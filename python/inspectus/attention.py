@@ -1,20 +1,17 @@
 import json
 from typing import List
 import numpy as np
+import pkgutil
 
 
-JS_CSS_ADDED = False
-
-
-def init_inline_viz():
+def _init_inline_viz():
     html = ''
 
-    global JS_CSS_ADDED
+    js_file = pkgutil.get_data(__name__, "static/js/charts.js").decode('utf-8')
+    html += f'<script type="text/javascript">{js_file}</script>'
 
-    if not JS_CSS_ADDED:
-        html += '''<script src="https://cdn.statically.io/gist/lakshith-403/6c40cc4e37d07676f421108d9d0109a6/raw/bf7eb154f409b91a0c9afdc66dfe2cf2e8283347/labml_attn_without_sample.js"></script>'''
-        html += '''<link rel="stylesheet" href="https://cdn.statically.io/gist/lakshith-403/81b16b30a7f2c853a536f3d3975a7693/raw/aaee9494e96c5370b27821e114562d2d8e64ce39/labml_attn.css">'''
-        JS_CSS_ADDED = True
+    css_file = pkgutil.get_data(__name__, "static/css/charts.css").decode('utf-8')
+    html += f'<style>{css_file}</style>'
 
     from IPython.display import display, HTML
 
@@ -37,6 +34,8 @@ def attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: 
         Returns:
         None
         """
+    _init_inline_viz()
+
     html = ''
 
     from uuid import uuid1
@@ -73,5 +72,4 @@ def attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: 
 
     from IPython.display import display, HTML
 
-    display(HTML(html))
-    display(HTML(script))
+    display(HTML(html + script))
