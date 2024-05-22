@@ -7,10 +7,21 @@ import pkgutil
 def _init_inline_viz():
     html = ''
 
-    js_file = pkgutil.get_data(__name__, "static/js/charts.js").decode('utf-8')
-    html += f'<script type="text/javascript">{js_file}</script>'
+    js_file = None
+    css_file = None
+    try:
+        js_file = pkgutil.get_data(__name__, "static/js/charts.js").decode('utf-8')
+        css_file = pkgutil.get_data(__name__, "static/css/charts.css").decode('utf-8')
+    except FileNotFoundError:
+        # print('Could not find the static files for the visualization in package static directory. '
+        #       'Trying to load from ui build.')
+        js_file = pkgutil.get_data(__name__, "../../ui/build/js/charts.js").decode('utf-8')
+        css_file = pkgutil.get_data(__name__, "../../ui/build/css/charts.css").decode('utf-8')
+    finally:
+        if js_file is None or css_file is None:
+            raise FileNotFoundError('Could not find the static files for the visualization')
 
-    css_file = pkgutil.get_data(__name__, "static/css/charts.css").decode('utf-8')
+    html += f'<script type="text/javascript">{js_file}</script>'
     html += f'<style>{css_file}</style>'
 
     from IPython.display import display, HTML
