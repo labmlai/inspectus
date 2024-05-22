@@ -24,3 +24,7 @@ build/
 **/.remote/configs.yaml
 
 /ui/node_modules/
+/ui/lib/weya
+
+/notebooks/test.ipynb
+

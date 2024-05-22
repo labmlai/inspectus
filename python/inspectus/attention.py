@@ -1,7 +1,8 @@
 import json
-from typing import List
-import numpy as np
 import pkgutil
+from typing import List, NamedTuple, Dict
+
+import numpy as np
 
 
 def _init_inline_viz():
@@ -10,13 +11,11 @@ def _init_inline_viz():
     js_file = None
     css_file = None
     try:
-        js_file = pkgutil.get_data(__name__, "static/js/charts.js").decode('utf-8')
-        css_file = pkgutil.get_data(__name__, "static/css/charts.css").decode('utf-8')
+        js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
+        css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
     except FileNotFoundError:
-        # print('Could not find the static files for the visualization in package static directory. '
-        #       'Trying to load from ui build.')
-        js_file = pkgutil.get_data(__name__, "../../ui/build/js/charts.js").decode('utf-8')
-        css_file = pkgutil.get_data(__name__, "../../ui/build/css/charts.css").decode('utf-8')
+        js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
+        css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
     finally:
         if js_file is None or css_file is None:
             raise FileNotFoundError('Could not find the static files for the visualization')
@@ -29,7 +28,12 @@ def _init_inline_viz():
     display(HTML(html))
 
 
-def attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: List['str'] = None):
+class AttentionMap(NamedTuple):
+    matrix: np.ndarray
+    info: Dict[str, int]
+
+
+def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_tokens: List['str'] = None):
     """
         This function visualizes the attention matrix of a transformer model in a Jupyter notebook.
 
@@ -54,21 +58,60 @@ def attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: 
 
     html += f'<div id="{elem_id}"></div>'
 
-    layers, heads, n_src, n_tgt = attn_mat.shape
-
     if src_tokens is None:
-        src_tokens = ['A'] * n_src
+        raise ValueError('Tokens should be provided')
     if tgt_tokens is None:
-        tgt_tokens = ['T'] * n_tgt
+        tgt_tokens = src_tokens
 
-    assert len(src_tokens) == n_src
-    assert len(tgt_tokens) == n_tgt
+    if isinstance(attn, tuple):
+        attn = list(attn)
 
-    data = []
-    for layer in range(layers):
-        for head in range(heads):
-            data.append({'values': attn_mat[layer, head].tolist(),
-                         'info': {'layer': layer, 'head': head}})
+    if isinstance(attn, list):
+        if not attn:
+            raise ValueError('Attention should not be empty')
+        if isinstance(attn[0], AttentionMap):
+            for a in attn:
+                if not isinstance(a, AttentionMap):
+                    raise ValueError(f'Unknown attention map type: {type(a)}')
+        else:
+            import torch
+            if isinstance(attn[0], torch.Tensor):
+                # Huggingface attention
+                if len(attn[0].shape) != 4:
+                    raise ValueError(f'Exected attention output from transformers library.'
+                                     f'Each tensor should have shape [batch_size, heads, src, tgt].'
+                                     f'Got shape {attn[0].shape}')
+                if attn[0].shape[0] != 1:
+                    raise ValueError(f'Exected attention output from transformers library. '
+                                     f'Each tensor should have shape [batch_size, heads, src, tgt]. '
+                                     f'And the batch size should be 1. '
+                                     f'Got shape {attn[0].shape}')
+                attn = [[AttentionMap(a[0, head].detach().cpu().numpy(), {'layer': layer, 'head': head})
+                         for head in range(a.shape[1])]
+                        for layer, a in enumerate(attn)]
+                attn = sum(attn, [])
+            else:
+                raise ValueError(f'Uknown attention type {type(attn[0])}')
+    elif isinstance(attn, AttentionMap):
+        attn = [attn]
+    elif isinstance(attn, np.ndarray):
+        if len(attn.shape) < 2:
+            raise ValueError('Attention should have at least 2 dimensions')
+        elif len(attn.shape) == 2:
+            attn = [AttentionMap(attn, {})]
+        elif len(attn.shape) == 3:
+            attn = [AttentionMap(attn[i], {'layer': i}) for i in range(attn.shape[0])]
+        elif len(attn.shape) == 4:
+            attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
+                     for head in range(attn.shape[1])]
+                    for layer in range(attn.shape[0])]
+            attn = sum(attn, [])
+        else:
+            raise ValueError(f'Unknown attention shape {attn.shape}')
+
+    data = [{'values': a.matrix.tolist(),
+             'info': a.info}
+            for a in attn]
 
     res = json.dumps({
         'attention': data,
