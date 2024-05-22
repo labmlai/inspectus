@@ -1,0 +1,51 @@
+body {
+  background: #eee;
+}
+
+.attention-visualization {
+  .matrix {
+    .label {
+      text {
+        dominant-baseline: central;
+        text-anchor: end;
+        font-family: monospace;
+      }
+    }
+
+    margin-bottom: 20px;
+  }
+
+  .text-tokens {
+
+    .token {
+      font-family: monospace;
+      display: inline-block;
+      white-space: pre;
+      border: 1px solid #ccc;
+      margin: 1px;
+      padding: 1px;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    margin-bottom: 10px;
+  }
+
+  .dimension-values {
+    margin-bottom: 20px;
+
+    .value {
+      font-family: monospace;
+      white-space: pre;
+      display: inline-block;
+      margin: 2px;
+      width: 15px;
+      padding: 2px;
+      font-size: 10px;
+      text-align: center;
+      user-select: none;
+      cursor: pointer;
+
+    }
+  }
+}

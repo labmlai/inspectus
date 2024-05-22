@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "module": "es6",
+        "allowJs": true,
+        "lib": ["dom", "es5", "es2015.promise"],
+        "moduleResolution": "node"
+    }
+}

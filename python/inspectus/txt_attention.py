@@ -8,7 +8,7 @@ def init_inline_viz():
 
     if not JS_CSS_ADDED:
         html += '''<script src="https://cdn.statically.io/gist/lakshith-403/6c40cc4e37d07676f421108d9d0109a6/raw/3570ac6da38a5d7250c6b6aee3e18bcf70b71d0f/labml_attn.js"></script>'''
-        html += '''<link rel="stylesheet" href="https://cdn.gisthostfor.me/lakshith-403-PHLvjr12Vw-labml_attn.css">'''
+        html += '''<link rel="stylesheet" href="https://cdn.statically.io/gist/lakshith-403/81b16b30a7f2c853a536f3d3975a7693/raw/aaee9494e96c5370b27821e114562d2d8e64ce39/labml_attn.css">'''
         JS_CSS_ADDED = True
 
     from IPython.display import display, HTML
@@ -33,7 +33,3 @@ def text_attention():
 
     display(HTML(html))
     display(HTML(script))
-
-
-init_inline_viz()
-text_attention()
