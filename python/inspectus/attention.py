@@ -21,7 +21,7 @@ def init_inline_viz():
     display(HTML(html))
 
 
-def text_attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: List['str'] = None):
+def attention(attn_mat: np.ndarray, src_tokens: List['str'] = None, tgt_tokens: List['str'] = None):
     """
         This function visualizes the attention matrix of a transformer model in a Jupyter notebook.
 
