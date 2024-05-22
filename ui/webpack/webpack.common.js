@@ -42,12 +42,6 @@ module.exports = {
         extensions: ['.ts', '.js', '.scss', '.css'],
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [
-                { from: 'assets', to: '../assets' },
-            ],
-            options: {},
-        }),
         new MiniCssExtractPlugin({
             filename: '../css/[name].css',
         }),
