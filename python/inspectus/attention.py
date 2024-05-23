@@ -41,7 +41,7 @@ class AttentionMap(NamedTuple):
 
 
 def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_tokens: List['str'] = None,
-              chart_types=None):
+              chart_types: List['str'] = None):
     """
         This function visualizes the attention matrix of a transformer model in a Jupyter notebook.
 
@@ -122,13 +122,13 @@ def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_toke
             for a in attn]
 
     if chart_types is None:
-        chart_types = [ChartType.AttentionMatrix]
+        chart_types = [ChartType.AttentionMatrix.value]
 
     res = json.dumps({
         'attention': data,
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
-        'chart_types': [c.value for c in chart_types]
+        'chart_types': chart_types
     })
 
     script = ''
