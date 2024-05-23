@@ -8,16 +8,14 @@ import numpy as np
 def _init_inline_viz():
     html = ''
 
-    js_file = None
-    css_file = None
     try:
         js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
         css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
     except FileNotFoundError:
-        js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
-        css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
-    finally:
-        if js_file is None or css_file is None:
+        try:
+            js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
+            css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
+        except FileNotFoundError:
             raise FileNotFoundError('Could not find the static files for the visualization')
 
     html += f'<script type="text/javascript">{js_file}</script>'
