@@ -1,8 +1,17 @@
 import json
 import pkgutil
+from enum import Enum
 from typing import List, NamedTuple, Dict
 
 import numpy as np
+
+
+class ChartType(Enum):
+    AttentionMatrix = 'attention_matrix',
+    TokenHeatmap = 'token_heatmap',
+    DimensionHeatmap = 'dimension_heatmap',
+    TokenDimHeatmap = 'token_dim_heatmap',
+    LineGrid = 'line_grid'
 
 
 def _init_inline_viz():
@@ -31,7 +40,8 @@ class AttentionMap(NamedTuple):
     info: Dict[str, int]
 
 
-def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_tokens: List['str'] = None):
+def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_tokens: List['str'] = None,
+              chart_types=None):
     """
         This function visualizes the attention matrix of a transformer model in a Jupyter notebook.
 
@@ -111,10 +121,14 @@ def attention(attn: List[AttentionMap], src_tokens: List['str'] = None, tgt_toke
              'info': a.info}
             for a in attn]
 
+    if chart_types is None:
+        chart_types = [ChartType.AttentionMatrix]
+
     res = json.dumps({
         'attention': data,
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
+        'chart_types': [c.value for c in chart_types]
     })
 
     script = ''

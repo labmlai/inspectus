@@ -20,6 +20,14 @@ interface StringTokensModel {
     tokens: string[]
 }
 
+export enum ChartType {
+    AttentionMatrix = 'attention_matrix',
+    TokenHeatmap = 'token_heatmap',
+    DimensionHeatmap = 'dimension_heatmap',
+    TokenDimHeatmap = 'token_dim_heatmap',
+    LineGrid = 'line_grid'
+}
+
 
 export abstract class Tokens {
     abstract getTokenLabelView(idx: number): TokenLabelView
@@ -59,12 +67,14 @@ export class Controller {
     private dimensionHeatmaps: DimensionHeatmap[];
     private tokenDimHeatmap: TokenDimHeatmapView;
     private lineGridView: LineGridView;
+    private readonly chartTypes: ChartType[]
 
     constructor(dimensions: Dimension[], attentions: AttentionMatrix[],
-                srcTokens: StringTokensModel, dstTokens: StringTokensModel) {
+                srcTokens: StringTokensModel, dstTokens: StringTokensModel, chartTypes: ChartType[] = [ChartType.AttentionMatrix]) {
         this.attentions = attentions
         this.srcTokens = new StringTokens(srcTokens)
         this.dstTokens = new StringTokens(dstTokens)
+        this.chartTypes = chartTypes
         this.dimensions = dimensions
         this.dimensionsMap = {}
         for (let d of this.dimensions) {
@@ -385,38 +395,64 @@ export class Controller {
     renderAttention() {
         let matrix = this.calcAttnMatrix()
 
-        this.attentionMatrixView.setSelection(this.selected['src'], this.selected['dst'])
-        this.attentionMatrixView.setAttention(matrix)
-        this.srcTokenHeatmap.setSelection(this.selected['src'])
-        this.dstTokenHeatmap.setSelection(this.selected['dst'])
-        this.srcTokenHeatmap.setAttention(this.calcSrcAttn(matrix))
-        this.dstTokenHeatmap.setAttention(this.calcDstAttn(matrix))
-
-        let dimsAttn = this.calcDimsAttention()
-        for (let i = 0; i < this.dimensions.length; ++i) {
-            let name = this.dimensions[i].name
-            this.dimensionHeatmaps[i].setSelection(this.selected[name])
-            this.dimensionHeatmaps[i].setAttention(dimsAttn[name])
+        if (this.chartTypes.includes(ChartType.AttentionMatrix)) {
+            this.attentionMatrixView.setSelection(this.selected['src'], this.selected['dst'])
+            this.attentionMatrixView.setAttention(matrix)
         }
-        this.tokenDimHeatmap.setSelection(this.selected['dst'])
-        this.tokenDimHeatmap.setAttention(this.calcTokenDimsAttention(
-            this.tokenDimHeatmap.selectedDimension))
-        this.lineGridView.setSelection(this.selected)
-        this.lineGridView.setAttention(this.calcGridAttentionAttention(this.lineGridView.dim1, this.lineGridView.dim2))
+
+        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+            this.srcTokenHeatmap.setSelection(this.selected['src'])
+            this.dstTokenHeatmap.setSelection(this.selected['dst'])
+            this.srcTokenHeatmap.setAttention(this.calcSrcAttn(matrix))
+            this.dstTokenHeatmap.setAttention(this.calcDstAttn(matrix))
+        }
+
+        if (this.chartTypes.includes(ChartType.DimensionHeatmap)) {
+            let dimsAttn = this.calcDimsAttention()
+            for (let i = 0; i < this.dimensions.length; ++i) {
+                let name = this.dimensions[i].name
+                this.dimensionHeatmaps[i].setSelection(this.selected[name])
+                this.dimensionHeatmaps[i].setAttention(dimsAttn[name])
+            }
+        }
+
+        if (this.chartTypes.includes(ChartType.TokenDimHeatmap)) {
+            this.tokenDimHeatmap.setSelection(this.selected['dst'])
+            this.tokenDimHeatmap.setAttention(this.calcTokenDimsAttention(
+                this.tokenDimHeatmap.selectedDimension))
+        }
+
+        if (this.chartTypes.includes(ChartType.LineGrid)) {
+            this.lineGridView.setSelection(this.selected)
+            this.lineGridView.setAttention(this.calcGridAttentionAttention(this.lineGridView.dim1, this.lineGridView.dim2))
+        }
     }
 
     render() {
         let elem = $('div', '.attention-visualization')
 
-        elem.appendChild(this.attentionMatrixView.render())
-        elem.appendChild(this.srcTokenHeatmap.render())
-        elem.appendChild(this.dstTokenHeatmap.render())
-
-        for (let i = 0; i < this.dimensions.length; ++i) {
-            elem.appendChild(this.dimensionHeatmaps[i].render())
+        if (this.chartTypes.includes(ChartType.AttentionMatrix)) {
+            elem.appendChild(this.attentionMatrixView.render())
         }
-        elem.appendChild(this.tokenDimHeatmap.render())
-        elem.appendChild(this.lineGridView.render())
+
+        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+            elem.appendChild(this.srcTokenHeatmap.render())
+            elem.appendChild(this.dstTokenHeatmap.render())
+        }
+
+        if (this.chartTypes.includes(ChartType.DimensionHeatmap)) {
+            for (let i = 0; i < this.dimensions.length; ++i) {
+                elem.appendChild(this.dimensionHeatmaps[i].render())
+            }
+        }
+
+        if (this.chartTypes.includes(ChartType.TokenDimHeatmap)) {
+            elem.appendChild(this.tokenDimHeatmap.render())
+        }
+
+        if (this.chartTypes.includes(ChartType.LineGrid)) {
+            elem.appendChild(this.lineGridView.render())
+        }
 
         this.renderAttention()
 
