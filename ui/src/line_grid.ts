@@ -244,6 +244,7 @@ export class LineGridView {
         let svgAttrs = {
             width: this.cellWidth * dv2.length + this.cellMargin * (dv2.length - 1),
             height: this.cellHeight * dv1.length + this.cellMargin * (dv1.length - 1),
+            viewBox: `0 0 ${this.cellWidth * dv2.length + this.cellMargin * (dv2.length - 1)} ${this.cellHeight * dv1.length + this.cellMargin * (dv1.length - 1)}`
         }
 
         this.cellLayers = []

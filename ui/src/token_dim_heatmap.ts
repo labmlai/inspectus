@@ -123,7 +123,8 @@ export class TokenDimHeatmapView {
         let dim = this.dimensions[this.selectedDimension]
         let svgAttrs = {
             width: this.cellSize * dim.values.length + this.leftLabelsMargin,
-            height: this.cellSize * this.tokens.length
+            height: this.cellSize * this.tokens.length,
+            viewBox: `0 0 ${this.cellSize * dim.values.length + this.leftLabelsMargin} ${this.cellSize * this.tokens.length} `
         }
         this.chartElem = $('svg', '.matrix', svgAttrs, $ => {
             grid = $('g', '.grid',

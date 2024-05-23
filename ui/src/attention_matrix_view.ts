@@ -91,7 +91,8 @@ export class AttentionMatrixView {
         let grid: SVGGElement
         let svgAttrs = {
             width: this.cellSize * this.dstTokens.length + this.leftLabelsMargin,
-            height: this.cellSize * this.srcTokens.length + this.leftLabelsMargin
+            height: this.cellSize * this.srcTokens.length + this.leftLabelsMargin,
+            viewBox: `0 0 ${this.cellSize * this.dstTokens.length + this.leftLabelsMargin} ${this.cellSize * this.srcTokens.length + this.leftLabelsMargin}`
         }
         let matrix = $('svg', '.matrix', svgAttrs, $ => {
             grid = $('g', '.grid',
