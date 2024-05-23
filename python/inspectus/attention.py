@@ -7,10 +7,10 @@ import numpy as np
 
 
 class ChartType(Enum):
-    AttentionMatrix = 'attention_matrix',
-    TokenHeatmap = 'token_heatmap',
-    DimensionHeatmap = 'dimension_heatmap',
-    TokenDimHeatmap = 'token_dim_heatmap',
+    AttentionMatrix = 'attention_matrix'
+    TokenHeatmap = 'token_heatmap'
+    DimensionHeatmap = 'dimension_heatmap'
+    TokenDimHeatmap = 'token_dim_heatmap'
     LineGrid = 'line_grid'
 
 
