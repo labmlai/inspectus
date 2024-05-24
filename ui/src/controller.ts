@@ -197,7 +197,7 @@ export class Controller {
         for (let i = 0; i < this.srcTokens.length; ++i) {
             let val = 0.
             for (let j = 0; j < this.dstTokens.length; ++j) {
-                if (this.selected['src'][i] === true) {
+                if (this.selected['dst'][j] === true) {
                     val += matrix[i][j]
                 }
             }
