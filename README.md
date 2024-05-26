@@ -5,7 +5,7 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ## Preview
 
-![Inspectus](images/preview.gif)
+![Inspectus](Images/preview.gif)
 
 ## Components
 
