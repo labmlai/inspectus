@@ -72,6 +72,14 @@ def attention(attn: List[AttentionMap],
     if tgt_tokens is None:
         tgt_tokens = src_tokens
 
+    for i, token in enumerate(src_tokens):
+        if not isinstance(token, str):
+            src_tokens[i] = str(token)
+
+    for i, token in enumerate(tgt_tokens):
+        if not isinstance(token, str):
+            tgt_tokens[i] = str(token)
+
     if isinstance(attn, tuple):
         attn = list(attn)
 
