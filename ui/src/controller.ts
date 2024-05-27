@@ -82,8 +82,8 @@ export class Controller {
         }
         this.attentionMatrixView = new AttentionMatrixView(this.srcTokens, this.dstTokens)
 
-        this.srcTokenHeatmap = new StringTokenHeatmap(this.srcTokens)
-        this.dstTokenHeatmap = new StringTokenHeatmap(this.dstTokens)
+        this.srcTokenHeatmap = new StringTokenHeatmap(this.srcTokens, "Source Tokens")
+        this.dstTokenHeatmap = new StringTokenHeatmap(this.dstTokens, "Destination Tokens")
 
         this.srcTokenHeatmap.addClickHandler('src', this.onSelected)
         this.dstTokenHeatmap.addClickHandler('dst', this.onSelected)

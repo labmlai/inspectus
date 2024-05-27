@@ -58,9 +58,11 @@ class TokenView {
 export class StringTokenHeatmap {
     private tokens: StringTokens;
     private tokenViews: TokenView[]
+    private title: string
 
-    constructor(tokens: StringTokens) {
+    constructor(tokens: StringTokens, title: string) {
         this.tokens = tokens;
+        this.title = title
 
         this.tokenViews = []
         for (let i = 0; i < this.tokens.length; ++i) {
@@ -77,7 +79,10 @@ export class StringTokenHeatmap {
     }
 
     render() {
-        let elem = $('div', '.src-tokens.text-tokens')
+        let elem = $('div', '.src-tokens.text-tokens', $ => {
+            $('span', this.title)
+            $('br')
+        })
         for (let i = 0; i < this.tokens.length; ++i) {
             elem.appendChild(this.tokenViews[i].render())
         }
