@@ -107,9 +107,9 @@ def attention(attn: List[AttentionMap],
         if len(attn.shape) < 2:
             raise ValueError('Attention should have at least 2 dimensions')
         elif len(attn.shape) == 2:
-            attn = [AttentionMap(attn, {})]
+            attn = [AttentionMap(attn, {'layer': 0, 'head': 0})]
         elif len(attn.shape) == 3:
-            attn = [AttentionMap(attn[i], {'layer': i}) for i in range(attn.shape[0])]
+            attn = [AttentionMap(attn[i], {'layer': i, 'head': 0}) for i in range(attn.shape[0])]
         elif len(attn.shape) == 4:
             attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
                      for head in range(attn.shape[1])]
