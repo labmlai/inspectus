@@ -16,10 +16,12 @@ window["chartsEmbed"]=function(elemId: string, data: ChartData) {
     document.getElementById(elemId).appendChild(chart.render())
 }
 
-// function test() {
-//     let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
-//         sampleAttentions,
-//         {tokens: sampleTokens},
-//         {tokens: sampleTokens})
-//     document.body.appendChild(chart.render())
-// }
+window["test"] = function() {
+    let sample = require('../assets/attention.json')
+    let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
+        sample['attention'],
+        {tokens: sample['src_tokens']},
+        {tokens: sample['tgt_tokens']},
+        [ChartType.AttentionMatrix, ChartType.TokenHeatmap])
+    document.body.appendChild(chart.render())
+}
