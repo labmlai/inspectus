@@ -45,6 +45,8 @@ class ValueView {
         } else {
             this.elem.style.setProperty('background', d3.interpolateGreys(value * 0.8))
         }
+
+        this.elem.title = value.toExponential()
     }
 
     setSelection(selected: boolean) {
