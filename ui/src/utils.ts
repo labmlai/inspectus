@@ -82,3 +82,9 @@ export function getDimValues(dim: string, dimensions: Dimensions) {
         return d.values
     }
 }
+
+export function capitalizeFirstLetter(str: string) {
+    return str.split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+}

@@ -80,8 +80,7 @@ export class StringTokenHeatmap {
 
     render() {
         let elem = $('div', '.src-tokens.text-tokens', $ => {
-            $('span', this.title)
-            $('br')
+            $('div.title', this.title)
         })
         for (let i = 0; i < this.tokens.length; ++i) {
             elem.appendChild(this.tokenViews[i].render())

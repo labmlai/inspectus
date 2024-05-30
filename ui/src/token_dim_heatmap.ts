@@ -93,7 +93,7 @@ export class TokenDimHeatmapView {
         this.elem = $('div', '.token-dim-heatmap',
             $ => {
                 $('div', '.select-container', $ => {
-                    $('label', 'Dimension', {for: 'token-dim-heatmap-select'})
+                    $('div.title.inline', 'Dimension', {for: 'token-dim-heatmap-select'})
                     this.dimSelectElem = $('select', '#token-dim-heatmap-select', {on: {change: this.onDimSelect}}, $ => {
                         for (let d in this.dimensions) {
                             $('option', d, {value: d})

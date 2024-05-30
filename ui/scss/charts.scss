@@ -3,6 +3,37 @@ body {
 }
 
 .attention-visualization {
+  font-family: "Roboto Light", "Ubuntu Light", "Ubuntu", monospace;
+
+  .title {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-size: 0.8rem;
+
+    &.inline {
+        display: inline-block;
+    }
+  }
+
+  .select-container {
+    padding-top: 10px;
+    padding-bottom: 5px;
+
+    select {
+      margin-left: 10px;
+    }
+  }
+
+  .double-select {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+
+    .select-container {
+      width: fit-content;
+    }
+  }
+
   .matrix {
     .label {
       text {
@@ -22,7 +53,6 @@ body {
       display: inline-block;
       white-space: pre;
       border: 1px solid #ccc;
-      margin: 1px;
       padding: 1px;
       user-select: none;
       cursor: pointer;

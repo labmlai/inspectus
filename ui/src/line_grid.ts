@@ -179,22 +179,24 @@ export class LineGridView {
     render() {
         this.elem = $('div', '.line-grid',
             $ => {
-                $('div', '.select-container', $ => {
-                    $('label', 'Y Dimension', {for: 'line-grid-dim2-select'},)
-                    this.dimSelectElem1 = $('select', '#line-grid-dim2-select', {on: {change: this.onDim1Select}}, $ => {
-                        for (let d in this.dimensions) {
-                            $('option', d, {value: d})
-                        }
-                        $('option', 'None', {value: 'null'})
+                $('div.double-select', $ => {
+                    $('div', '.select-container', $ => {
+                        $('label.title.inline', 'Y Dimension', {for: 'line-grid-dim2-select'},)
+                        this.dimSelectElem1 = $('select', '#line-grid-dim2-select', {on: {change: this.onDim1Select}}, $ => {
+                            for (let d in this.dimensions) {
+                                $('option', d, {value: d})
+                            }
+                            $('option', 'None', {value: 'null'})
+                        })
                     })
-                })
-                $('div', '.select-container', $ => {
-                    $('label', 'X Dimension', {for: 'line-grid-dim1-select'})
-                    this.dimSelectElem2 = $('select', '#line-grid-dim1-select', {on: {change: this.onDim2Select}}, $ => {
-                        for (let d in this.dimensions) {
-                            $('option', d, {value: d})
-                        }
-                        $('option', 'None', {value: 'null'})
+                    $('div', '.select-container', $ => {
+                        $('label.title.inline', 'X Dimension', {for: 'line-grid-dim1-select'})
+                        this.dimSelectElem2 = $('select', '#line-grid-dim1-select', {on: {change: this.onDim2Select}}, $ => {
+                            for (let d in this.dimensions) {
+                                $('option', d, {value: d})
+                            }
+                            $('option', 'None', {value: 'null'})
+                        })
                     })
                 })
             })
