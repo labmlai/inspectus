@@ -45,5 +45,12 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: '../css/[name].css',
         }),
+        new CopyPlugin({
+            patterns: [
+                { from: 'html', to: '../html' },
+                { from: 'assets', to: '../assets' },
+            ],
+            options: {},
+        }),
     ],
 }

@@ -1,6 +1,7 @@
 import {Weya as $} from "../lib/weya/weya";
 import {SelectCallback, DimValue} from "./types";
 import * as d3 from "../lib/d3/d3";
+import {capitalizeFirstLetter} from "./utils";
 
 class ValueView {
     private elem: HTMLDivElement;
@@ -45,6 +46,8 @@ class ValueView {
         } else {
             this.elem.style.setProperty('background', d3.interpolateGreys(value * 0.8))
         }
+
+        this.elem.title = value.toExponential()
     }
 
     setSelection(selected: boolean) {
@@ -77,7 +80,7 @@ export class DimensionHeatmap {
 
     render() {
         let elem = $('div', '.dimension-values', $ => {
-          $('div', '.dimension-name', `${this.name}`)
+          $('div', '.dimension-name.title', `${capitalizeFirstLetter(this.name)}`)
         })
         for (let i = 0; i < this.values.length; ++i) {
             elem.appendChild(this.valueViews[this.values[i]].render())

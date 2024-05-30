@@ -8,6 +8,7 @@ import * as d3 from "../lib/d3/d3";
 class CellView {
     private elem: SVGRectElement;
     private selected: boolean;
+    private titleElem: SVGTitleElement
 
     constructor() {
     }
@@ -19,6 +20,8 @@ class CellView {
             width: cellSize,
             height: cellSize
         })
+        this.titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title")
+        this.elem.appendChild(this.titleElem)
 
         return this.elem
     }
@@ -29,6 +32,7 @@ class CellView {
         } else {
             this.elem.style.setProperty('fill', d3.interpolateGreys(value))
         }
+        this.titleElem.textContent = value.toExponential()
     }
 
     setSelection(selected: boolean) {

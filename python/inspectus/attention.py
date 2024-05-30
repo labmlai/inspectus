@@ -44,20 +44,35 @@ def attention(attn: List[AttentionMap],
               src_tokens: List['str'] = None, tgt_tokens: List['str'] = None, *,
               chart_types: List['str'] = None):
     """
-        This function visualizes the attention matrix of a transformer model in a Jupyter notebook.
+    This function is used to visualize attention maps. It takes as input a list of attention maps,
+    source tokens, target tokens and chart types. It then processes the attention maps and generates
+    an HTML visualization using the provided tokens and chart types.
 
-        Parameters:
-        attn_mat (np.ndarray): A 4D numpy array representing the attention matrix.
-                               The dimensions are [layers, heads, n_src, n_tgt].
-        src_tokens (List[str], optional): A list of source tokens. Defaults to a list of 'A' repeated n_src times.
-        tgt_tokens (List[str], optional): A list of target tokens. Defaults to a list of 'T' repeated n_tgt times.
+    Parameters
+    ----------
+    attn : (List[AttentionMap])
+        A list of attention maps to visualize. should be either a list of or a single `AttentionMap` object, or a numpy
+        array. Numpy arrays ideally should have the dimensions (layers, heads, src_len, tgt_len). If the array has 3
+        dimensions head is assumed to be 0. If the array has 2 dimensions, layer and head are assumed to be 0. Array
+        should not have less than 2 or more than 4 dimensions.
+    src_tokens : (List[str], optional)
+        A list of source tokens. If not provided, a ValueError is raised.
+    tgt_tokens : (List[str], optional)
+        A list of target tokens. If not provided, it defaults to src_tokens.
+    chart_types : (List[str], optional)
+        A list of chart types to use for visualization. If not provided, it defaults to ['attention_matrix',
+        'token_heatmap', 'dimension_heatmap'].
 
-        Raises:
-        AssertionError: If the length of src_tokens or tgt_tokens does not match n_src or n_tgt respectively.
+    Raises
+    ------
+    ValueError
+        If src_tokens is None or if attn is empty or if attn contains an unknown type or shape.
 
-        Returns:
-        None
-        """
+    Returns
+    -------
+    string
+        a value in a string
+    """
     _init_inline_viz()
 
     html = ''
@@ -71,6 +86,14 @@ def attention(attn: List[AttentionMap],
         raise ValueError('Tokens should be provided')
     if tgt_tokens is None:
         tgt_tokens = src_tokens
+
+    for i, token in enumerate(src_tokens):
+        if not isinstance(token, str):
+            src_tokens[i] = str(token)
+
+    for i, token in enumerate(tgt_tokens):
+        if not isinstance(token, str):
+            tgt_tokens[i] = str(token)
 
     if isinstance(attn, tuple):
         attn = list(attn)
@@ -87,11 +110,11 @@ def attention(attn: List[AttentionMap],
             if isinstance(attn[0], torch.Tensor):
                 # Huggingface attention
                 if len(attn[0].shape) != 4:
-                    raise ValueError(f'Exected attention output from transformers library.'
+                    raise ValueError(f'Expected attention output from transformers library.'
                                      f'Each tensor should have shape [batch_size, heads, src, tgt].'
                                      f'Got shape {attn[0].shape}')
                 if attn[0].shape[0] != 1:
-                    raise ValueError(f'Exected attention output from transformers library. '
+                    raise ValueError(f'Expected attention output from transformers library. '
                                      f'Each tensor should have shape [batch_size, heads, src, tgt]. '
                                      f'And the batch size should be 1. '
                                      f'Got shape {attn[0].shape}')
@@ -100,16 +123,16 @@ def attention(attn: List[AttentionMap],
                         for layer, a in enumerate(attn)]
                 attn = sum(attn, [])
             else:
-                raise ValueError(f'Uknown attention type {type(attn[0])}')
+                raise ValueError(f'Unknown attention type {type(attn[0])}')
     elif isinstance(attn, AttentionMap):
         attn = [attn]
     elif isinstance(attn, np.ndarray):
         if len(attn.shape) < 2:
             raise ValueError('Attention should have at least 2 dimensions')
         elif len(attn.shape) == 2:
-            attn = [AttentionMap(attn, {})]
+            attn = [AttentionMap(attn, {'layer': 0, 'head': 0})]
         elif len(attn.shape) == 3:
-            attn = [AttentionMap(attn[i], {'layer': i}) for i in range(attn.shape[0])]
+            attn = [AttentionMap(attn[i], {'layer': i, 'head': 0}) for i in range(attn.shape[0])]
         elif len(attn.shape) == 4:
             attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
                      for head in range(attn.shape[1])]

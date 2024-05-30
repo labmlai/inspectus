@@ -16,8 +16,8 @@ setuptools.setup(
     project_urls={
         'Documentation': 'https://docs.labml.ai/'
     },
-    packages=setuptools.find_packages(exclude=('test',
-                                               'test.*')),
+    packages=['inspectus'],
+    include_package_data=True,
     install_requires=[],
     entry_points={
     },

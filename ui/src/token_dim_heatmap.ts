@@ -7,6 +7,7 @@ import * as d3 from "../lib/d3/d3";
 class CellView {
     private elem: SVGRectElement;
     private selected: boolean;
+    private titleElem: SVGTitleElement
 
     constructor() {
     }
@@ -19,6 +20,9 @@ class CellView {
             height: cellSize
         })
 
+        this.titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title")
+        this.elem.appendChild(this.titleElem)
+
         return this.elem
     }
 
@@ -28,6 +32,8 @@ class CellView {
         } else {
             this.elem.style.setProperty('fill', d3.interpolateGreys(value * 0.8))
         }
+
+        this.titleElem.textContent = value.toExponential()
     }
 
     setSelection(selected: boolean) {
@@ -87,7 +93,7 @@ export class TokenDimHeatmapView {
         this.elem = $('div', '.token-dim-heatmap',
             $ => {
                 $('div', '.select-container', $ => {
-                    $('label', 'Dimension', {for: 'token-dim-heatmap-select'})
+                    $('div.title.inline', 'Dimension', {for: 'token-dim-heatmap-select'})
                     this.dimSelectElem = $('select', '#token-dim-heatmap-select', {on: {change: this.onDimSelect}}, $ => {
                         for (let d in this.dimensions) {
                             $('option', d, {value: d})
