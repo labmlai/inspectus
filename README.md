@@ -10,19 +10,20 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 ## Components
 
 ### Attention Matrix
-[todo]
+Visualizes the attention scores between tokens, highlighting how each token focuses on others during processing.
 
 ### Token Heatmap
-[todo]
+- Query Heatmap: Shows the sum of attention scores between each query and selected key tokens
+- Key Heatmap: Shows the sum of attention scores between each key and selected query tokens
 
 ### Dimension Heatmap 
-[todo]
+Shows the sum of attention scores for each item in dimensions (Layers and Heads) normalized over the dimension.
 
 ### Token Dimension Heatmap
-[todo]
+For each key token, shows the sum of attention scores from query tokens in the selected dimension.
 
 ### Line Grid
-[todo]
+Visualize attention scores between query and key tokens for all attention matrices.
 
 ## Getting Started
 
@@ -123,17 +124,11 @@ Check out the notebook here: [Inspectus Tutorial]()
 import numpy as np
 from inspectus import attention
 
-# Define a 3D array representing attention values between source and destination tokens
-# The outermost list represents different layers in the model
-# Next dimension represents different heads in that layer
-# Each head contains a 2D array representing the attention values for each head
+# Define a 2D array representing attention values between Query and Key tokens
 arr = [
-    [
-        [[0.1, 0.7, 0.2],
-         [0.2, 0.7, 0.1],
-         [0.1, 0.7, 0.2],
-        ]
-    ]
+    [0.1, 0.7, 0.2],
+     [0.2, 0.7, 0.1],
+     [0.1, 0.7, 0.2],
 ]
 
 # Convert the list to a numpy array
