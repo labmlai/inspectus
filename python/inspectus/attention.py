@@ -4,6 +4,8 @@ from typing import List, NamedTuple, Dict
 
 import numpy as np
 
+from inspectus.utils import convert_b64
+
 
 def _init_inline_viz():
     html = ''
@@ -69,6 +71,11 @@ def _parse_hf_attn(attn):
             for layer, a in enumerate(attn)]
     return sum(attn, [])
 
+def encode_attention(attn):
+    data = [{'values': convert_b64(a.matrix),
+             'shape': a.matrix.shape,
+             'info': a.info}
+            for a in attn]
 
 def parse_attn(attn) -> List[AttentionMap]:
     if isinstance(attn, tuple):
@@ -117,8 +124,8 @@ def attention_chart(*,
                     src_tokens: List['str'], tgt_tokens: List['str'],
                     chart_types: List['str']):
     res = json.dumps({
-        'attention': [{'values': a.matrix.tolist(),
-                       'info': a.info} for a in attn],
+        'attention': [{'values': convert_b64(a.matrix),
+                       'info': a.info, 'shape': a.matrix.shape} for a in attn],
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
         'chart_types': chart_types
