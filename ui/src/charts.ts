@@ -17,7 +17,7 @@ window["chartsEmbed"]=function(elemId: string, data: ChartData) {
 }
 
 window["test"] = function() {
-    let sample = require('../assets/attention.json')
+    let sample = {} // require('../assets/attention.json')
     let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
         sample['attention'],
         {tokens: sample['src_tokens']},
