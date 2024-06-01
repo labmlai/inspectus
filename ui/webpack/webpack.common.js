@@ -48,7 +48,6 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: 'html', to: '../html' },
-                { from: 'assets', to: '../assets' },
             ],
             options: {},
         }),

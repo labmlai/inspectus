@@ -13,7 +13,8 @@ window["chartsEmbed"]=function(elemId: string, data: ChartDataModel) {
 }
 
 window["test"] = function() {
-    let sample = require('../assets/attention.json')
+    let sample: any = {} // require('../assets/attention.json')
+
     let chartData = new ChartData(sample)
     let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
         chartData.attention,
