@@ -5,6 +5,8 @@ from typing import List, NamedTuple, Dict
 
 import numpy as np
 
+from inspectus.utils import convert_b64
+
 
 class ChartType(Enum):
     AttentionMatrix = 'attention_matrix'
@@ -141,7 +143,8 @@ def attention(attn: List[AttentionMap],
         else:
             raise ValueError(f'Unknown attention shape {attn.shape}')
 
-    data = [{'values': a.matrix.tolist(),
+    data = [{'values': convert_b64(a.matrix),
+             'shape': a.matrix.shape,
              'info': a.info}
             for a in attn]
 

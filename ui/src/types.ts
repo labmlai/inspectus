@@ -1,3 +1,5 @@
+import {ChartType} from "./controller";
+
 export type SelectCallback = (type: string, idx: DimValue, isMulti: boolean) => void
 
 export interface ComputedAttention {
@@ -15,6 +17,12 @@ export interface Dimension {
 
 export type Dimensions = { [name: string]: Dimension }
 
+export interface  AttentionMatrixModel {
+    values: string
+    shape: number[]
+    info: { [name: string]: DimValue }
+}
+
 export interface AttentionMatrix {
     values: number[][]
     info: { [name: string]: DimValue }
@@ -23,3 +31,10 @@ export interface AttentionMatrix {
 export type GridAttention = { [dim1: string]: { [dim2: string]: number[][] } }
 
 export type DimValue = string | number
+
+export interface ChartDataModel {
+    attention: AttentionMatrixModel[],
+    src_tokens: string[],
+    tgt_tokens: string[],
+    chart_types: ChartType[]
+}
