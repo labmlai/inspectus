@@ -45,7 +45,8 @@ function reshapeArray(data: any[], shape: number[]): number[][] {
         return data
     }
     let result = [];
-    let size = shape.pop();
+    let size = shape[0];
+    shape = shape.slice(1);
     let length = data.length / size;
     for (let i = 0; i < size; i++) {
         result.push(reshapeArray(data.splice(0, length), shape));
