@@ -122,13 +122,13 @@ def parse_attn(attn) -> List[AttentionMap]:
 def attention_chart(*,
                     attn: List[AttentionMap],
                     src_tokens: List['str'], tgt_tokens: List['str'],
-                    chart_types: List['str']):
+                    chart_types: List['str'], color: str):
     res = json.dumps({
         'attention': [{'values': convert_b64(a.matrix),
                        'info': a.info, 'shape': a.matrix.shape} for a in attn],
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
-        'chart_types': chart_types
+        'chart_types': chart_types,
     })
 
     _init_inline_viz()
@@ -138,7 +138,7 @@ def attention_chart(*,
 
     html = f'<div id="{elem_id}"></div>'
 
-    script = f'<script>window.chartsEmbed(\'{elem_id}\',{res})</script>'
+    script = f'<script>window.chartsEmbed(\'{elem_id}\',{res}, \'{color}\')</script>'
 
     from IPython.display import display, HTML
 

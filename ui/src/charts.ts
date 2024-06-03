@@ -1,9 +1,12 @@
 import {ChartType, Controller} from "./controller"
 import {ChartDataModel} from "./types"
 import {ChartData} from "./data"
+import {PlotColors} from "./colors"
 
-window["chartsEmbed"]=function(elemId: string, data: ChartDataModel) {
+window["chartsEmbed"]=function(elemId: string, data: ChartDataModel, color: string) {
     let chartData = new ChartData(data)
+
+    PlotColors.shared.setColorScheme(color)
 
     let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
         chartData.attention,

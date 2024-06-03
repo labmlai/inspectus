@@ -1,7 +1,7 @@
 import {StringTokens} from "./controller";
 import {Weya as $} from "../lib/weya/weya";
 import {SelectCallback, DimValue} from "./types";
-import * as d3 from "../lib/d3/d3";
+import {PlotColors} from "./colors";
 
 class TokenView {
     private elem: HTMLDivElement;
@@ -42,9 +42,9 @@ class TokenView {
 
     setAttn(value: number) {
         if(this.selected) {
-            this.elem.style.setProperty('background', d3.interpolateBlues(value * 0.8))
+            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8))
         } else {
-            this.elem.style.setProperty('background', d3.interpolateGreys(value * 0.8))
+            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
         }
 
         this.elem.title = value.toExponential()
