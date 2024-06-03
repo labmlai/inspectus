@@ -1,5 +1,5 @@
 import {AttentionMatrix, ChartDataModel} from "./types"
-import {ChartType} from "./controller"
+import {ChartType} from "./types"
 
 export class ChartData {
     attention: AttentionMatrix[]

@@ -1,10 +1,38 @@
 import json
 import pkgutil
-from typing import List, NamedTuple, Dict
+from typing import List, NamedTuple, Dict, Union
 
 import numpy as np
 
 from inspectus.utils import convert_b64
+
+CHART_TYPES = ['attention_matrix', 'token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid']
+DEFAULT_COLOR = 'blue'
+
+
+def parse_colors(color: Union[str, Dict[str, str]]):
+    if color is None:
+        color = DEFAULT_COLOR
+
+    color_json = {}
+    for chart_type in CHART_TYPES:
+        color_json[chart_type] = DEFAULT_COLOR
+
+    if isinstance(color, str):
+        for chart_type in CHART_TYPES:
+            color_json[chart_type] = color
+        return color_json
+
+    if not isinstance(color, dict):
+        raise ValueError(f'Unknown color type {type(color)}')
+
+    for k, v in color.items():
+        if k not in CHART_TYPES:
+            raise ValueError(f'Unknown chart type {k}')
+        color_json[k] = v
+
+    return color_json
+
 
 
 def _init_inline_viz():
@@ -71,11 +99,13 @@ def _parse_hf_attn(attn):
             for layer, a in enumerate(attn)]
     return sum(attn, [])
 
+
 def encode_attention(attn):
     data = [{'values': convert_b64(a.matrix),
              'shape': a.matrix.shape,
              'info': a.info}
             for a in attn]
+
 
 def parse_attn(attn) -> List[AttentionMap]:
     if isinstance(attn, tuple):
@@ -122,7 +152,7 @@ def parse_attn(attn) -> List[AttentionMap]:
 def attention_chart(*,
                     attn: List[AttentionMap],
                     src_tokens: List['str'], tgt_tokens: List['str'],
-                    chart_types: List['str'], color: str):
+                    chart_types: List['str'], color: Dict[str, str]):
     res = json.dumps({
         'attention': [{'values': convert_b64(a.matrix),
                        'info': a.info, 'shape': a.matrix.shape} for a in attn],
@@ -138,7 +168,7 @@ def attention_chart(*,
 
     html = f'<div id="{elem_id}"></div>'
 
-    script = f'<script>window.chartsEmbed(\'{elem_id}\',{res}, \'{color}\')</script>'
+    script = f'<script>window.chartsEmbed(\'{elem_id}\',{res}, {color})</script>'
 
     from IPython.display import display, HTML
 

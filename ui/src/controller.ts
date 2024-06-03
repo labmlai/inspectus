@@ -10,7 +10,7 @@ import {
     maxNormalizeMap,
     normalizeArray
 } from "./utils";
-import {AttentionMatrix, Dimension, Dimensions, DimValue, GridAttention} from "./types";
+import {AttentionMatrix, ChartType, Dimension, Dimensions, DimValue, GridAttention} from "./types";
 import {DimensionHeatmap} from "./dimensions";
 import {TokenDimHeatmapView} from "./token_dim_heatmap";
 import {LineGridView} from "./line_grid";
@@ -18,14 +18,6 @@ import {LineGridView} from "./line_grid";
 
 interface StringTokensModel {
     tokens: string[]
-}
-
-export enum ChartType {
-    AttentionMatrix = 'attention_matrix',
-    TokenHeatmap = 'token_heatmap',
-    DimensionHeatmap = 'dimension_heatmap',
-    TokenDimHeatmap = 'token_dim_heatmap',
-    LineGrid = 'line_grid'
 }
 
 

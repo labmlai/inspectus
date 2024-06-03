@@ -1,6 +1,6 @@
 __version__ = '0.0.1'
 
-from typing import List, Optional, TYPE_CHECKING, Union, Tuple
+from typing import List, Optional, TYPE_CHECKING, Union, Tuple, Dict
 
 if TYPE_CHECKING:
     import numpy as np
@@ -14,7 +14,7 @@ def attention(attn: Union[
     Tuple['torch.Tensor', ...],
 ],
               query_tokens: Optional[List['str']], key_tokens: Optional[List['str']] = None, *,
-              chart_types: Optional[List['str']] = None, color: str = None):
+              chart_types: Optional[List['str']] = None, color: Union[str, Dict[str, str]] = None):
     """
     Use this to visualize attention maps.
 
@@ -34,8 +34,10 @@ def attention(attn: Union[
         `['attention_matrix', 'token_heatmap', 'dimension_heatmap']`.
         Possible values are
         `'attention_matrix', 'token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid'`.
-    color: str
-        A color to use for rendering the attention matrix. If not provided, it defaults to 'blue'.
+    color : (str, dict)
+        A color to use for rendering components. Single color for all components or a dictionary of colors with
+        (key: chart_type, value: color).
+        If not provided, it defaults to 'blue'.
         refer https://observablehq.com/@d3/color-schemes for color options
 
     Raises
@@ -50,7 +52,7 @@ def attention(attn: Union[
     if key_tokens is None:
         key_tokens = query_tokens
 
-    from inspectus.attention import parse_attn, attention_chart
+    from inspectus.attention import parse_attn, attention_chart, parse_colors
 
     attn = parse_attn(attn)
 
@@ -70,5 +72,5 @@ def attention(attn: Union[
         src_tokens=[str(t) for t in query_tokens],
         tgt_tokens=[str(t) for t in key_tokens],
         chart_types=chart_types,
-        color=color
+        color=parse_colors(color),
     )

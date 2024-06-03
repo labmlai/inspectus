@@ -1,5 +1,3 @@
-import {ChartType} from "./controller";
-
 export type SelectCallback = (type: string, idx: DimValue, isMulti: boolean) => void
 
 export interface ComputedAttention {
@@ -37,4 +35,12 @@ export interface ChartDataModel {
     src_tokens: string[],
     tgt_tokens: string[],
     chart_types: ChartType[]
+}
+
+export enum ChartType {
+    AttentionMatrix = 'attention_matrix',
+    TokenHeatmap = 'token_heatmap',
+    DimensionHeatmap = 'dimension_heatmap',
+    TokenDimHeatmap = 'token_dim_heatmap',
+    LineGrid = 'line_grid'
 }

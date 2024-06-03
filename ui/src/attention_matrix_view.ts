@@ -4,6 +4,7 @@ import {TokenLabelView} from "./token_label_view";
 import {createMatrix} from "./utils";
 import {DimValue} from "./types";
 import {PlotColors} from "./colors";
+import {ChartType} from "./types";
 
 class CellView {
     private elem: SVGRectElement;
@@ -28,7 +29,7 @@ class CellView {
 
     setAttn(value: number) {
         if (this.selected) {
-            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedColor(value))
+            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedColor(value, ChartType.AttentionMatrix))
         } else {
             this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedSecondaryColor(value))
         }

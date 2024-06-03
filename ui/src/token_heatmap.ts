@@ -2,6 +2,7 @@ import {StringTokens} from "./controller";
 import {Weya as $} from "../lib/weya/weya";
 import {SelectCallback, DimValue} from "./types";
 import {PlotColors} from "./colors";
+import {ChartType} from "./types";
 
 class TokenView {
     private elem: HTMLDivElement;
@@ -42,7 +43,7 @@ class TokenView {
 
     setAttn(value: number) {
         if(this.selected) {
-            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8))
+            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenHeatmap))
         } else {
             this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
         }

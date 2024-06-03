@@ -1,44 +1,54 @@
 import * as d3 from "../lib/d3/d3"
+import {ChartType} from "./types"
 
 export class PlotColors {
     public static shared = new PlotColors()
-    private colorScheme: string
+    private colorSchemes: Record<ChartType, string>
 
     private constructor() {
-        this.colorScheme = 'Blues'
+        this.colorSchemes = {
+            [ChartType.AttentionMatrix]: 'Blues',
+            [ChartType.TokenHeatmap]: 'Blues',
+            [ChartType.TokenDimHeatmap]: 'Blues',
+            [ChartType.DimensionHeatmap]: 'Blues',
+            [ChartType.LineGrid]: 'Blues'
+        }
     }
 
-    public setColorScheme(scheme: string) {
-        switch (scheme.toLowerCase()) {
-            case 'blue':
-                scheme = 'blues'
-                break
-            case 'green':
-                scheme = 'greens'
-                break
-            case 'grey':
-                scheme = 'greys'
-                break
-            case 'orange':
-                scheme = 'oranges'
-                break
-            case 'purple':
-                scheme = 'purples'
-                break
-            case 'red':
-                scheme = 'reds'
-                break
+    public setColorScheme(scheme: Record<ChartType, string>) {
+        for (let key in scheme) {
+            let s = scheme[key]
+            switch (s.toLowerCase()) {
+                case 'blue':
+                    s = 'blues'
+                    break
+                case 'green':
+                    s = 'greens'
+                    break
+                case 'grey':
+                    s = 'greys'
+                    break
+                case 'orange':
+                    s = 'oranges'
+                    break
+                case 'purple':
+                    s = 'purples'
+                    break
+                case 'red':
+                    s = 'reds'
+                    break
+            }
+            this.colorSchemes[key] = s
         }
-
-        this.colorScheme = scheme
     }
 
     public getInterpolatedSecondaryColor(value: number) {
         return d3.interpolateGreys(value)
     }
 
-    public getInterpolatedColor(value: number) {
-        switch (this.colorScheme.toLowerCase()) {
+    public getInterpolatedColor(value: number, chart: string) {
+        let color = this.colorSchemes[chart as ChartType]
+        switch (color.toLowerCase()) {
             case 'blues':
                 return d3.interpolateBlues(value)
             case 'greens':

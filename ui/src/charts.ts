@@ -1,9 +1,10 @@
-import {ChartType, Controller} from "./controller"
+import {ChartType} from "./types"
 import {ChartDataModel} from "./types"
 import {ChartData} from "./data"
-import {PlotColors} from "./colors"
+import {Controller} from "./controller";
+import {PlotColors} from "./colors";
 
-window["chartsEmbed"]=function(elemId: string, data: ChartDataModel, color: string) {
+window["chartsEmbed"]=function(elemId: string, data: ChartDataModel, color: Record<ChartType, string>) {
     let chartData = new ChartData(data)
 
     PlotColors.shared.setColorScheme(color)
