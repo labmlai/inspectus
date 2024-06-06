@@ -1,6 +1,6 @@
 import json
 import pkgutil
-from typing import List, NamedTuple, Dict, Union
+from typing import List, NamedTuple, Dict, Union, Tuple
 
 import numpy as np
 
@@ -61,6 +61,14 @@ class AttentionMap(NamedTuple):
     info: Dict[str, int]
 
 
+def _extract_dimensions(attn_list: List[AttentionMap]):
+    dimensions = set()
+    for attn in attn_list:
+        dimensions.update(attn.info.keys())
+
+    return [{'name': dim_name} for dim_name in dimensions]
+
+
 def _to_numpy_if_torch(tensor):
     try:
         import torch
@@ -100,19 +108,12 @@ def _parse_hf_attn(attn):
     return sum(attn, [])
 
 
-def encode_attention(attn):
-    data = [{'values': convert_b64(a.matrix),
-             'shape': a.matrix.shape,
-             'info': a.info}
-            for a in attn]
-
-
-def parse_attn(attn) -> List[AttentionMap]:
+def parse_attn(attn) -> Tuple[List[AttentionMap], List[Dict[str, str]]]:
     if isinstance(attn, tuple):
         attn = list(attn)
 
     if isinstance(attn, AttentionMap):
-        return [attn]
+        return [attn], _extract_dimensions([attn])
 
     attn = _to_numpy_if_torch(attn)
 
@@ -120,20 +121,20 @@ def parse_attn(attn) -> List[AttentionMap]:
         if len(attn.shape) < 2:
             raise ValueError('Attention should have at least 2 dimensions')
         elif len(attn.shape) == 2:
-            return [AttentionMap(attn, {'layer': 0, 'head': 0})]
+            return [AttentionMap(attn, {})], []
         elif len(attn.shape) == 3:
-            return [AttentionMap(attn[i], {'layer': 0, 'head': i}) for i in range(attn.shape[0])]
+            return [AttentionMap(attn[i], {'layer': i}) for i in range(attn.shape[0])], [{'name': 'layer'}]
         elif len(attn.shape) == 4:
             attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
                      for head in range(attn.shape[1])]
                     for layer in range(attn.shape[0])]
-            return sum(attn, [])
+            return sum(attn, []), [{'name': 'layer'}, {'name': 'head'}]
         else:
             raise ValueError(f'Unknown attention shape {attn.shape}')
 
     hf_attn = _parse_hf_attn(attn)
     if hf_attn is not None:
-        return hf_attn
+        return hf_attn, [{'name': 'layer'}, {'name': 'head'}]
 
     if isinstance(attn, list):
         if len(attn) == 0:
@@ -142,7 +143,7 @@ def parse_attn(attn) -> List[AttentionMap]:
             for a in attn:
                 if not isinstance(a, AttentionMap):
                     raise ValueError(f'Unknown attention map type: {type(a)}')
-            return attn
+            return attn, _extract_dimensions(attn)
 
         raise ValueError(f'Unknown attention type {type(attn[0])}')
 
@@ -151,7 +152,7 @@ def parse_attn(attn) -> List[AttentionMap]:
 
 def attention_chart(*,
                     attn: List[AttentionMap],
-                    src_tokens: List['str'], tgt_tokens: List['str'],
+                    src_tokens: List['str'], tgt_tokens: List['str'], dimensions: List[Dict[str, str]],
                     chart_types: List['str'], color: Dict[str, str]):
     res = json.dumps({
         'attention': [{'values': convert_b64(a.matrix),
@@ -159,6 +160,7 @@ def attention_chart(*,
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
         'chart_types': chart_types,
+        'dimensions': dimensions,
     })
 
     _init_inline_viz()

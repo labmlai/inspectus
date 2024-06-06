@@ -9,7 +9,7 @@ window["chartsEmbed"]=function(elemId: string, data: ChartDataModel, color: Reco
 
     PlotColors.shared.setColorScheme(color)
 
-    let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
+    let chart = new Controller(chartData.dimensions,
         chartData.attention,
         {tokens: chartData.src_tokens},
         {tokens: chartData.tgt_tokens}, data.chart_types)
@@ -20,7 +20,7 @@ window["test"] = function() {
     let sample: any = {} // require('../assets/attention.json')
 
     let chartData = new ChartData(sample)
-    let chart = new Controller([{name: 'layer', isMulti: true}, {name: 'head', isMulti: true}],
+    let chart = new Controller(chartData.dimensions,
         chartData.attention,
         {tokens: chartData.src_tokens},
         {tokens: chartData.tgt_tokens},

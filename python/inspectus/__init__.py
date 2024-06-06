@@ -54,7 +54,7 @@ def attention(attn: Union[
 
     from inspectus.attention import parse_attn, attention_chart, parse_colors
 
-    attn = parse_attn(attn)
+    attn, dimensions = parse_attn(attn)
 
     for a in attn:
         if a.matrix.shape != (len(query_tokens), len(key_tokens)):
@@ -68,9 +68,10 @@ def attention(attn: Union[
                        'dimension_heatmap']
 
     attention_chart(
-        attn=parse_attn(attn),
+        attn=attn,
         src_tokens=[str(t) for t in query_tokens],
         tgt_tokens=[str(t) for t in key_tokens],
         chart_types=chart_types,
         color=parse_colors(color),
+        dimensions=dimensions
     )

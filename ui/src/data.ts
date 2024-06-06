@@ -1,4 +1,4 @@
-import {AttentionMatrix, ChartDataModel} from "./types"
+import {AttentionMatrix, ChartDataModel, Dimension} from "./types"
 import {ChartType} from "./types"
 
 export class ChartData {
@@ -6,11 +6,16 @@ export class ChartData {
     src_tokens: string[]
     tgt_tokens: string[]
     chart_types: ChartType[]
+    dimensions: Dimension[]
 
     constructor(data: ChartDataModel) {
         this.chart_types = data.chart_types
         this.src_tokens = data.src_tokens
         this.tgt_tokens = data.tgt_tokens
+        this.dimensions = []
+        for (let index in data.dimensions) {
+            this.dimensions.push({name: data.dimensions[index].name} as Dimension)
+        }
 
         this.attention = []
         for (let index in data.attention) {

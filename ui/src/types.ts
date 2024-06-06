@@ -1,15 +1,11 @@
 export type SelectCallback = (type: string, idx: DimValue, isMulti: boolean) => void
 
-export interface ComputedAttention {
-    matrix: number[][]
-    src: number[]
-    dst: number[]
-    dims: { [type: string]: { [value: DimValue]: number } }
+export interface DimensionModel {
+    name: string
 }
 
 export interface Dimension {
     name: string
-    isMulti: boolean
     values?: DimValue[]
 }
 
@@ -34,7 +30,8 @@ export interface ChartDataModel {
     attention: AttentionMatrixModel[],
     src_tokens: string[],
     tgt_tokens: string[],
-    chart_types: ChartType[]
+    chart_types: ChartType[],
+    dimensions: DimensionModel[]
 }
 
 export enum ChartType {
