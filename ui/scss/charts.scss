@@ -52,10 +52,11 @@ body {
       font-family: monospace;
       display: inline-block;
       white-space: pre;
-      border: 1px solid #ccc;
-      padding: 1px;
+      padding: 2px 5px;
       user-select: none;
       cursor: pointer;
+      margin-bottom: 10px;
+      background-clip: padding-box !important;
     }
 
     margin-bottom: 10px;
@@ -70,7 +71,7 @@ body {
       display: inline-block;
       margin: 2px;
       width: 15px;
-      padding: 2px;
+      padding: 3px 5px;
       font-size: 10px;
       text-align: center;
       user-select: none;

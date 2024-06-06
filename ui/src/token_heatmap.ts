@@ -3,6 +3,7 @@ import {Weya as $} from "../lib/weya/weya";
 import {SelectCallback, DimValue} from "./types";
 import {PlotColors} from "./colors";
 import {ChartType} from "./types";
+import {setAlpha} from "./utils";
 
 class TokenView {
     private elem: HTMLDivElement;
@@ -30,10 +31,6 @@ class TokenView {
         this.idx = idx
     }
 
-    set background(color: string) {
-        this.elem.style.background = color
-    }
-
     private onClick = (e: MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
@@ -43,10 +40,21 @@ class TokenView {
 
     setAttn(value: number) {
         if(this.selected) {
-            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenHeatmap))
+            this.elem.style.setProperty('background',
+                PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenHeatmap))
+            this.elem.style.setProperty('border-left',
+                `3px solid ${
+                setAlpha(PlotColors.shared.getInterpolatedColor(1 - value * 0.8, ChartType.TokenHeatmap), 0.5)}`)
         } else {
-            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
+            this.elem.style.setProperty('background',
+                PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
+            this.elem.style.setProperty('border-left',
+                `3px solid ${
+                setAlpha(PlotColors.shared.getInterpolatedSecondaryColor( 1 - value * 0.8), 0.5)}`)
         }
+
+
+        this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(value))
 
         this.elem.title = value.toExponential()
     }

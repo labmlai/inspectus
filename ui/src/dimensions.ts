@@ -47,6 +47,7 @@ class ValueView {
         } else {
             this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
         }
+        this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(value))
 
         this.elem.title = value.toExponential()
     }

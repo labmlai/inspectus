@@ -88,3 +88,8 @@ export function capitalizeFirstLetter(str: string) {
               .map(word => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
 }
+
+
+export function setAlpha(d3Color: string, alpha: number): string {
+    return d3Color.replace(')', `, ${alpha})`)
+}

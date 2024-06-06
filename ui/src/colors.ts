@@ -42,6 +42,14 @@ export class PlotColors {
         }
     }
 
+    public getInterpolatedTextColor(value: number) {
+        let processed_val = 1-value
+        if (processed_val <= 0.8 && processed_val >= 0.3) {
+            processed_val = 0.8
+        }
+        return d3.interpolateGreys(processed_val)
+    }
+
     public getInterpolatedSecondaryColor(value: number) {
         return d3.interpolateGreys(value)
     }

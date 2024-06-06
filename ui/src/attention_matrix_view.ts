@@ -53,6 +53,8 @@ export class AttentionMatrixView {
     private leftLabelsMargin: number;
     private cells: CellView[][];
     private labelCellGap: number;
+    private srcLabels: SVGElement[]
+    private dstLabels: SVGElement[]
 
     constructor(srcTokens: Tokens, dstTokens: Tokens) {
         this.srcTokens = srcTokens
@@ -103,30 +105,30 @@ export class AttentionMatrixView {
             grid = $('g', '.grid',
                 {transform: `translate(${this.leftLabelsMargin}, ${this.topLabelsMargin})`})
 
-            let srcLabels = []
+            this.srcLabels = []
             $('g', '.src_labels',
                 {transform: `translate(${this.leftLabelsMargin - this.labelCellGap}, ${this.topLabelsMargin + this.cellSize / 2})`},
                 $ => {
                     for (let i = 0; i < this.srcTokens.length; ++i) {
-                        srcLabels.push($('g', '.label', {transform: `translate(0, ${this.cellSize * i})`}))
+                        this.srcLabels.push($('g', '.label', {transform: `translate(0, ${this.cellSize * i})`}))
                     }
                 })
 
             for (let i = 0; i < this.srcTokens.length; ++i) {
-                srcLabels[i].appendChild(this.srcTokenElems[i].render(this.cellSize, false))
+                this.srcLabels[i].appendChild(this.srcTokenElems[i].render(this.cellSize, false))
             }
 
-            let dstLabels = []
+            this.dstLabels = []
             $('g', '.dst_labels',
                 {transform: `translate(${this.leftLabelsMargin + this.cellSize / 2}, ${this.topLabelsMargin - this.labelCellGap})`},
                 $ => {
                     for (let i = 0; i < this.dstTokens.length; ++i) {
-                        dstLabels.push($('g', '.label', {transform: `translate(${this.cellSize * i}, 0)`}))
+                        this.dstLabels.push($('g', '.label', {transform: `translate(${this.cellSize * i}, 0)`}))
                     }
                 })
 
             for (let i = 0; i < this.dstTokens.length; ++i) {
-                dstLabels[i].appendChild(this.dstTokenElems[i].render(this.cellSize, true))
+                this.dstLabels[i].appendChild(this.dstTokenElems[i].render(this.cellSize, true))
             }
         })
 
@@ -154,6 +156,16 @@ export class AttentionMatrixView {
             for (let j = 0; j < this.dstTokens.length; ++j) {
                 this.cells[i][j].setSelection(src[i] === true && dst[j] === true)
             }
+        }
+
+        for (let i = 0; i < this.srcTokens.length; i++) {
+            this.srcLabels[i].style.setProperty('opacity', src[i] === true ? '1' : '0.6')
+            this.srcLabels[i].style.setProperty('font-weight', src[i] === true ? 'bold' : 'normal')
+        }
+
+        for (let i = 0; i < this.dstTokens.length; i++) {
+            this.dstLabels[i].style.setProperty('opacity', dst[i] === true ? '1' : '0.6')
+            this.dstLabels[i].style.setProperty('font-weight', dst[i] === true ? 'bold' : 'normal')
         }
     }
 }
