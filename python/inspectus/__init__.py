@@ -64,8 +64,8 @@ def attention(attn: Union[
 
     if chart_types is None:
         chart_types = ['attention_matrix',
-                       'src_token_heatmap',
-                       'dst_token_heatmap',
+                       'query_token_heatmap',
+                       'key_token_heatmap',
                        'dimension_heatmap']
 
     attention_chart(
