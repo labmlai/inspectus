@@ -1,17 +1,38 @@
 import json
 import pkgutil
-from enum import Enum
-from typing import List, NamedTuple, Dict
+from typing import List, NamedTuple, Dict, Union, Tuple
 
 import numpy as np
 
+from inspectus.utils import convert_b64
 
-class ChartType(Enum):
-    AttentionMatrix = 'attention_matrix'
-    TokenHeatmap = 'token_heatmap'
-    DimensionHeatmap = 'dimension_heatmap'
-    TokenDimHeatmap = 'token_dim_heatmap'
-    LineGrid = 'line_grid'
+CHART_TYPES = ['attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid']
+DEFAULT_COLOR = 'blue'
+
+
+def parse_colors(color: Union[str, Dict[str, str]]):
+    if color is None:
+        color = DEFAULT_COLOR
+
+    color_json = {}
+    for chart_type in CHART_TYPES:
+        color_json[chart_type] = DEFAULT_COLOR
+
+    if isinstance(color, str):
+        for chart_type in CHART_TYPES:
+            color_json[chart_type] = color
+        return color_json
+
+    if not isinstance(color, dict):
+        raise ValueError(f'Unknown color type {type(color)}')
+
+    for k, v in color.items():
+        if k not in CHART_TYPES:
+            raise ValueError(f'Unknown chart type {k}')
+        color_json[k] = v
+
+    return color_json
+
 
 
 def _init_inline_viz():
@@ -40,127 +61,116 @@ class AttentionMap(NamedTuple):
     info: Dict[str, int]
 
 
-def attention(attn: List[AttentionMap],
-              src_tokens: List['str'] = None, tgt_tokens: List['str'] = None, *,
-              chart_types: List['str'] = None):
-    """
-    This function is used to visualize attention maps. It takes as input a list of attention maps,
-    source tokens, target tokens and chart types. It then processes the attention maps and generates
-    an HTML visualization using the provided tokens and chart types.
+def _extract_dimensions(attn_list: List[AttentionMap]):
+    dimensions = set()
+    for attn in attn_list:
+        dimensions.update(attn.info.keys())
 
-    Parameters
-    ----------
-    attn : (List[AttentionMap])
-        A list of attention maps to visualize. should be either a list of or a single `AttentionMap` object, or a numpy
-        array. Numpy arrays ideally should have the dimensions (layers, heads, src_len, tgt_len). If the array has 3
-        dimensions head is assumed to be 0. If the array has 2 dimensions, layer and head are assumed to be 0. Array
-        should not have less than 2 or more than 4 dimensions.
-    src_tokens : (List[str], optional)
-        A list of source tokens. If not provided, a ValueError is raised.
-    tgt_tokens : (List[str], optional)
-        A list of target tokens. If not provided, it defaults to src_tokens.
-    chart_types : (List[str], optional)
-        A list of chart types to use for visualization. If not provided, it defaults to ['attention_matrix',
-        'token_heatmap', 'dimension_heatmap'].
+    return [{'name': dim_name} for dim_name in dimensions]
 
-    Raises
-    ------
-    ValueError
-        If src_tokens is None or if attn is empty or if attn contains an unknown type or shape.
 
-    Returns
-    -------
-    string
-        a value in a string
-    """
-    _init_inline_viz()
+def _to_numpy_if_torch(tensor):
+    try:
+        import torch
+    except ImportError:
+        return tensor
 
-    html = ''
+    if isinstance(tensor, torch.Tensor):
+        return tensor.detach().cpu().numpy()
+    else:
+        return tensor
 
-    from uuid import uuid1
-    elem_id = 'id_' + uuid1().hex
 
-    html += f'<div id="{elem_id}"></div>'
+def _parse_hf_attn(attn):
+    if not isinstance(attn, (list, tuple)):
+        return None
 
-    if src_tokens is None:
-        raise ValueError('Tokens should be provided')
-    if tgt_tokens is None:
-        tgt_tokens = src_tokens
+    try:
+        import torch
+    except ImportError:
+        return None
 
-    for i, token in enumerate(src_tokens):
-        if not isinstance(token, str):
-            src_tokens[i] = str(token)
+    if not isinstance(attn[0], torch.Tensor):
+        return None
 
-    for i, token in enumerate(tgt_tokens):
-        if not isinstance(token, str):
-            tgt_tokens[i] = str(token)
+    if len(attn[0].shape) != 4:
+        raise ValueError(f'Expected attention output from transformers library.'
+                         f'Each tensor should have shape [batch_size, heads, src, tgt].'
+                         f'Got shape {attn[0].shape}')
+    if attn[0].shape[0] != 1:
+        raise ValueError(f'Expected attention output from transformers library. '
+                         f'Each tensor should have shape [batch_size, heads, src, tgt]. '
+                         f'And the batch size should be 1. '
+                         f'Got shape {attn[0].shape}')
+    attn = [[AttentionMap(a[0, head].detach().cpu().numpy(), {'layer': layer, 'head': head})
+             for head in range(a.shape[1])]
+            for layer, a in enumerate(attn)]
+    return sum(attn, [])
 
+
+def parse_attn(attn) -> Tuple[List[AttentionMap], List[Dict[str, str]]]:
     if isinstance(attn, tuple):
         attn = list(attn)
 
+    if isinstance(attn, AttentionMap):
+        return [attn], _extract_dimensions([attn])
+
+    attn = _to_numpy_if_torch(attn)
+
+    if isinstance(attn, np.ndarray):
+        if len(attn.shape) < 2:
+            raise ValueError('Attention should have at least 2 dimensions')
+        elif len(attn.shape) == 2:
+            return [AttentionMap(attn, {})], []
+        elif len(attn.shape) == 3:
+            return [AttentionMap(attn[i], {'layer': i}) for i in range(attn.shape[0])], [{'name': 'layer'}]
+        elif len(attn.shape) == 4:
+            attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
+                     for head in range(attn.shape[1])]
+                    for layer in range(attn.shape[0])]
+            return sum(attn, []), [{'name': 'layer'}, {'name': 'head'}]
+        else:
+            raise ValueError(f'Unknown attention shape {attn.shape}')
+
+    hf_attn = _parse_hf_attn(attn)
+    if hf_attn is not None:
+        return hf_attn, [{'name': 'layer'}, {'name': 'head'}]
+
     if isinstance(attn, list):
-        if not attn:
+        if len(attn) == 0:
             raise ValueError('Attention should not be empty')
         if isinstance(attn[0], AttentionMap):
             for a in attn:
                 if not isinstance(a, AttentionMap):
                     raise ValueError(f'Unknown attention map type: {type(a)}')
-        else:
-            import torch
-            if isinstance(attn[0], torch.Tensor):
-                # Huggingface attention
-                if len(attn[0].shape) != 4:
-                    raise ValueError(f'Expected attention output from transformers library.'
-                                     f'Each tensor should have shape [batch_size, heads, src, tgt].'
-                                     f'Got shape {attn[0].shape}')
-                if attn[0].shape[0] != 1:
-                    raise ValueError(f'Expected attention output from transformers library. '
-                                     f'Each tensor should have shape [batch_size, heads, src, tgt]. '
-                                     f'And the batch size should be 1. '
-                                     f'Got shape {attn[0].shape}')
-                attn = [[AttentionMap(a[0, head].detach().cpu().numpy(), {'layer': layer, 'head': head})
-                         for head in range(a.shape[1])]
-                        for layer, a in enumerate(attn)]
-                attn = sum(attn, [])
-            else:
-                raise ValueError(f'Unknown attention type {type(attn[0])}')
-    elif isinstance(attn, AttentionMap):
-        attn = [attn]
-    elif isinstance(attn, np.ndarray):
-        if len(attn.shape) < 2:
-            raise ValueError('Attention should have at least 2 dimensions')
-        elif len(attn.shape) == 2:
-            attn = [AttentionMap(attn, {'layer': 0, 'head': 0})]
-        elif len(attn.shape) == 3:
-            attn = [AttentionMap(attn[i], {'layer': i, 'head': 0}) for i in range(attn.shape[0])]
-        elif len(attn.shape) == 4:
-            attn = [[AttentionMap(attn[layer, head], {'layer': layer, 'head': head})
-                     for head in range(attn.shape[1])]
-                    for layer in range(attn.shape[0])]
-            attn = sum(attn, [])
-        else:
-            raise ValueError(f'Unknown attention shape {attn.shape}')
+            return attn, _extract_dimensions(attn)
 
-    data = [{'values': a.matrix.tolist(),
-             'info': a.info}
-            for a in attn]
+        raise ValueError(f'Unknown attention type {type(attn[0])}')
 
-    if chart_types is None:
-        chart_types = [ChartType.AttentionMatrix.value,
-                       ChartType.TokenHeatmap.value,
-                       ChartType.DimensionHeatmap.value]
+    return attn
 
+
+def attention_chart(*,
+                    attn: List[AttentionMap],
+                    src_tokens: List['str'], tgt_tokens: List['str'], dimensions: List[Dict[str, str]],
+                    chart_types: List['str'], color: Dict[str, str]):
     res = json.dumps({
-        'attention': data,
+        'attention': [{'values': convert_b64(a.matrix),
+                       'info': a.info, 'shape': a.matrix.shape} for a in attn],
         'src_tokens': src_tokens,
         'tgt_tokens': tgt_tokens,
-        'chart_types': chart_types
+        'chart_types': chart_types,
+        'dimensions': dimensions,
     })
 
-    script = ''
-    script += '<script>'
-    script += f"window.chartsEmbed('{elem_id}',{res})"
-    script += '</script>'
+    _init_inline_viz()
+
+    from uuid import uuid1
+    elem_id = 'id_' + uuid1().hex
+
+    html = f'<div id="{elem_id}"></div>'
+
+    script = f'<script>window.chartsEmbed(\'{elem_id}\',{res}, {color})</script>'
 
     from IPython.display import display, HTML
 

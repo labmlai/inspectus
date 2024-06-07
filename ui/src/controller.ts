@@ -10,7 +10,7 @@ import {
     maxNormalizeMap,
     normalizeArray
 } from "./utils";
-import {AttentionMatrix, Dimension, Dimensions, DimValue, GridAttention} from "./types";
+import {AttentionMatrix, ChartType, Dimension, Dimensions, DimValue, GridAttention} from "./types";
 import {DimensionHeatmap} from "./dimensions";
 import {TokenDimHeatmapView} from "./token_dim_heatmap";
 import {LineGridView} from "./line_grid";
@@ -18,14 +18,6 @@ import {LineGridView} from "./line_grid";
 
 interface StringTokensModel {
     tokens: string[]
-}
-
-export enum ChartType {
-    AttentionMatrix = 'attention_matrix',
-    TokenHeatmap = 'token_heatmap',
-    DimensionHeatmap = 'dimension_heatmap',
-    TokenDimHeatmap = 'token_dim_heatmap',
-    LineGrid = 'line_grid'
 }
 
 
@@ -400,14 +392,17 @@ export class Controller {
             this.attentionMatrixView.setAttention(matrix)
         }
 
-        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+        if (this.chartTypes.includes(ChartType.SrcTokenHeatmap)) {
             this.srcTokenHeatmap.setSelection(this.selected['src'])
-            this.dstTokenHeatmap.setSelection(this.selected['dst'])
             this.srcTokenHeatmap.setAttention(this.calcSrcAttn(matrix))
+        }
+
+        if (this.chartTypes.includes(ChartType.DestTokenHeatmap)) {
+            this.dstTokenHeatmap.setSelection(this.selected['dst'])
             this.dstTokenHeatmap.setAttention(this.calcDstAttn(matrix))
         }
 
-        if (this.chartTypes.includes(ChartType.DimensionHeatmap)) {
+        if (this.chartTypes.includes(ChartType.DimensionHeatmap) && this.dimensions.length != 0) {
             let dimsAttn = this.calcDimsAttention()
             for (let i = 0; i < this.dimensions.length; ++i) {
                 let name = this.dimensions[i].name
@@ -416,7 +411,7 @@ export class Controller {
             }
         }
 
-        if (this.chartTypes.includes(ChartType.TokenDimHeatmap)) {
+        if (this.chartTypes.includes(ChartType.TokenDimHeatmap) && this.dimensions.length != 0) {
             this.tokenDimHeatmap.setSelection(this.selected['dst'])
             this.tokenDimHeatmap.setAttention(this.calcTokenDimsAttention(
                 this.tokenDimHeatmap.selectedDimension))
@@ -435,18 +430,21 @@ export class Controller {
             elem.appendChild(this.attentionMatrixView.render())
         }
 
-        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+        if (this.chartTypes.includes(ChartType.SrcTokenHeatmap)) {
             elem.appendChild(this.srcTokenHeatmap.render())
+        }
+
+        if (this.chartTypes.includes(ChartType.DestTokenHeatmap)) {
             elem.appendChild(this.dstTokenHeatmap.render())
         }
 
-        if (this.chartTypes.includes(ChartType.DimensionHeatmap)) {
+        if (this.chartTypes.includes(ChartType.DimensionHeatmap) && this.dimensions.length != 0) {
             for (let i = 0; i < this.dimensions.length; ++i) {
                 elem.appendChild(this.dimensionHeatmaps[i].render())
             }
         }
 
-        if (this.chartTypes.includes(ChartType.TokenDimHeatmap)) {
+        if (this.chartTypes.includes(ChartType.TokenDimHeatmap) && this.dimensions.length != 0) {
             elem.appendChild(this.tokenDimHeatmap.render())
         }
 

@@ -2,7 +2,8 @@ import {Weya as $} from '../lib/weya/weya'
 import {Tokens} from "./controller";
 import {TokenLabelView} from "./token_label_view";
 import {Dimensions, DimValue} from "./types";
-import * as d3 from "../lib/d3/d3";
+import {PlotColors} from "./colors";
+import {ChartType} from "./types";
 
 class CellView {
     private elem: SVGRectElement;
@@ -28,9 +29,9 @@ class CellView {
 
     setAttn(value: number) {
         if (this.selected) {
-            this.elem.style.setProperty('fill', d3.interpolateBlues(value * 0.8))
+            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenDimHeatmap))
         } else {
-            this.elem.style.setProperty('fill', d3.interpolateGreys(value * 0.8))
+            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
         }
 
         this.titleElem.textContent = value.toExponential()

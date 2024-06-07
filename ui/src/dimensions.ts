@@ -1,7 +1,8 @@
 import {Weya as $} from "../lib/weya/weya";
 import {SelectCallback, DimValue} from "./types";
-import * as d3 from "../lib/d3/d3";
 import {capitalizeFirstLetter} from "./utils";
+import {PlotColors} from "./colors";
+import {ChartType} from "./types";
 
 class ValueView {
     private elem: HTMLDivElement;
@@ -42,10 +43,11 @@ class ValueView {
 
     setAttn(value: number) {
         if(this.selected) {
-            this.elem.style.setProperty('background', d3.interpolateBlues(value * 0.8))
+            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.DimensionHeatmap))
         } else {
-            this.elem.style.setProperty('background', d3.interpolateGreys(value * 0.8))
+            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
         }
+        this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(value))
 
         this.elem.title = value.toExponential()
     }
