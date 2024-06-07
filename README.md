@@ -63,8 +63,6 @@ Select which views to display
 attention(attns, tokens, chart_types=['attention_matrix'])
 ```
 
-For detailed API documentation, please refer to the [official documentation]().
-
 ## Tutorials
 
 ### Huggingface models
@@ -107,7 +105,7 @@ with torch.no_grad():
 attention(res['attentions'], tokens)
 ```
 
-Check out the notebook here: [Inspectus Tutorial](./notebooks/gpt2.ipynb)
+Check out the notebook here: [Huggingface Tutorial](./notebooks/gpt2.ipynb)
 
 
 ### Custom Defined Attentions
@@ -116,20 +114,12 @@ Check out the notebook here: [Inspectus Tutorial](./notebooks/gpt2.ipynb)
 import numpy as np
 from inspectus import attention
 
-# Define a 2D array representing attention values between Query and Key tokens
-arr = [
-    [0.1, 0.7, 0.2],
-     [0.2, 0.7, 0.1],
-     [0.1, 0.7, 0.2],
-]
+arr = np.random.rand(3, 5)
 
-arr = np.array(arr)
-
-# Visualize the attention values using the Inspectus library
-attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
+attention(arr, ['a', 'b', 'c'], [f'{i}' for i in range(5)])
 ```
 
-Check out the notebook here: [Inspectus Tutorial]()
+Check out the notebook here: [Custom Attention Tutorial](./notebooks/custom_attn.ipynb)
 
 
 # Setting up for Development
