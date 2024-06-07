@@ -21,12 +21,6 @@ Shows the sum of attention scores between each key and selected query tokens
 ### Dimension Heatmap 
 Shows the sum of attention scores for each item in dimensions (Layers and Heads) normalized over the dimension.
 
-### Token Dimension Heatmap
-For each key token, shows the sum of attention scores from query tokens in the selected dimension.
-
-### Line Grid
-Visualize attention scores between query and key tokens for all attention matrices.
-
 ## Getting Started
 
 ### Installation
@@ -38,42 +32,35 @@ pip install inspectus
 ### Usage
 
 Import the library
+
 ```python
 from inspectus import attention
 ```
 
 Simple usage
+
 ```python
-# attns: A list of attention maps for each layer
-# tokens: A list of tokens
-attention(attns, tokens)
+# attn: Attention map; a 2-4D tensor or attention maps from Huggingface transformers
+attention(attn, tokens)
 ```
 
-For different source and target tokens
+For different query and key tokens
 ```python
-# source_tokens: A list of source tokens
-# target_tokens: A list of target tokens
-attention(attns, source_tokens, target_tokens)
+attention(attns, query_tokens, key_tokens)
 ```
 
-Select which views to display
-```python
-# views: A list of views to display
-# Possible values: 'attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid'
-attention(attns, tokens, chart_types=['attention_matrix'])
-```
+For detailed API documentation, please refer to the [official documentation - wip]().
 
 ## Tutorials
 
-### Huggingface models
-
-Following example uses a GPT2 Model from huggingface.
+### Huggingface model
 
 ```python
 from transformers import AutoTokenizer, GPT2LMHeadModel, AutoConfig
 import torch
 from inspectus import attention
 
+# Initialize the tokenizer and model
 context_length = 128
 tokenizer = AutoTokenizer.from_pretrained("huggingface-course/code-search-net-tokenizer")
 
@@ -85,7 +72,6 @@ config = AutoConfig.from_pretrained(
     eos_token_id=tokenizer.eos_token_id,
 )
 
-# Initialize the model with the defined configuration
 model = GPT2LMHeadModel(config)
 
 # Tokenize the input text
@@ -108,15 +94,20 @@ attention(res['attentions'], tokens)
 Check out the notebook here: [Huggingface Tutorial](./notebooks/gpt2.ipynb)
 
 
-### Custom Defined Attentions
+### Custom attention map
 
 ```python
 import numpy as np
 from inspectus import attention
 
-arr = np.random.rand(3, 5)
+# 2D attention representing attention values between Query and Key tokens
+attn = np.random.rand(3, 3)
 
-attention(arr, ['a', 'b', 'c'], [f'{i}' for i in range(5)])
+# Visualize the attention values using the Inspectus library
+# The first argument is the attention matrix
+# The second argument is the list of query tokens
+# The third argument is the list of key tokens
+attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
 ```
 
 Check out the notebook here: [Custom Attention Tutorial](./notebooks/custom_attn.ipynb)
