@@ -1,8 +1,7 @@
 import {StringTokens} from "./controller";
 import {Weya as $} from "../lib/weya/weya";
-import {SelectCallback, DimValue} from "./types";
+import {ChartType, DimValue, SelectCallback} from "./types";
 import {PlotColors} from "./colors";
-import {ChartType} from "./types";
 import {setAlpha} from "./utils";
 
 class TokenView {
@@ -41,10 +40,12 @@ class TokenView {
     setAttn(value: number) {
         if(this.selected) {
             this.elem.style.setProperty('background',
-                PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenHeatmap))
+                PlotColors.shared.getInterpolatedColor(value * 0.8,
+                    this.type == 'src' ? ChartType.SrcTokenHeatmap : ChartType.DestTokenHeatmap))
             this.elem.style.setProperty('border-left',
                 `3px solid ${
-                setAlpha(PlotColors.shared.getInterpolatedColor(1 - value * 0.8, ChartType.TokenHeatmap), 0.5)}`)
+                setAlpha(PlotColors.shared.getInterpolatedColor(1 - value * 0.8, 
+                    this.type == 'src' ? ChartType.SrcTokenHeatmap : ChartType.DestTokenHeatmap), 0.5)}`)
         } else {
             this.elem.style.setProperty('background',
                 PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))

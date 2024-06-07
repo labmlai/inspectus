@@ -31,9 +31,9 @@ def attention(attn: Union[
     chart_types : (List[str], optional)
         A list of chart types to render.
         If not provided, it defaults to
-        `['attention_matrix', 'token_heatmap', 'dimension_heatmap']`.
+        `['attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap']`.
         Possible values are
-        `'attention_matrix', 'token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid'`.
+        `'attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid'`.
     color : (str, dict)
         A color to use for rendering components. Single color for all components or a dictionary of colors with
         (key: chart_type, value: color).
@@ -64,7 +64,8 @@ def attention(attn: Union[
 
     if chart_types is None:
         chart_types = ['attention_matrix',
-                       'token_heatmap',
+                       'src_token_heatmap',
+                       'dst_token_heatmap',
                        'dimension_heatmap']
 
     attention_chart(

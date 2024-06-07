@@ -24,6 +24,6 @@ window["test"] = function() {
         chartData.attention,
         {tokens: chartData.src_tokens},
         {tokens: chartData.tgt_tokens},
-        [ChartType.AttentionMatrix, ChartType.TokenHeatmap, ChartType.TokenDimHeatmap, ChartType.DimensionHeatmap, ChartType.LineGrid])
+        [ChartType.AttentionMatrix, ChartType.SrcTokenHeatmap, ChartType.TokenDimHeatmap, ChartType.DimensionHeatmap, ChartType.LineGrid])
     document.body.appendChild(chart.render())
 }
