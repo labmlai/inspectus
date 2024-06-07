@@ -45,6 +45,7 @@ attention(attn, tokens)
 ```
 
 For different query and key tokens
+
 ```python
 attention(attns, query_tokens, key_tokens)
 ```
@@ -75,14 +76,15 @@ config = AutoConfig.from_pretrained(
 model = GPT2LMHeadModel(config)
 
 # Tokenize the input text
+text= 'The quick brown fox jumps over the lazy dog'
 tokenized = tokenizer(
-    'The quick brown fox jumps over the lazy dog',
+    text,
     return_tensors='pt',
+    return_offsets_mapping=True
 )
-
 input_ids = tokenized['input_ids']
 
-tokens = [tokenizer.convert_ids_to_tokens(t.item()) for t in input_ids[0]]
+tokens = [text[s: e] for s, e in tokenized['offset_mapping'][0]]
 
 with torch.no_grad():
     res = model(input_ids=input_ids.to(model.device), output_attentions=True)
@@ -110,9 +112,5 @@ attn = np.random.rand(3, 3)
 attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
 ```
 
-Check out the notebook here: [Custom Attention Tutorial](./notebooks/custom_attn.ipynb)
+Check out the notebook here: [Custom attention map tutorial](./notebooks/custom_attn.ipynb)
 
-
-# Setting up for Development
-
-[Development README](./DEV_README.md)
