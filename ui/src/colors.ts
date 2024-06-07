@@ -8,7 +8,8 @@ export class PlotColors {
     private constructor() {
         this.colorSchemes = {
             [ChartType.AttentionMatrix]: 'Blues',
-            [ChartType.TokenHeatmap]: 'Blues',
+            [ChartType.SrcTokenHeatmap]: 'Blues',
+            [ChartType.DestTokenHeatmap]: 'Blues',
             [ChartType.TokenDimHeatmap]: 'Blues',
             [ChartType.DimensionHeatmap]: 'Blues',
             [ChartType.LineGrid]: 'Blues'

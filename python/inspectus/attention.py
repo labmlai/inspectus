@@ -6,7 +6,7 @@ import numpy as np
 
 from inspectus.utils import convert_b64
 
-CHART_TYPES = ['attention_matrix', 'token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid']
+CHART_TYPES = ['attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid']
 DEFAULT_COLOR = 'blue'
 
 

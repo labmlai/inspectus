@@ -392,10 +392,13 @@ export class Controller {
             this.attentionMatrixView.setAttention(matrix)
         }
 
-        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+        if (this.chartTypes.includes(ChartType.SrcTokenHeatmap)) {
             this.srcTokenHeatmap.setSelection(this.selected['src'])
-            this.dstTokenHeatmap.setSelection(this.selected['dst'])
             this.srcTokenHeatmap.setAttention(this.calcSrcAttn(matrix))
+        }
+
+        if (this.chartTypes.includes(ChartType.DestTokenHeatmap)) {
+            this.dstTokenHeatmap.setSelection(this.selected['dst'])
             this.dstTokenHeatmap.setAttention(this.calcDstAttn(matrix))
         }
 
@@ -427,8 +430,11 @@ export class Controller {
             elem.appendChild(this.attentionMatrixView.render())
         }
 
-        if (this.chartTypes.includes(ChartType.TokenHeatmap)) {
+        if (this.chartTypes.includes(ChartType.SrcTokenHeatmap)) {
             elem.appendChild(this.srcTokenHeatmap.render())
+        }
+
+        if (this.chartTypes.includes(ChartType.DestTokenHeatmap)) {
             elem.appendChild(this.dstTokenHeatmap.render())
         }
 

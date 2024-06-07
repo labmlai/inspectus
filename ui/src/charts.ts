@@ -17,13 +17,12 @@ window["chartsEmbed"]=function(elemId: string, data: ChartDataModel, color: Reco
 }
 
 window["test"] = function() {
-    let sample: any = {} // require('../assets/attention.json')
-
+    let sample: any = require('/assets/attention.json')
     let chartData = new ChartData(sample)
     let chart = new Controller(chartData.dimensions,
         chartData.attention,
         {tokens: chartData.src_tokens},
         {tokens: chartData.tgt_tokens},
-        [ChartType.AttentionMatrix, ChartType.TokenHeatmap, ChartType.TokenDimHeatmap, ChartType.DimensionHeatmap, ChartType.LineGrid])
+        [ChartType.AttentionMatrix, ChartType.SrcTokenHeatmap, ChartType.TokenDimHeatmap, ChartType.DimensionHeatmap, ChartType.LineGrid])
     document.body.appendChild(chart.render())
 }

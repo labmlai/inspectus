@@ -36,7 +36,8 @@ export interface ChartDataModel {
 
 export enum ChartType {
     AttentionMatrix = 'attention_matrix',
-    TokenHeatmap = 'token_heatmap',
+    SrcTokenHeatmap = 'query_token_heatmap',
+    DestTokenHeatmap = 'key_token_heatmap',
     DimensionHeatmap = 'dimension_heatmap',
     TokenDimHeatmap = 'token_dim_heatmap',
     LineGrid = 'line_grid'
