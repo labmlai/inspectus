@@ -354,14 +354,7 @@ export class Controller {
 
     private onSelected = (type: string, idx: DimValue, isMulti: boolean) => {
         if (isMulti) {
-            if (this.getSelectedCount(type) == Object.keys(this.selected[type]).length) {
-                for (let i in this.selected[type]) {
-                    this.selected[type][i] = true
-                }
-                this.selected[type][idx] = false
-            } else {
-                this.selected[type][idx] = this.selected[type][idx] !== true
-            }
+            this.selected[type][idx] = this.selected[type][idx] !== true
         } else {
             if (this.selected[type][idx] === true) {
                 if (this.getSelectedCount(type) > 1) {
