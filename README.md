@@ -9,16 +9,16 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ## Components
 
-### Attention Matrix
+**Attention Matrix**:
 Visualizes the attention scores between tokens, highlighting how each token focuses on others during processing.
 
-### Query Token Heatmap
+**Query Token Heatmap**:
 Shows the sum of attention scores between each query and selected key tokens
 
-### Key Token Heatmap
+**Key Token Heatmap**:
 Shows the sum of attention scores between each key and selected query tokens
 
-### Dimension Heatmap 
+**Dimension Heatmap**:
 Shows the sum of attention scores for each item in dimensions (Layers and Heads) normalized over the dimension.
 
 ## Getting Started
