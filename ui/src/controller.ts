@@ -127,7 +127,7 @@ export class Controller {
         this.lineGridView.addClickHandler(this.onSelected)
     }
 
-    private calcAttnMatrix(): number[][] {
+    private calcAttnMatrix(filterTokens: boolean = false): number[][] {
         let matrix = createMatrix(this.srcTokens.length, this.dstTokens.length)
 
         for (let attn of this.attentions) {
@@ -150,14 +150,16 @@ export class Controller {
             }
         }
 
-        // // Filter tokens
-        // for (let i = 0; i < this.srcTokens.length; ++i) {
-        //     for (let j = 0; j < this.dstTokens.length; ++j) {
-        //         if (!this.selected['src'][i] || !this.selected['dst'][j]) {
-        //             matrix[i][j] = 0.
-        //         }
-        //     }
-        // }
+        // Filter tokens
+        if (filterTokens) {
+            for (let i = 0; i < this.srcTokens.length; ++i) {
+                for (let j = 0; j < this.dstTokens.length; ++j) {
+                    if (!this.selected['src'][i] || !this.selected['dst'][j]) {
+                        matrix[i][j] = 0.
+                    }
+                }
+            }
+        }
 
 
         // Normalize
@@ -352,7 +354,14 @@ export class Controller {
 
     private onSelected = (type: string, idx: DimValue, isMulti: boolean) => {
         if (isMulti) {
-            this.selected[type][idx] = this.selected[type][idx] !== true
+            if (this.getSelectedCount(type) == Object.keys(this.selected[type]).length) {
+                for (let i in this.selected[type]) {
+                    this.selected[type][i] = true
+                }
+                this.selected[type][idx] = false
+            } else {
+                this.selected[type][idx] = this.selected[type][idx] !== true
+            }
         } else {
             if (this.selected[type][idx] === true) {
                 if (this.getSelectedCount(type) > 1) {
@@ -389,7 +398,7 @@ export class Controller {
 
         if (this.chartTypes.includes(ChartType.AttentionMatrix)) {
             this.attentionMatrixView.setSelection(this.selected['src'], this.selected['dst'])
-            this.attentionMatrixView.setAttention(matrix)
+            this.attentionMatrixView.setAttention(this.calcAttnMatrix(true))
         }
 
         if (this.chartTypes.includes(ChartType.SrcTokenHeatmap)) {
