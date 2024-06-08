@@ -7,6 +7,9 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ![Inspectus](Images/preview.gif)
 
+*Click a token to select it and deselect others. Clicking again will select all again. 
+To change the state of only one token, do shift+click*
+
 ## Components
 
 **Attention Matrix**:
