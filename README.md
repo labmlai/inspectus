@@ -1,5 +1,5 @@
 [![PyPI - Python Version](https://badge.fury.io/py/inspectus.svg)](https://badge.fury.io/py/inspectus)
-[![PyPI Status](https://pepy.tech/badge/labml)](https://pepy.tech/project/inspectus)
+[![PyPI Status](https://pepy.tech/badge/inspectus)](https://pepy.tech/project/inspectus)
 [![Twitter](https://img.shields.io/twitter/follow/labmlai?style=social)](https://twitter.com/labmlai?ref_src=twsrc%5Etfw)
 
 # Inspectus
