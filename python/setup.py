@@ -1,7 +1,7 @@
 import setuptools
 import inspectus
 
-with open("readme.md", "r") as f:
+with open("../README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(

@@ -1,4 +1,9 @@
-clean: ## Clean
+clean-pycache:
+	find . -depth -name "__pycache__" -type d -exec rm -rf {} +
+	find . -depth -name ".DS_Store" -type f -exec rm -rf {} +
+	find . -depth -name ".ipynb_checkpoints" -type d -exec rm -rf {} +
+
+clean: clean-pycache ## Clean
 	rm -rf dist
 	rm -rf build
 	rm -rf *.egg-info

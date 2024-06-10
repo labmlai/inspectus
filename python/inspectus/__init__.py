@@ -1,4 +1,4 @@
-__version__ = '0.0.1'
+__version__ = '0.0.7'
 
 from typing import List, Optional, TYPE_CHECKING, Union, Tuple, Dict
 
