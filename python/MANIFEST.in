@@ -1,1 +1,4 @@
 include readme.md
+recursive-include inspectus *
+global-exclude */__pycache__/*
+global-exclude *.pyc
