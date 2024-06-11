@@ -9,7 +9,7 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ## Preview
 
-![Inspectus](Images/preview.gif)
+![Inspectus](https://github.com/labmlai/inspectus/blob/main/Images/preview.gif)
 
 *Click a token to select it and deselect others. Clicking again will select all again. 
 To change the state of only one token, do shift+click*
@@ -120,4 +120,22 @@ inspectus.attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
 ```
 
 Check out the notebook here: [Custom attention map tutorial](./notebooks/custom_attn.ipynb)
+
+
+## Setting up for Development
+
+[Development Docs](https://github.com/labmlai/inspectus/blob/main/development.md)
+
+## Citing
+
+If you use Inspectus for academic research, please cite the library using the following BibTeX entry.
+
+```bibtext
+@misc{inspectus,
+ author = {Varuna Jayasiri, Lakshith Nishshanke},
+ title = {inspectus: A visualization and analytics tool for large language models},
+ year = {2024},
+ url = {[https://labml.ai/](https://github.com/labmlai/inspectus},
+}
+```
 
