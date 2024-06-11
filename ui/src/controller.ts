@@ -4,7 +4,7 @@ import {AttentionMatrixView} from "./attention_matrix_view";
 import {StringTokenHeatmap} from "./token_heatmap";
 import {
     createMatrix,
-    getDimValues,
+    getDimValues, maxNormalize2DArray,
     maxNormalizeArray,
     maxNormalizeArrayMap,
     maxNormalizeMap,
@@ -161,11 +161,7 @@ export class Controller {
             }
         }
 
-
-        // Normalize
-        for (let i = 0; i < this.srcTokens.length; ++i) {
-            normalizeArray(matrix[i])
-        }
+        maxNormalize2DArray(matrix)
 
         return matrix
     }

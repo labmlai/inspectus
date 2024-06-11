@@ -13,6 +13,24 @@ export function createMatrix(rows: number, cols: number) {
     return matrix
 }
 
+export function maxNormalize2DArray(arr: number[][]) {
+    let max = 0
+    for (let i = 0; i < arr.length; ++i) {
+        for (let j = 0; j < arr[i].length; ++j) {
+            max = Math.max(max, arr[i][j])
+        }
+    }
+    if (max <= 0) {
+        return
+    }
+
+    for (let i = 0; i < arr.length; ++i) {
+        for (let j = 0; j < arr[i].length; ++j) {
+            arr[i][j] /= max
+        }
+    }
+}
+
 export function normalizeArray(arr: number[]) {
     let sum = 0
     for (let j = 0; j < arr.length; ++j) {
