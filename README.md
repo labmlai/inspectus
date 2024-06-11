@@ -135,7 +135,7 @@ If you use Inspectus for academic research, please cite the library using the fo
  author = {Varuna Jayasiri, Lakshith Nishshanke},
  title = {inspectus: A visualization and analytics tool for large language models},
  year = {2024},
- url = {[https://labml.ai/](https://github.com/labmlai/inspectus},
+ url = {https://github.com/labmlai/inspectus},
 }
 ```
 
