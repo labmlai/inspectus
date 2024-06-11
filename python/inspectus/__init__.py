@@ -1,4 +1,4 @@
-__version__ = '0.0.7'
+__version__ = '0.0.9'
 
 from typing import List, Optional, TYPE_CHECKING, Union, Tuple, Dict
 
@@ -52,7 +52,7 @@ def attention(attn: Union[
     if key_tokens is None:
         key_tokens = query_tokens
 
-    from inspectus.attention import parse_attn, attention_chart, parse_colors
+    from inspectus.attention_viz import parse_attn, attention_chart, parse_colors
 
     attn, dimensions = parse_attn(attn)
 
@@ -76,3 +76,6 @@ def attention(attn: Union[
         color=parse_colors(color),
         dimensions=dimensions
     )
+
+
+__all__ = ['attention']
