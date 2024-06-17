@@ -76,3 +76,6 @@ def attention(attn: Union[
         color=parse_colors(color),
         dimensions=dimensions
     )
+
+
+from .distribution import distribution
