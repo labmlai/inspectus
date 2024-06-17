@@ -78,4 +78,5 @@ def attention(attn: Union[
     )
 
 
-from .distribution import distribution
+from .distribution import data_to_table
+from .distribution import render
