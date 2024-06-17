@@ -9,7 +9,7 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ## Preview
 
-![Inspectus](Images/preview.gif)
+![Inspectus](https://github.com/labmlai/inspectus/blob/main/Images/preview.gif)
 
 *Click a token to select it and deselect others. Clicking again will select all again. 
 To change the state of only one token, do shift+click*
@@ -41,20 +41,20 @@ pip install inspectus
 Import the library
 
 ```python
-from inspectus import attention
+import inspectus
 ```
 
 Simple usage
 
 ```python
 # attn: Attention map; a 2-4D tensor or attention maps from Huggingface transformers
-attention(attn, tokens)
+inspectus.attention(attn, tokens)
 ```
 
 For different query and key tokens
 
 ```python
-attention(attns, query_tokens, key_tokens)
+inspectus.attention(attns, query_tokens, key_tokens)
 ```
 
 For detailed API documentation, please refer to the [official documentation - wip]().
@@ -66,7 +66,7 @@ For detailed API documentation, please refer to the [official documentation - wi
 ```python
 from transformers import AutoTokenizer, GPT2LMHeadModel, AutoConfig
 import torch
-from inspectus import attention
+import inspectus
 
 # Initialize the tokenizer and model
 context_length = 128
@@ -97,7 +97,7 @@ with torch.no_grad():
     res = model(input_ids=input_ids.to(model.device), output_attentions=True)
 
 # Visualize the attention maps using the Inspectus library
-attention(res['attentions'], tokens)
+inspectus.attention(res['attentions'], tokens)
 ```
 
 Check out the notebook here: [Huggingface Tutorial](./notebooks/gpt2.ipynb)
@@ -107,7 +107,7 @@ Check out the notebook here: [Huggingface Tutorial](./notebooks/gpt2.ipynb)
 
 ```python
 import numpy as np
-from inspectus import attention
+import inspectus
 
 # 2D attention representing attention values between Query and Key tokens
 attn = np.random.rand(3, 3)
@@ -116,8 +116,26 @@ attn = np.random.rand(3, 3)
 # The first argument is the attention matrix
 # The second argument is the list of query tokens
 # The third argument is the list of key tokens
-attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
+inspectus.attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
 ```
 
 Check out the notebook here: [Custom attention map tutorial](./notebooks/custom_attn.ipynb)
+
+
+## Setting up for Development
+
+[Development Docs](https://github.com/labmlai/inspectus/blob/main/development.md)
+
+## Citing
+
+If you use Inspectus for academic research, please cite the library using the following BibTeX entry.
+
+```bibtext
+@misc{inspectus,
+ author = {Varuna Jayasiri, Lakshith Nishshanke},
+ title = {inspectus: A visualization and analytics tool for large language models},
+ year = {2024},
+ url = {https://github.com/labmlai/inspectus},
+}
+```
 
