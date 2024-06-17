@@ -97,7 +97,7 @@ def data_to_table(*args: any,
                 row['step'] = step[i]
             table.append(row)
 
-    return alt.Data(values=table)
+    return table
 
 
 def _render_distribution(table: alt.Data, *,
@@ -172,6 +172,8 @@ def render(table: alt.Data, *,
 
     zoom = alt.selection_interval(encodings=["x", "y"])
     selection = alt.selection_multi(fields=['series'], bind='legend')
+
+    table = alt.Data(values=table)
 
     minimaps = _render_distribution(table,
                                x_name='',
