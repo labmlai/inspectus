@@ -73,10 +73,10 @@ def _data_to_table(series, names, step, levels=5):
                     row = {'series': name, 'step': i}
 
                 dist = np.percentile(data[i], BASIS_POINTS)
-                row['v5'] = dist[4 - 1]
+                row['v5'] = dist[4]
                 for j in range(1, levels):
-                    row[f"v{5 - j}"] = dist[4 - 1 - j]
-                    row[f"v{5 + j}"] = dist[4 - 1 + j]
+                    row[f"v{5 - j}"] = dist[4 - j]
+                    row[f"v{5 + j}"] = dist[4 + j]
             else:
                 row = {'series': name,
                        'v5': data[i]}
