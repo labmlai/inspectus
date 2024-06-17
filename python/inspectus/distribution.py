@@ -15,42 +15,54 @@ BASIS_POINTS = [
     100.00
 ]
 
-
-def _remove_names_prefix(names: List[Union[str, List[str]]]) -> List[str]:
-    if len(names) == 0:
-        return []
-
-    if isinstance(names[0], list):
-        common = names[0]
-    else:
-        common = None
-
-    for n in names:
-        if common is None:
-            break
-        if not isinstance(n, list):
-            common = None
-        merge = []
-        for x, y in zip(common, n):
-            if x != y:
-                merge.append(None)
-            else:
-                merge.append(x)
-        common = merge
-
-    res = []
-    for n in names:
-        if isinstance(n, list):
-            if common is not None:
-                n = [p for i, p in enumerate(n) if i > len(common) or p != common[i]]
-            n = '-'.join(n)
-
-        res.append(n)
-
-    return res
+@overload
+def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']], *,
+                 names: Optional[List[str]] = None,
+                 levels: int = 5):
+    ...
 
 
-def _data_to_table(series, names, step, levels=5):
+@overload
+def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']],
+                 step: np.ndarray, *,
+                 names: Optional[List[str]] = None,
+                 levels: int = 5):
+    ...
+
+
+@overload
+def data_to_table(series: Union[np.ndarray, 'torch.Tensor'], *,
+                 names: Optional[List[str]] = None,
+                 levels: int = 5):
+    ...
+
+
+def data_to_table(*args: any,
+                 names: Optional[List[str]] = None, levels=5):
+
+    if levels > 5:
+        levels = 5
+
+    series = None
+    step = None
+
+    if len(args) != 0:
+        if isinstance(args[0], list):
+            series = args[0]
+        else:
+            series = [args[0]]
+
+    if len(args) == 2:
+        step = args[1]
+
+    if names is None:
+        digits = len(str(len(series)))
+        names = [str(i + 1).zfill(digits) for i in range(len(series))]
+
+    if series is None:
+        raise ValueError("distribution should be called with a"
+                         "a series. Check documentation for details.")
+
     table = []
 
     for s in range(len(series)):
@@ -88,7 +100,7 @@ def _data_to_table(series, names, step, levels=5):
     return alt.Data(values=table)
 
 
-def _render_density(table: alt.Data, *,
+def _render_distribution(table: alt.Data, *,
                     x_name: str,
                     levels: int,
                     alpha: float,
@@ -150,24 +162,25 @@ def _render_density(table: alt.Data, *,
     return line
 
 
-def _render(table: alt.Data, *,
+def render(table: alt.Data, *,
             levels=5,
             alpha=0.6,
             color_scheme='tableau10',
             height: int,
             width: int,
             height_minimap: int):
+
     zoom = alt.selection_interval(encodings=["x", "y"])
     selection = alt.selection_multi(fields=['series'], bind='legend')
 
-    minimaps = _render_density(table,
+    minimaps = _render_distribution(table,
                                x_name='',
                                levels=levels,
                                alpha=alpha,
                                selection=zoom,
                                color_scheme=color_scheme)
 
-    details = _render_density(table,
+    details = _render_distribution(table,
                               x_name='Step',
                               levels=levels,
                               alpha=alpha,
@@ -181,105 +194,3 @@ def _render(table: alt.Data, *,
 
     return details & minimaps
 
-
-@overload
-def distribution(series: List[Union[np.ndarray, 'torch.Tensor']], *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5, alpha: int = 0.6,
-                 color_scheme: str = 'tableau10',
-                 height: int = 400, width: int = 800, height_minimap: int = 100):
-    ...
-
-
-@overload
-def distribution(series: List[Union[np.ndarray, 'torch.Tensor']],
-                 step: np.ndarray, *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5, alpha: int = 0.6,
-                 color_scheme: str = 'tableau10',
-                 height: int = 400, width: int = 800, height_minimap: int = 100):
-    ...
-
-
-@overload
-def distribution(series: Union[np.ndarray, 'torch.Tensor'], *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5, alpha: int = 0.6,
-                 color_scheme: str = 'tableau10',
-                 height: int = 400, width: int = 800, height_minimap: int = 100):
-    ...
-
-
-def distribution(*args: any,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5, alpha: int = 0.6,
-                 color_scheme: str = 'tableau10',
-                 height: int = 400, width: int = 800, height_minimap: int = 100):
-    r"""
-    Creates a distribution plot distribution with Altair
-
-    This has multiple overloads
-
-    .. function:: distribution(series: Union[np.ndarray, torch.Tensor], *, names: Optional[List[str]] = None, levels: int = 5, alpha: int = 0.6, height: int = 400, width: int = 800, height_minimap: int = 100)
-        :noindex:
-
-    .. function:: distribution(series: List[Union[np.ndarray, torch.Tensor]], *, names: Optional[List[str]] = None, levels: int = 5, alpha: int = 0.6, height: int = 400, width: int = 800, height_minimap: int = 100)
-        :noindex:
-
-    .. function:: distribution(series: List[Union[np.ndarray, torch.Tensor]], step: np.ndarray, *, names: Optional[List[str]] = None, levels: int = 5, alpha: int = 0.6, height: int = 400, width: int = 800, height_minimap: int = 100)
-        :noindex:
-
-    Arguments:
-        series(List[np.ndarray]): List of series of data
-        step(np.ndarray): Steps
-
-    Keyword Arguments:
-        names(List[str]): List of names of series
-        levels: how many levels of the distribution to be plotted (Maximum 5)
-        alpha: opacity of the distribution
-        color_scheme: color scheme
-        height: height of the visualization
-        width: width of the visualization
-        height_minimap: height of the view finder
-
-    Return:
-        The Altair visualization
-
-    Example:
-        >>> distribution(np.random.rand(5), np.array([i for i in range(5)]), width=800, height=400, height_minimap=100)
-    """
-
-    if levels > 5:
-        levels = 5
-
-    series = None
-    step = None
-
-    if len(args) != 0:
-        if isinstance(args[0], list):
-            series = args[0]
-        else:
-            series = [args[0]]
-
-    if len(args) == 2:
-        step = args[1]
-
-    if names is None:
-        digits = len(str(len(series)))
-        names = [str(i + 1).zfill(digits) for i in range(len(series))]
-
-    if series is None:
-        raise ValueError("distribution should be called with a"
-                         "a series. Check documentation for details.")
-
-    names = _remove_names_prefix(names)
-    tables = _data_to_table(series, names, step, levels)
-
-    return _render(
-        tables,
-        levels=levels,
-        alpha=alpha,
-        color_scheme=color_scheme,
-        width=width,
-        height=height,
-        height_minimap=height_minimap)
