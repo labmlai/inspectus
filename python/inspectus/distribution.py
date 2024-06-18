@@ -2,6 +2,8 @@ from typing import List, overload, Optional, Union
 import altair as alt
 import numpy as np
 import torch
+import os
+import json
 
 BASIS_POINTS = [
     0,
@@ -162,7 +164,7 @@ def _render_distribution(table: alt.Data, *,
     return line
 
 
-def render(table: alt.Data, *,
+def render(table: dict, *,
             levels=5,
             alpha=0.6,
             color_scheme='tableau10',
@@ -196,3 +198,29 @@ def render(table: alt.Data, *,
 
     return details & minimaps
 
+
+def export_data(table: list[dict], path: str):
+    series_dict = {}
+    for row in table:
+        if row['series'] not in series_dict:
+            series_dict[row['series']] = [row]
+        else:
+            series_dict[row['series']].append(row)
+
+    for series, data in series_dict.items():
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(f"{path}/{series}.json", "w") as f:
+            for row in data:
+                json.dump(row, f)
+                f.write('\n')
+
+
+def import_data(path: str):
+    data = []
+    for file in os.listdir(path):
+        series = file.split('.')[0]
+        with open(f"{path}/{file}", "r") as f:
+            for line in f:
+                data.append(json.loads(line))
+    return data

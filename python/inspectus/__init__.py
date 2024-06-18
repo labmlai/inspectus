@@ -83,3 +83,5 @@ __all__ = ['attention']
 
 from .distribution import data_to_table
 from .distribution import render
+from .distribution import export_data
+from .distribution import import_data
