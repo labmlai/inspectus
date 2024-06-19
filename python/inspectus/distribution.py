@@ -224,3 +224,56 @@ def import_data(path: str):
             for line in f:
                 data.append(json.loads(line))
     return data
+
+"""
+todo
+- fix wastage
+- auto detect levels
+- save and load unprocessed data
+"""
+
+class Tracker:
+    _path: str
+    _type: str
+
+    def __init__(self, path: str, type: str = 'histogram'):
+        self._path = path
+        self._type = type
+        import os
+        if not os.path.exists(self._path):
+            os.makedirs(self._path)
+        else:
+            # clean the directory
+            for file in os.listdir(self._path):
+                os.remove(os.path.join(self._path, file))
+
+    def write(self, entry: dict[str, any]):
+        series = entry['series']
+        with open(self._path + f'/{series}', "a") as f:
+            json.dump(encode_entry(entry), f)
+            f.write('\n')
+
+    def read(self, series: str) -> List[dict]:
+        with open(self._path + f'/{series}', "r") as f:
+            return [decode_entry(json.loads(line), series) for line in f]
+
+
+def encode_entry(entry: dict) -> dict:
+    series = entry['series']
+    entry.pop('series')
+    step = entry['step']
+    entry.pop('step')
+
+    levels = (len(entry) - 1) // 2
+
+    values = [entry[f"v{i}"] for i in range(5-levels, 5+levels+1)]
+
+    return {'step': step, 'histogram': values}
+
+def decode_entry(entry: dict, series: str) -> dict:
+    step = entry['step']
+    values = entry['histogram']
+
+    levels = (len(values) - 1) // 2
+
+    return {'series': series, 'step': step, **{f"v{5 - levels + i}": values[i] for i in range(levels*2+1)}}
