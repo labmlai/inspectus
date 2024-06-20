@@ -257,6 +257,16 @@ class Tracker:
         with open(self._path + f'/{series}', "r") as f:
             return [decode_entry(json.loads(line), series) for line in f]
 
+    def read_all(self) -> List[dict]:
+        data = []
+        for series in self.get_series():
+            data.extend(self.read(series))
+        return data
+
+    def get_series(self):
+        import os
+        return [file for file in os.listdir(self._path)]
+
 
 def encode_entry(entry: dict) -> dict:
     series = entry['series']
