@@ -1,0 +1,59 @@
+import json
+from pathlib import Path
+from typing import Union, Dict, Any, List
+
+import numpy as np
+from labml import monit, logger
+
+def _to_json(data):
+    try:
+        import torch
+        if isinstance(data, torch.Tensor):
+            return {'values': data.detach().cpu().numpy().tolist()}
+    except ImportError:
+        pass
+
+    if isinstance(data, np.ndarray):
+        return {'values': data.tolist()}
+    elif isinstance(data, dict):
+        return data
+    elif isinstance(data, list):
+        return {'values': data}
+
+
+class DataLogger:
+    _type: str
+
+    def __init__(self, path: Union[str, Path]):
+        if isinstance(path, str):
+            path = Path(path)
+        path = path.absolute()
+        self._path = path
+
+        if not path.exists():
+            with monit.section(f'Create {path}'):
+                path.mkdir(parents=True)
+        elif not path.is_dir():
+            raise ValueError(f'Path {path} is not a directory')
+        else:
+            with monit.section(f'Using {path}'):
+                pass
+
+    def clear(self):
+        for f in self._path.iterdir():
+            if f.is_dir():
+                raise RuntimeError(f'{f} is a folder')
+            logger.log(f'Deleting {f}')
+            f.unlink()
+
+    def save(self, name: str, data: Dict[str, Any], step=-1):
+        # NOTE: If it's already a histogram data = {'histogram': }
+        data = _to_json(data)
+        assert 'step' not in data
+        data['step'] = step
+        with open(self._path / f'{name}.jsonl', "a") as f:
+            f.write(json.dumps(data) + '\n')
+
+    def read(self, name: str) -> List[dict]:
+        with open(self._path / f'{name}.jsonl', "r") as f:
+            return [json.loads(line) for line in f]

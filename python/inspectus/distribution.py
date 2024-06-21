@@ -1,9 +1,10 @@
-from typing import List, overload, Optional, Union
+import json
+import os
+from typing import List, overload, Optional, Union, Dict
+
 import altair as alt
 import numpy as np
 import torch
-import os
-import json
 
 BASIS_POINTS = [
     0,
@@ -17,31 +18,31 @@ BASIS_POINTS = [
     100.00
 ]
 
+
 @overload
 def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']], *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5):
+                  names: Optional[List[str]] = None,
+                  levels: int = 5):
     ...
 
 
 @overload
 def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']],
-                 step: np.ndarray, *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5):
+                  step: np.ndarray, *,
+                  names: Optional[List[str]] = None,
+                  levels: int = 5):
     ...
 
 
 @overload
 def data_to_table(series: Union[np.ndarray, 'torch.Tensor'], *,
-                 names: Optional[List[str]] = None,
-                 levels: int = 5):
+                  names: Optional[List[str]] = None,
+                  levels: int = 5):
     ...
 
 
 def data_to_table(*args: any,
-                 names: Optional[List[str]] = None, levels=5):
-
+                  names: Optional[List[str]] = None, levels=5):
     if levels > 5:
         levels = 5
 
@@ -102,15 +103,39 @@ def data_to_table(*args: any,
     return table
 
 
+def series_to_table(series: List[np.ndarray], step,
+                    name: str, levels: int):
+    table = []
+
+    for i in range(len(series)):
+        data = series[i]
+        if len(data.shape) == 1:
+            row = {'series': name}
+
+            dist = np.percentile(data, BASIS_POINTS)
+            row['v5'] = dist[4]
+            for j in range(1, levels):
+                row[f"v{5 - j}"] = dist[4 - j]
+                row[f"v{5 + j}"] = dist[4 + j]
+        else:
+            row = {'series': name,
+                   'v5': data}
+
+        row['step'] = step[i]
+        table.append(row)
+
+    return table
+
+
 def _render_distribution(table: alt.Data, *,
-                    x_name: str,
-                    levels: int,
-                    alpha: float,
-                    color_scheme: str = 'tableau10',
-                    series_selection=None,
-                    selection=None,
-                    x_scale: alt.Scale = alt.Undefined,
-                    y_scale: alt.Scale = alt.Undefined) -> alt.Chart:
+                         x_name: str,
+                         levels: int,
+                         alpha: float,
+                         color_scheme: str = 'tableau10',
+                         series_selection=None,
+                         selection=None,
+                         x_scale: alt.Scale = alt.Undefined,
+                         y_scale: alt.Scale = alt.Undefined) -> alt.Chart:
     areas: List[alt.Chart] = []
     for i in range(1, levels):
         y = f"v{5 - i}:Q"
@@ -164,34 +189,33 @@ def _render_distribution(table: alt.Data, *,
     return line
 
 
-def render(table: dict, *,
-            levels=5,
-            alpha=0.6,
-            color_scheme='tableau10',
-            height: int,
-            width: int,
-            height_minimap: int):
-
+def render(table: List[Dict], *,
+           levels=5,
+           alpha=0.6,
+           color_scheme='tableau10',
+           height: int,
+           width: int,
+           height_minimap: int):
     zoom = alt.selection_interval(encodings=["x", "y"])
     selection = alt.selection_multi(fields=['series'], bind='legend')
 
     table = alt.Data(values=table)
 
     minimaps = _render_distribution(table,
-                               x_name='',
-                               levels=levels,
-                               alpha=alpha,
-                               selection=zoom,
-                               color_scheme=color_scheme)
+                                    x_name='',
+                                    levels=levels,
+                                    alpha=alpha,
+                                    selection=zoom,
+                                    color_scheme=color_scheme)
 
     details = _render_distribution(table,
-                              x_name='Step',
-                              levels=levels,
-                              alpha=alpha,
-                              color_scheme=color_scheme,
-                              series_selection=selection,
-                              x_scale=alt.Scale(domain=zoom.ref()),
-                              y_scale=alt.Scale(domain=zoom.ref()))
+                                   x_name='Step',
+                                   levels=levels,
+                                   alpha=alpha,
+                                   color_scheme=color_scheme,
+                                   series_selection=selection,
+                                   x_scale=alt.Scale(domain=zoom.ref()),
+                                   y_scale=alt.Scale(domain=zoom.ref()))
 
     minimaps = minimaps.properties(width=width, height=height_minimap)
     details = details.properties(width=width, height=height)
@@ -225,65 +249,11 @@ def import_data(path: str):
                 data.append(json.loads(line))
     return data
 
+
 """
 todo
 - fix wastage
 - auto detect levels
 - save and load unprocessed data
+- merge data_to_table and render
 """
-
-class Tracker:
-    _path: str
-    _type: str
-
-    def __init__(self, path: str, type: str = 'histogram'):
-        self._path = path
-        self._type = type
-        import os
-        if not os.path.exists(self._path):
-            os.makedirs(self._path)
-        else:
-            # clean the directory
-            for file in os.listdir(self._path):
-                os.remove(os.path.join(self._path, file))
-
-    def write(self, entry: dict[str, any]):
-        series = entry['series']
-        with open(self._path + f'/{series}', "a") as f:
-            json.dump(encode_entry(entry), f)
-            f.write('\n')
-
-    def read(self, series: str) -> List[dict]:
-        with open(self._path + f'/{series}', "r") as f:
-            return [decode_entry(json.loads(line), series) for line in f]
-
-    def read_all(self) -> List[dict]:
-        data = []
-        for series in self.get_series():
-            data.extend(self.read(series))
-        return data
-
-    def get_series(self):
-        import os
-        return [file for file in os.listdir(self._path)]
-
-
-def encode_entry(entry: dict) -> dict:
-    series = entry['series']
-    entry.pop('series')
-    step = entry['step']
-    entry.pop('step')
-
-    levels = (len(entry) - 1) // 2
-
-    values = [entry[f"v{i}"] for i in range(5-levels, 5+levels+1)]
-
-    return {'step': step, 'histogram': values}
-
-def decode_entry(entry: dict, series: str) -> dict:
-    step = entry['step']
-    values = entry['histogram']
-
-    levels = (len(values) - 1) // 2
-
-    return {'series': series, 'step': step, **{f"v{5 - levels + i}": values[i] for i in range(levels*2+1)}}
