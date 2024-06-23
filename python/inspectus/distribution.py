@@ -171,7 +171,7 @@ def _render_distribution(table: alt.Data, *,
         .encode(**encode)
     )
     if selection is not None:
-        line = line.add_selection(selection)
+        line = line.add_params(selection)
 
     areas_sum = None
     for a in areas:
@@ -184,7 +184,7 @@ def _render_distribution(table: alt.Data, *,
         line = areas_sum + line
 
     if series_selection:
-        line = line.add_selection(series_selection)
+        line = line.add_params(series_selection)
 
     return line
 
@@ -197,7 +197,7 @@ def render(table: List[Dict], *,
            width: int,
            height_minimap: int):
     zoom = alt.selection_interval(encodings=["x", "y"])
-    selection = alt.selection_multi(fields=['series'], bind='legend')
+    selection = alt.selection_point(fields=['series'], bind='legend')
 
     table = alt.Data(values=table)
 
@@ -214,8 +214,8 @@ def render(table: List[Dict], *,
                                    alpha=alpha,
                                    color_scheme=color_scheme,
                                    series_selection=selection,
-                                   x_scale=alt.Scale(domain=zoom.ref()),
-                                   y_scale=alt.Scale(domain=zoom.ref()))
+                                   x_scale=alt.Scale(domain={"param": zoom.name, "encoding": "x"}),
+                                   y_scale=alt.Scale(domain={"param": zoom.name, "encoding": "y"}))
 
     minimaps = minimaps.properties(width=width, height=height_minimap)
     details = details.properties(width=width, height=height)
