@@ -19,109 +19,42 @@ BASIS_POINTS = [
 ]
 
 
-@overload
-def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']], *,
-                  names: Optional[List[str]] = None,
-                  levels: int = 5):
-    ...
-
-
-@overload
-def data_to_table(series: List[Union[np.ndarray, 'torch.Tensor']],
-                  step: np.ndarray, *,
-                  names: Optional[List[str]] = None,
-                  levels: int = 5):
-    ...
-
-
-@overload
-def data_to_table(series: Union[np.ndarray, 'torch.Tensor'], *,
-                  names: Optional[List[str]] = None,
-                  levels: int = 5):
-    ...
-
-
-def data_to_table(*args: any,
-                  names: Optional[List[str]] = None, levels=5):
-    if levels > 5:
-        levels = 5
-
-    series = None
-    step = None
-
-    if len(args) != 0:
-        if isinstance(args[0], list):
-            series = args[0]
-        else:
-            series = [args[0]]
-
-    if len(args) == 2:
-        step = args[1]
-
-    if names is None:
-        digits = len(str(len(series)))
-        names = [str(i + 1).zfill(digits) for i in range(len(series))]
-
-    if series is None:
-        raise ValueError("distribution should be called with a"
-                         "a series. Check documentation for details.")
-
-    table = []
-
-    for s in range(len(series)):
-        data = series[s]
-        name = names[s]
-
-        try:
-            import torch
-        except ImportError:
-            torch = None
-
-        if torch is not None and isinstance(data, torch.Tensor):
-            data = data.detach().cpu().numpy()
-
-        for i in range(data.shape[0]):
-            if len(data.shape) == 2:
-                if step is not None:
-                    row = {'series': name, 'step': step[i]}
-                else:
-                    row = {'series': name, 'step': i}
-
-                dist = np.percentile(data[i], BASIS_POINTS)
-                row['v5'] = dist[4]
-                for j in range(1, levels):
-                    row[f"v{5 - j}"] = dist[4 - j]
-                    row[f"v{5 + j}"] = dist[4 + j]
-            else:
-                row = {'series': name,
-                       'v5': data[i]}
-
-            if step is not None:
-                row['step'] = step[i]
-            table.append(row)
-
-    return table
-
-
-def series_to_table(series: List[np.ndarray], step,
-                    name: str, levels: int):
+def series_to_histogram(series, steps: np.ndarray = None):
     table = []
 
     for i in range(len(series)):
         data = series[i]
-        if len(data.shape) == 1:
-            row = {'series': name}
 
+        if isinstance(data, np.ndarray):
             dist = np.percentile(data, BASIS_POINTS)
-            row['v5'] = dist[4]
-            for j in range(1, levels):
-                row[f"v{5 - j}"] = dist[4 - j]
-                row[f"v{5 + j}"] = dist[4 + j]
+            step = steps[i] if steps is not None else i
         else:
-            row = {'series': name,
-                   'v5': data}
+            dist = np.percentile(data['values'], BASIS_POINTS)
+            step = data['step']
 
-        row['step'] = step[i]
+        histogram = [dist[i] for i in range(0, 9)]
+        row = {
+            'step': step,
+            'histogram': histogram
+        }
+        table.append(row)
+
+    return table
+
+
+def _histogram_to_table(data: List[dict], name: str):
+    table = []
+
+    for i in range(len(data)):
+        row = {'series': name}
+
+        dist = data[i]['histogram']
+        row['v5'] = dist[4]
+        for j in range(1, 5):
+            row[f"v{5 - j}"] = dist[4 - j]
+            row[f"v{5 + j}"] = dist[4 + j]
+
+        row['step'] = data[i]['step']
         table.append(row)
 
     return table
@@ -189,7 +122,8 @@ def _render_distribution(table: alt.Data, *,
     return line
 
 
-def render(table: List[Dict], *,
+def render(data: List[dict], names: List[str], *,
+           steps: Optional[np.ndarray] = None,
            levels=5,
            alpha=0.6,
            color_scheme='tableau10',
@@ -198,6 +132,18 @@ def render(table: List[Dict], *,
            height_minimap: int):
     zoom = alt.selection_interval(encodings=["x", "y"])
     selection = alt.selection_point(fields=['series'], bind='legend')
+
+    table = []
+    i = 0
+    for name, series in zip(names, data):
+        if len(series) != 0 and isinstance(series[0], dict):
+            if 'histogram' in series[0]:
+                table += _histogram_to_table(series, name)
+            else:
+                table += _histogram_to_table(series_to_histogram(series), name)
+        elif isinstance(series, np.ndarray):
+            table += _histogram_to_table(series_to_histogram(series, steps), name)
+        i += 1
 
     table = alt.Data(values=table)
 
@@ -221,34 +167,6 @@ def render(table: List[Dict], *,
     details = details.properties(width=width, height=height)
 
     return details & minimaps
-
-
-def export_data(table: list[dict], path: str):
-    series_dict = {}
-    for row in table:
-        if row['series'] not in series_dict:
-            series_dict[row['series']] = [row]
-        else:
-            series_dict[row['series']].append(row)
-
-    for series, data in series_dict.items():
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open(f"{path}/{series}.json", "w") as f:
-            for row in data:
-                json.dump(row, f)
-                f.write('\n')
-
-
-def import_data(path: str):
-    data = []
-    for file in os.listdir(path):
-        series = file.split('.')[0]
-        with open(f"{path}/{file}", "r") as f:
-            for line in f:
-                data.append(json.loads(line))
-    return data
-
 
 """
 todo

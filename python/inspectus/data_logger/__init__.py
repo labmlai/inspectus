@@ -49,8 +49,8 @@ class DataLogger:
     def save(self, name: str, data: Dict[str, Any], step=-1):
         # NOTE: If it's already a histogram data = {'histogram': }
         data = _to_json(data)
-        assert 'step' not in data
-        data['step'] = step
+        if 'step' not in data:
+            data['step'] = step
         with open(self._path / f'{name}.jsonl', "a") as f:
             f.write(json.dumps(data) + '\n')
 
