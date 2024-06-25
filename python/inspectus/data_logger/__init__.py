@@ -8,8 +8,6 @@ from labml import monit, logger
 
 
 class DataLogger:
-    _type: str
-
     def __init__(self, path: Union[str, Path]):
         if isinstance(path, str):
             path = Path(path)
@@ -43,3 +41,6 @@ class DataLogger:
     def read(self, name: str) -> List[dict]:
         with open(self._path / f'{name}.jsonl', "r") as f:
             return [json.loads(line) for line in f]
+
+    def get_names(self) -> List[str]:
+        return [p.stem for p in self._path.iterdir() if p.is_file()]
