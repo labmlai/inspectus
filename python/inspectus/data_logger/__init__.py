@@ -1,24 +1,10 @@
 import json
 from pathlib import Path
 from typing import Union, Dict, Any, List
+from inspectus.utils import to_json
 
 import numpy as np
 from labml import monit, logger
-
-def _to_json(data):
-    try:
-        import torch
-        if isinstance(data, torch.Tensor):
-            return {'values': data.detach().cpu().numpy().tolist()}
-    except ImportError:
-        pass
-
-    if isinstance(data, np.ndarray):
-        return {'values': data.tolist()}
-    elif isinstance(data, dict):
-        return data
-    elif isinstance(data, list):
-        return {'values': data}
 
 
 class DataLogger:
@@ -48,7 +34,7 @@ class DataLogger:
 
     def save(self, name: str, data: Dict[str, Any], step=-1):
         # NOTE: If it's already a histogram data = {'histogram': }
-        data = _to_json(data)
+        data = to_json(data)
         if 'step' not in data:
             data['step'] = step
         with open(self._path / f'{name}.jsonl', "a") as f:

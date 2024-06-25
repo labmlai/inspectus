@@ -1,45 +1,10 @@
 import json
 import os
 from typing import List, overload, Optional, Union, Dict
+from inspectus.utils import to_json
 
 import altair as alt
 import numpy as np
-import torch
-
-BASIS_POINTS = [
-    0,
-    6.68,
-    15.87,
-    30.85,
-    50.00,
-    69.15,
-    84.13,
-    93.32,
-    100.00
-]
-
-
-def series_to_histogram(series, steps: np.ndarray = None):
-    table = []
-
-    for i in range(len(series)):
-        data = series[i]
-
-        if isinstance(data, np.ndarray):
-            dist = np.percentile(data, BASIS_POINTS)
-            step = steps[i] if steps is not None else i
-        else:
-            dist = np.percentile(data['values'], BASIS_POINTS)
-            step = data['step']
-
-        histogram = [dist[i] for i in range(0, 9)]
-        row = {
-            'step': step,
-            'histogram': histogram
-        }
-        table.append(row)
-
-    return table
 
 
 def _histogram_to_table(data: List[dict], name: str):
@@ -122,7 +87,7 @@ def _render_distribution(table: alt.Data, *,
     return line
 
 
-def render(data: List[dict], names: List[str], *,
+def render(data: any, names: List[str], *,
            steps: Optional[np.ndarray] = None,
            levels=5,
            alpha=0.6,
@@ -133,19 +98,7 @@ def render(data: List[dict], names: List[str], *,
     zoom = alt.selection_interval(encodings=["x", "y"])
     selection = alt.selection_point(fields=['series'], bind='legend')
 
-    table = []
-    i = 0
-    for name, series in zip(names, data):
-        if len(series) != 0 and isinstance(series[0], dict):
-            if 'histogram' in series[0]:
-                table += _histogram_to_table(series, name)
-            else:
-                table += _histogram_to_table(series_to_histogram(series), name)
-        elif isinstance(series, np.ndarray):
-            table += _histogram_to_table(series_to_histogram(series, steps), name)
-        i += 1
-
-    table = alt.Data(values=table)
+    table = alt.Data(values=data)
 
     minimaps = _render_distribution(table,
                                     x_name='',
@@ -167,11 +120,3 @@ def render(data: List[dict], names: List[str], *,
     details = details.properties(width=width, height=height)
 
     return details & minimaps
-
-"""
-todo
-- fix wastage
-- auto detect levels
-- save and load unprocessed data
-- merge data_to_table and render
-"""

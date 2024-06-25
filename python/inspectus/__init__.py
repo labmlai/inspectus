@@ -6,6 +6,18 @@ if TYPE_CHECKING:
     import numpy as np
     import torch
 
+BASIS_POINTS = [
+    0,
+    6.68,
+    15.87,
+    30.85,
+    50.00,
+    69.15,
+    84.13,
+    93.32,
+    100.00
+]
+
 
 def attention(attn: Union[
     'np.ndarray',
@@ -81,5 +93,64 @@ def attention(attn: Union[
 __all__ = ['attention']
 
 
-from .distribution import series_to_histogram
-from .distribution import render
+def series_to_distribution(series: Union[
+    List['dict'],
+    List['torch.Tensor'],
+    List['np.ndarray'],
+], steps: 'np.ndarray' = None):
+    import numpy as np
+    table = []
+
+    for i in range(len(series)):
+        data = series[i]
+
+        if isinstance(data, dict):
+            dist = np.percentile(data['values'], BASIS_POINTS)
+            step = data['step']
+        else:
+            dist = np.percentile(data, BASIS_POINTS)
+            step = steps[i] if steps is not None else i
+
+        histogram = [dist[i] for i in range(0, 9)]
+        row = {
+            'step': step,
+            'histogram': histogram
+        }
+        table.append(row)
+
+    return table
+
+
+def distribution(data: Union[
+    List['dict'],
+    List['torch.Tensor'],
+    List['np.ndarray'],
+], names: List[str], *,
+                 steps: Optional['np.ndarray'] = None,
+                 levels=5,
+                 alpha=0.6,
+                 color_scheme='tableau10',
+                 height: int,
+                 width: int,
+                 height_minimap: int):
+    from .distribution_viz import render, _histogram_to_table
+
+    table = []
+    i = 0
+    for name, series in zip(names, data):
+        if len(series) == 0:
+            continue
+
+        if isinstance(series[0], dict) and 'histogram' in series[0]:
+            table += _histogram_to_table(series, name)
+        else:
+            table += _histogram_to_table(series_to_distribution(series), name)
+        i += 1
+
+    return render(table, steps,
+                  levels=levels,
+                  alpha=alpha,
+                  color_scheme=color_scheme,
+                  height=height,
+                  width=width,
+                  height_minimap=height_minimap)
