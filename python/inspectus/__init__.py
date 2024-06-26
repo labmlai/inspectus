@@ -104,6 +104,13 @@ def series_to_distribution(series: Union[
     for i in range(len(series)):
         data = series[i]
 
+        try:
+            import torch
+            if isinstance(data, torch.Tensor):
+                data = data.detach().cpu().numpy()
+        except ImportError:
+            pass
+
         if isinstance(data, dict):
             dist = np.percentile(data['values'], BASIS_POINTS)
             step = data['step']
@@ -147,7 +154,7 @@ def distribution(data: Union[
             table += _histogram_to_table(series_to_distribution(series), name)
         i += 1
 
-    return render(table, steps,
+    return render(table,
                   levels=levels,
                   alpha=alpha,
                   color_scheme=color_scheme,

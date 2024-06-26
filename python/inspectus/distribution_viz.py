@@ -87,8 +87,7 @@ def _render_distribution(table: alt.Data, *,
     return line
 
 
-def render(data: any, names: List[str], *,
-           steps: Optional[np.ndarray] = None,
+def render(data: any, *,
            levels=5,
            alpha=0.6,
            color_scheme='tableau10',
