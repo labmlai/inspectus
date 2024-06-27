@@ -1,13 +1,8 @@
-import json
-import os
-from typing import List, overload, Optional, Union, Dict
-from inspectus.utils import to_json
-
+from typing import List
 import altair as alt
-import numpy as np
 
 
-def _histogram_to_table(data: List[dict], name: str):
+def _histogram_to_table(data: List[dict], name: str, include_mean: bool = False):
     table = []
 
     for i in range(len(data)):
@@ -21,6 +16,13 @@ def _histogram_to_table(data: List[dict], name: str):
 
         row['step'] = data[i]['step']
         table.append(row)
+
+        if include_mean:
+            table.append({
+                'series': name + " mean",
+                'v5': data[i]['mean'],
+                'step': data[i]['step']
+            })
 
     return table
 

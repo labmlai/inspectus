@@ -113,15 +113,18 @@ def series_to_distribution(series: Union[
 
         if isinstance(data, dict):
             dist = np.percentile(data['values'], BASIS_POINTS)
+            mean = np.mean(data['values'])
             step = data['step']
         else:
             dist = np.percentile(data, BASIS_POINTS)
+            mean = np.mean(data)
             step = steps[i] if steps is not None else i
 
         histogram = [dist[i] for i in range(0, 9)]
         row = {
             'step': step,
-            'histogram': histogram
+            'histogram': histogram,
+            'mean': mean
         }
         table.append(row)
 
@@ -134,6 +137,7 @@ def distribution(data: Union[
     List['np.ndarray'],
 ], names: List[str], *,
                  steps: Optional['np.ndarray'] = None,
+                 include_mean: bool = False,
                  levels=5,
                  alpha=0.6,
                  color_scheme='tableau10',
@@ -149,9 +153,9 @@ def distribution(data: Union[
             continue
 
         if isinstance(series[0], dict) and 'histogram' in series[0]:
-            table += _histogram_to_table(series, name)
+            table += _histogram_to_table(series, name, include_mean)
         else:
-            table += _histogram_to_table(series_to_distribution(series), name)
+            table += _histogram_to_table(series_to_distribution(series), name, include_mean)
         i += 1
 
     return render(table,
