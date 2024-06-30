@@ -131,11 +131,11 @@ def series_to_distribution(series: Union[
     return table
 
 
-def distribution(data: Union[
+def distribution(data: dict[str, Union[
     List['dict'],
     List['torch.Tensor'],
     List['np.ndarray'],
-], names: List[str] = None, *,
+]], *,
                  steps: Optional['np.ndarray'] = None,
                  include_mean: bool = False,
                  include_borders: bool = False,
@@ -143,16 +143,13 @@ def distribution(data: Union[
                  alpha=0.6,
                  color_scheme='tableau10',
                  height: int = 500,
-                 width: int = 500,
+                 width: int = 700,
                  height_minimap: int = 100):
     from .distribution_viz import render, _histogram_to_table
 
-    if names is None:
-        names = [f'series_{i}' for i in range(len(data))]
-
     table = []
     i = 0
-    for name, series in zip(names, data):
+    for name, series in data.items():
         if len(series) == 0:
             continue
 
