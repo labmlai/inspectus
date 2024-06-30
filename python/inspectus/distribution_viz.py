@@ -31,6 +31,7 @@ def _render_distribution(table: alt.Data, *,
                          x_name: str,
                          levels: int,
                          alpha: float,
+                         include_borders: bool = False,
                          color_scheme: str = 'tableau10',
                          series_selection=None,
                          selection=None,
@@ -70,8 +71,27 @@ def _render_distribution(table: alt.Data, *,
         .mark_line()
         .encode(**encode)
     )
-    if selection is not None:
-        line = line.add_params(selection)
+
+    if include_borders:
+        encode_down = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
+                           y=alt.Y(f"v{5 - levels + 1}:Q", scale=y_scale, title='Value'),
+                           color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+        encode_up = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
+                         y=alt.Y(f"v{5 + levels - 1}:Q", scale=y_scale, title='Value'),
+                         color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+
+        line_up = (
+            alt.Chart(table)
+            .mark_line()
+            .encode(**encode_up)
+        )
+        line_down = (
+            alt.Chart(table)
+            .mark_line()
+            .encode(**encode_down)
+        )
+        line += line_up
+        line += line_down
 
     areas_sum = None
     for a in areas:
@@ -86,12 +106,16 @@ def _render_distribution(table: alt.Data, *,
     if series_selection:
         line = line.add_params(series_selection)
 
+    if selection is not None:
+        line = line.add_params(selection)
+
     return line
 
 
 def render(data: any, *,
            levels=5,
            alpha=0.6,
+           include_borders=False,
            color_scheme='tableau10',
            height: int,
            width: int,
@@ -106,12 +130,14 @@ def render(data: any, *,
                                     levels=levels,
                                     alpha=alpha,
                                     selection=zoom,
+                                    include_borders=include_borders,
                                     color_scheme=color_scheme)
 
     details = _render_distribution(table,
                                    x_name='Step',
                                    levels=levels,
                                    alpha=alpha,
+                                   include_borders=include_borders,
                                    color_scheme=color_scheme,
                                    series_selection=selection,
                                    x_scale=alt.Scale(domain={"param": zoom.name, "encoding": "x"}),
