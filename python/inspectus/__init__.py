@@ -135,16 +135,19 @@ def distribution(data: Union[
     List['dict'],
     List['torch.Tensor'],
     List['np.ndarray'],
-], names: List[str], *,
+], names: List[str] = None, *,
                  steps: Optional['np.ndarray'] = None,
                  include_mean: bool = False,
                  levels=5,
                  alpha=0.6,
                  color_scheme='tableau10',
-                 height: int,
-                 width: int,
-                 height_minimap: int):
+                 height: int = 500,
+                 width: int = 500,
+                 height_minimap: int = 100):
     from .distribution_viz import render, _histogram_to_table
+
+    if names is None:
+        names = [f'series_{i}' for i in range(len(data))]
 
     table = []
     i = 0
