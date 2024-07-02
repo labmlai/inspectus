@@ -8,6 +8,7 @@ def convert_b64(data: numpy.ndarray) -> str:
 
     return b64_str
 
+
 def to_json(data):
     try:
         import torch
