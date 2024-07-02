@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Union, Dict, Any, List
 from inspectus.utils import to_json
@@ -31,7 +32,6 @@ class DataLogger:
             f.unlink()
 
     def save(self, name: str, data: Dict[str, Any], step=-1):
-        # NOTE: If it's already a histogram data = {'histogram': }
         data = to_json(data)
         if 'step' not in data:
             data['step'] = step
@@ -39,8 +39,17 @@ class DataLogger:
             f.write(json.dumps(data) + '\n')
 
     def read(self, name: str) -> List[dict]:
-        with open(self._path / f'{name}.jsonl', "r") as f:
-            return [json.loads(line) for line in f]
+        try:
+            with open(self._path / f'{name}.jsonl', "r") as f:
+                return [json.loads(line) for line in f]
+        except FileNotFoundError:
+            import glob
+            files = glob.glob(str(self._path / f'{name}.*'))
+            if files:
+                raise ValueError(f'{name} is not a jsonl file')
+            raise ValueError(f'{name} not found')
+        except JSONDecodeError:
+            raise ValueError(f'{name} is not a valid jsonl file')
 
     def get_names(self) -> List[str]:
         return [p.stem for p in self._path.iterdir() if p.is_file()]
