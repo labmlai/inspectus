@@ -145,7 +145,45 @@ def distribution(data: dict[str, Union[
                  height: int = 500,
                  width: int = 700,
                  height_minimap: int = 100):
+    """
+        Generates a distribution visualization from the given data.
+
+        Parameters
+        ----------
+        data : dict
+            A dictionary where keys are series names and values are lists of data points.
+            Data points can be dictionaries(output from the inspectus.daa_logger), numpy arrays, or PyTorch tensors.
+        steps : np.ndarray, optional
+            An array of step values. If not provided, step values are inferred from the data or generated from 1 to
+            data point length.
+        include_mean : bool, optional
+            If True, includes the mean of the data in the visualization. Default is False.
+        include_borders : bool, optional
+            If True, includes borders at the highest and lowest levels in the visualization. Default is False.
+        levels : int, optional
+            An Integer between 1 and 5, the number of levels in the visualization. Default is 5.
+        alpha : float, optional
+            Opacity of the first band. Reduces by powers for each level. Default is 0.6.
+        color_scheme : str, optional
+            The color scheme to use for the visualization. Default is 'tableau10'.
+        height : int, optional
+            The height of the visualization. Default is 500.
+        width : int, optional
+            The width of the visualization. Default is 700.
+        height_minimap : int, optional
+            The height of the minimap in the visualization. Default is 100.
+
+        Returns
+        -------
+        alt.Chart
+            An Altair Chart object representing the distribution visualization.
+        """
     from .distribution_viz import render, _histogram_to_table
+
+    if levels > 5:
+        levels = 5
+    if levels < 1:
+        levels = 1
 
     table = []
     i = 0
