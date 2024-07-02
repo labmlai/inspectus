@@ -6,6 +6,18 @@ if TYPE_CHECKING:
     import numpy as np
     import torch
 
+BASIS_POINTS = [
+    0,
+    6.68,
+    15.87,
+    30.85,
+    50.00,
+    69.15,
+    84.13,
+    93.32,
+    100.00
+]
+
 
 def attention(attn: Union[
     'np.ndarray',
@@ -79,3 +91,117 @@ def attention(attn: Union[
 
 
 __all__ = ['attention']
+
+
+def series_to_distribution(series: Union[
+    List['dict'],
+    List['torch.Tensor'],
+    List['np.ndarray'],
+], steps: 'np.ndarray' = None):
+    import numpy as np
+    table = []
+
+    for i in range(len(series)):
+        data = series[i]
+
+        try:
+            import torch
+            if isinstance(data, torch.Tensor):
+                data = data.detach().cpu().numpy()
+        except ImportError:
+            pass
+
+        if isinstance(data, dict):
+            dist = np.percentile(data['values'], BASIS_POINTS)
+            mean = np.mean(data['values'])
+            step = data['step']
+        else:
+            dist = np.percentile(data, BASIS_POINTS)
+            mean = np.mean(data)
+            step = steps[i] if steps is not None else i
+
+        histogram = [dist[i] for i in range(0, 9)]
+        row = {
+            'step': step,
+            'histogram': histogram,
+            'mean': mean
+        }
+        table.append(row)
+
+    return table
+
+
+def distribution(data: dict[str, Union[
+    List['dict'],
+    List['torch.Tensor'],
+    List['np.ndarray'],
+]], *,
+                 steps: Optional['np.ndarray'] = None,
+                 include_mean: bool = False,
+                 include_borders: bool = False,
+                 levels=5,
+                 alpha=0.6,
+                 color_scheme='tableau10',
+                 height: int = 500,
+                 width: int = 700,
+                 height_minimap: int = 100):
+    """
+        Generates a distribution visualization from the given data.
+
+        Parameters
+        ----------
+        data : dict
+            A dictionary where keys are series names and values are lists of data points.
+            Data points can be dictionaries(output from the inspectus.daa_logger), numpy arrays, or PyTorch tensors.
+        steps : np.ndarray, optional
+            An array of step values. If not provided, step values are inferred from the data or generated from 1 to
+            data point length.
+        include_mean : bool, optional
+            If True, includes the mean of the data in the visualization. Default is False.
+        include_borders : bool, optional
+            If True, includes borders at the highest and lowest levels in the visualization. Default is False.
+        levels : int, optional
+            An Integer between 1 and 5, the number of levels in the visualization. Default is 5.
+        alpha : float, optional
+            Opacity of the first band. Reduces by powers for each level. Default is 0.6.
+        color_scheme : str, optional
+            The color scheme to use for the visualization. Default is 'tableau10'.
+        height : int, optional
+            The height of the visualization. Default is 500.
+        width : int, optional
+            The width of the visualization. Default is 700.
+        height_minimap : int, optional
+            The height of the minimap in the visualization. Default is 100.
+
+        Returns
+        -------
+        alt.Chart
+            An Altair Chart object representing the distribution visualization.
+        """
+    from .distribution_viz import render, _histogram_to_table
+
+    if levels > 5:
+        levels = 5
+    if levels < 1:
+        levels = 1
+
+    table = []
+    i = 0
+    for name, series in data.items():
+        if len(series) == 0:
+            continue
+
+        if isinstance(series[0], dict) and 'histogram' in series[0]:
+            table += _histogram_to_table(series, name, include_mean)
+        else:
+            table += _histogram_to_table(series_to_distribution(series), name, include_mean)
+        i += 1
+
+    return render(table,
+                  levels=levels,
+                  alpha=alpha,
+                  include_borders=include_borders,
+                  color_scheme=color_scheme,
+                  height=height,
+                  width=width,
+                  height_minimap=height_minimap)
