@@ -44,3 +44,6 @@ class DataLogger:
 
     def get_names(self) -> List[str]:
         return [p.stem for p in self._path.iterdir() if p.is_file()]
+
+    def get_all(self) -> Dict[str, List[dict]]:
+        return {name: self.read(name) for name in self.get_names()}
