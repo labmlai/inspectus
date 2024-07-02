@@ -16,7 +16,8 @@ def to_json(data):
             return {'values': data.detach().cpu().numpy().tolist()}
     except ImportError:
         pass
-
+    if isinstance(data, (int, float)):
+        return {'values': [data]}
     if isinstance(data, numpy.ndarray):
         return {'values': data.tolist()}
     elif isinstance(data, dict):
