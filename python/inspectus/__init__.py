@@ -137,7 +137,7 @@ def distribution(data: dict[str, Union[
     List['np.ndarray'],
 ]], *,
                  steps: Optional['np.ndarray'] = None,
-                 include_mean: bool = False,
+                 include_mean: bool = True,
                  include_borders: bool = False,
                  levels=5,
                  alpha=0.6,
@@ -157,7 +157,7 @@ def distribution(data: dict[str, Union[
             An array of step values. If not provided, step values are inferred from the data or generated from 1 to
             data point length.
         include_mean : bool, optional
-            If True, includes the mean of the data in the visualization. Default is False.
+            If True, includes the mean of the data in the visualization. Default is True.
         include_borders : bool, optional
             If True, includes borders at the highest and lowest levels in the visualization. Default is False.
         levels : int, optional
