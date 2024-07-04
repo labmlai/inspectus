@@ -9,7 +9,7 @@ It runs smoothly in Jupyter notebooks via an easy-to-use Python API. Inspectus p
 
 ## Preview
 
-![Inspectus](https://github.com/labmlai/inspectus/blob/main/Images/preview.gif)
+![Inspectus](https://github.com/labmlai/inspectus/blob/main/assets/preview.gif)
 
 *Click a token to select it and deselect others. Clicking again will select all again. 
 To change the state of only one token, do shift+click*
