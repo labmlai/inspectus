@@ -146,10 +146,10 @@ the distribution of the data is calculated and maximum of 5 bands are drawn from
 (0, 6.68, 15.87, 30.85, 50.00, 69.15, 84.13, 93.32, 100.00) 
 
 
-### Preview
+#### Preview
 ![Inspectus](https://github.com/labmlai/inspectus/blob/main/assets/mnist_train_loss_tail.png)
 
-## Usage
+#### Usage
 
 ```python
 import inspectus
@@ -161,7 +161,7 @@ To focus on parts of the plot and zoom in, the minimap can be used. To select a 
 
 For comprehensive usage guide please check the notebook here: [Distribution Plot Tutorial](./notebooks/distribution_plot.ipynb)
 
-## Sample Use case
+#### Sample Use case
 
 This plot can be used to identify the existence of outliers in the data. Following 
 notebooks demonstrate how to use the distribution plot to identify outliers in the MNIST training loss.
