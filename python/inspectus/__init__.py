@@ -98,6 +98,22 @@ def series_to_distribution(series: Union[
     List['torch.Tensor'],
     List['np.ndarray'],
 ], steps: 'np.ndarray' = None):
+    """
+       Converts a series of data points into a distribution table.
+
+       Parameters
+       ----------
+       series : Union[List['dict'], List['torch.Tensor'], List['np.ndarray']]
+           A list of data points. Data points can be dictionaries, numpy arrays, or PyTorch tensors.
+           Dictionary struture should be {'values': [data_points], 'step': step_value}.
+       steps : np.ndarray, optional
+           An array of step values. If not provided, step values are inferred from the data.
+
+       Returns
+       -------
+       list
+           A list of dictionaries representing the distribution table. Each dictionary contains the step, histogram, and mean of the data at that step.
+       """
     import numpy as np
     table = []
 
@@ -152,7 +168,7 @@ def distribution(data: dict[str, Union[
         ----------
         data : dict
             A dictionary where keys are series names and values are lists of data points.
-            Data points can be dictionaries(output from the inspectus.daa_logger), numpy arrays, or PyTorch tensors.
+            Data points can be dictionaries(output from the inspectus.data_logger), numpy arrays, or PyTorch tensors.
         steps : np.ndarray, optional
             An array of step values. If not provided, step values are inferred from the data or generated from 1 to
             data point length.
