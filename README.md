@@ -36,7 +36,7 @@ It provides a set of comprehensive views, making it easier to understand how the
 
 ### Preview
 
-![Inspectus](https://github.com/labmlai/inspectus/raw/main/assets/preview.gif)
+![Attention visualization](https://github.com/labmlai/inspectus/raw/main/assets/preview.gif)
 
 *Click a token to select it and deselect others. Clicking again will select all again. 
 To change the state of only one token, do shift+click*
@@ -147,7 +147,8 @@ the distribution of the data is calculated and maximum of 5 bands are drawn from
 
 
 #### Preview
-![Inspectus](https://github.com/labmlai/inspectus/raw/main/assets/mnist_train_loss_tail.gif)
+
+![MNIST loss distribution plot](https://github.com/labmlai/inspectus/raw/main/assets/mnist_train_loss_tail.png)
 
 #### Usage
 
