@@ -151,7 +151,7 @@ the distribution of the data is calculated and maximum of 5 bands are drawn from
 
 #### Preview
 
-![MNIST loss distribution plot](https://github.com/labmlai/inspectus/raw/main/assets/mnist_train_loss_tail.png)
+![Distribution Plot visualization](https://github.com/labmlai/inspectus/raw/main/assets/dist_preview.gif)
 
 #### Usage
 
