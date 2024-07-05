@@ -119,7 +119,8 @@ with torch.no_grad():
 inspectus.attention(res['attentions'], tokens)
 ```
 
-Check out the notebook here: [Huggingface Tutorial](./notebooks/gpt2.ipynb)
+Check out the notebook here: [Huggingface Tutorial](https://github.com/labmlai/inspectus/blob/main/notebooks/gpt2.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/gpt2.ipynb)
 
 
 #### Custom attention map
@@ -138,7 +139,9 @@ attn = np.random.rand(3, 3)
 inspectus.attention(arr, ['a', 'b', 'c'], ['d', 'e', 'f'])
 ```
 
-Check out the notebook here: [Custom attention map tutorial](./notebooks/custom_attn.ipynb)
+Check out the notebook here: [Custom attention map tutorial](https://github.com/labmlai/inspectus/blob/main/notebooks/custom_attn.ipynb)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/custom_attn.ipynb)
 
 ## Distribution Plot
 The distribution plot is a plot that shows the distribution of a series of data. At each step, 
@@ -160,14 +163,18 @@ inspectus.distribution({'x': [x for x in range(0, 100)]})
 
 To focus on parts of the plot and zoom in, the minimap can be used. To select a single plot, use the legend on the top right.
 
-For comprehensive usage guide please check the notebook here: [Distribution Plot Tutorial](./notebooks/distribution_plot.ipynb)
+For comprehensive usage guide please check the notebook here: [Distribution Plot Tutorial](https://github.com/labmlai/inspectus/blob/main/notebooks/distribution_plot.ipynb)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/distribution_plot.ipynb)
 
 #### Sample Use case
 
 This plot can be used to identify the existence of outliers in the data. Following 
 notebooks demonstrate how to use the distribution plot to identify outliers in the MNIST training loss.
 
-[MNIST](./notebooks/mnist.ipynb)
+[MNIST](https://github.com/labmlai/inspectus/blob/main/notebooks/mnist.ipynb)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/mnist.ipynb)
 
 ## Setting up for Development
 
