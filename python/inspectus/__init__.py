@@ -208,15 +208,16 @@ def distribution(data: dict[str, Union[
             continue
 
         if isinstance(series[0], dict) and 'histogram' in series[0]:
-            table += _histogram_to_table(series, name, include_mean)
+            table += _histogram_to_table(series, name)
         else:
-            table += _histogram_to_table(series_to_distribution(series), name, include_mean)
+            table += _histogram_to_table(series_to_distribution(series), name)
         i += 1
 
     return render(table,
                   levels=levels,
                   alpha=alpha,
                   include_borders=include_borders,
+                  include_mean=include_mean,
                   color_scheme=color_scheme,
                   height=height,
                   width=width,

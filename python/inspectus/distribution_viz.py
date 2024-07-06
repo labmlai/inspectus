@@ -2,7 +2,7 @@ from typing import List
 import altair as alt
 
 
-def _histogram_to_table(data: List[dict], name: str, include_mean: bool = False):
+def _histogram_to_table(data: List[dict], name: str):
     table = []
 
     for i in range(len(data)):
@@ -15,14 +15,9 @@ def _histogram_to_table(data: List[dict], name: str, include_mean: bool = False)
             row[f"v{5 + j}"] = dist[4 + j]
 
         row['step'] = data[i]['step']
-        table.append(row)
+        row['mean'] = data[i]['mean']
 
-        if include_mean:
-            table.append({
-                'series': name + " mean",
-                'v5': data[i]['mean'],
-                'step': data[i]['step']
-            })
+        table.append(row)
 
     return table
 
@@ -31,7 +26,8 @@ def _render_distribution(table: alt.Data, *,
                          x_name: str,
                          levels: int,
                          alpha: float,
-                         include_borders: bool = False,
+                         include_mean: bool,
+                         include_borders: bool,
                          color_scheme: str = 'tableau10',
                          series_selection=None,
                          selection=None,
@@ -93,6 +89,18 @@ def _render_distribution(table: alt.Data, *,
         line += line_up
         line += line_down
 
+    if include_mean:
+        encode_mean = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
+                           y=alt.Y(f"mean:Q", scale=y_scale, title='Value'),
+                           color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+        line_mean = (
+            alt.Chart(table)
+            .mark_line(strokeDash=[1, 1], blend='darken', strokeWidth=2)
+            .encode(**encode_mean)
+        )
+
+        line += line_mean
+
     areas_sum = None
     for a in areas:
         if areas_sum is None:
@@ -115,7 +123,8 @@ def _render_distribution(table: alt.Data, *,
 def render(data: any, *,
            levels=5,
            alpha=0.6,
-           include_borders=False,
+           include_borders,
+           include_mean,
            color_scheme='tableau10',
            height: int,
            width: int,
@@ -131,6 +140,7 @@ def render(data: any, *,
                                     alpha=alpha,
                                     selection=zoom,
                                     include_borders=include_borders,
+                                    include_mean=include_mean,
                                     color_scheme=color_scheme)
 
     details = _render_distribution(table,
@@ -138,6 +148,7 @@ def render(data: any, *,
                                    levels=levels,
                                    alpha=alpha,
                                    include_borders=include_borders,
+                                   include_mean=include_mean,
                                    color_scheme=color_scheme,
                                    series_selection=selection,
                                    x_scale=alt.Scale(domain={"param": zoom.name, "encoding": "x"}),
