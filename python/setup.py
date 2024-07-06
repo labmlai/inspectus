@@ -18,7 +18,10 @@ setuptools.setup(
     },
     packages=['inspectus'],
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'labml>=0.5.2',
+        'altair>=5.3.0'
+    ],
     entry_points={
     },
     classifiers=[
