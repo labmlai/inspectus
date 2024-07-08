@@ -72,9 +72,13 @@ def _render_distribution(table: alt.Data, *,
         encode_down = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
                            y=alt.Y(f"v{5 - levels + 1}:Q", scale=y_scale, title='Value'),
                            color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+        if series_selection:
+            encode_down['opacity'] = alt.condition(series_selection, alt.value(1), alt.value(0.001))
         encode_up = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
                          y=alt.Y(f"v{5 + levels - 1}:Q", scale=y_scale, title='Value'),
                          color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+        if series_selection:
+            encode_up['opacity'] = alt.condition(series_selection, alt.value(1), alt.value(0.001))
 
         line_up = (
             alt.Chart(table)
@@ -93,6 +97,9 @@ def _render_distribution(table: alt.Data, *,
         encode_mean = dict(x=alt.X('step:Q', scale=x_scale, title=x_name),
                            y=alt.Y(f"mean:Q", scale=y_scale, title='Value'),
                            color=alt.Color('series:N', scale=alt.Scale(scheme=color_scheme)))
+        if series_selection:
+            encode_mean['opacity'] = alt.condition(series_selection, alt.value(1), alt.value(0.001))
+
         line_mean = (
             alt.Chart(table)
             .mark_line(strokeDash=[1, 1], blend='darken', strokeWidth=2)
