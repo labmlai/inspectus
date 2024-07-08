@@ -1,4 +1,4 @@
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 from typing import List, Optional, TYPE_CHECKING, Union, Tuple, Dict
 
@@ -88,9 +88,6 @@ def attention(attn: Union[
         color=parse_colors(color),
         dimensions=dimensions
     )
-
-
-__all__ = ['attention']
 
 
 def series_to_distribution(series: Union[
@@ -222,3 +219,6 @@ def distribution(data: dict[str, Union[
                   height=height,
                   width=width,
                   height_minimap=height_minimap)
+
+
+__all__ = ['attention', 'series_to_distribution', 'distribution']

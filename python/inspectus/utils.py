@@ -12,8 +12,12 @@ def convert_b64(data: numpy.ndarray) -> str:
 def to_json(data):
     try:
         import torch
-        if isinstance(data, torch.Tensor):
-            return {'values': data.detach().cpu().numpy().tolist()}
+        with torch.no_grad():
+            if isinstance(data, torch.Tensor):
+                data = data.cpu()
+                if data.dtype == torch.bfloat16:
+                    data = data.float()
+                return {'values': data.numpy().tolist()}
     except ImportError:
         pass
     if isinstance(data, (int, float)):
