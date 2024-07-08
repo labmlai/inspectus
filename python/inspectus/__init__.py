@@ -191,7 +191,7 @@ def distribution(data: dict[str, Union[
         alt.Chart
             An Altair Chart object representing the distribution visualization.
         """
-    from .distribution_viz import render, _histogram_to_table
+    from inspectus.distribution_viz import render, _histogram_to_table
 
     if levels > 5:
         levels = 5
