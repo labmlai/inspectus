@@ -43,7 +43,7 @@ def _scatter_chart(table: alt.Data, *,
                    y_scale: alt.Scale = alt.Undefined) -> alt.Chart:
     base = alt.Chart(table)
     if selection is not None:
-        base = base.add_selection(selection)
+        base = base.add_params(selection)
 
     if not is_ticks:
         scat_x_title = x_name
@@ -116,10 +116,8 @@ def render(tables: List[alt.Data], *,
                                 range_color=TABLEAU_10[i % 10],
                                 height=height,
                                 width=width,
-                                x_scale=alt.Scale(domain={'selection': zoom.name,
-                                                          "encoding": "x"}),
-                                y_scale=alt.Scale(domain={'selection': zoom.name,
-                                                          "encoding": "y"}),
+                                x_scale=alt.Scale(domain={"param": zoom.name, "encoding": "x"}),
+                                y_scale=alt.Scale(domain={"param": zoom.name, "encoding": "y"}),
                                 circle_size=circle_size)
 
         if details is None:
