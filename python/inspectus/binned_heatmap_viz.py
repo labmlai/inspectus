@@ -82,6 +82,7 @@ TODO
 def render(tables: List[alt.Data], *,
            names: List[str],
            x_name: str,
+           max_bins: int,
            height: int,
            width: int,
            height_minimap: int):
@@ -95,6 +96,7 @@ def render(tables: List[alt.Data], *,
                            range_color=TABLEAU_10[i % 10],
                            name='',
                            x_name='',
+                           max_bins=max_bins,
                            selection=z)
         if minimaps is None:
             minimaps = minimap
@@ -108,6 +110,7 @@ def render(tables: List[alt.Data], *,
                           name=names[i],
                           x_name=x_name,
                           range_color=TABLEAU_10[i % 10],
+                          max_bins=max_bins,
                           height=height,
                           width=width,
                           x_scale=alt.Scale(domain={"param": zoom.name, "encoding": "x"}),
