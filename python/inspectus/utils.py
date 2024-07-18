@@ -1,5 +1,6 @@
-import numpy
 import base64
+
+import numpy
 
 
 def convert_b64(data: numpy.ndarray) -> str:
@@ -9,11 +10,32 @@ def convert_b64(data: numpy.ndarray) -> str:
     return b64_str
 
 
+def _to_json(data):
+    try:
+        import torch
+        if isinstance(data, torch.Tensor):
+            with torch.no_grad():
+                data = data.cpu()
+                if data.dtype == torch.bfloat16:
+                    data = data.float()
+                return data.numpy().tolist()
+    except ImportError:
+        pass
+    if isinstance(data, (int, float)):
+        return data
+    if isinstance(data, numpy.ndarray):
+        return data.tolist()
+    elif isinstance(data, dict):
+        return {k: _to_json(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [_to_json(v) for v in data]
+
+
 def to_json(data):
     try:
         import torch
-        with torch.no_grad():
-            if isinstance(data, torch.Tensor):
+        if isinstance(data, torch.Tensor):
+            with torch.no_grad():
                 data = data.cpu()
                 if data.dtype == torch.bfloat16:
                     data = data.float()
@@ -25,6 +47,6 @@ def to_json(data):
     if isinstance(data, numpy.ndarray):
         return {'values': data.tolist()}
     elif isinstance(data, dict):
-        return data
+        return {k: _to_json(v) for k, v in data.items()}
     elif isinstance(data, list):
-        return {'values': data}
+        return {'values': [_to_json(v) for v in data]}
