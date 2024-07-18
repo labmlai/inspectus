@@ -48,6 +48,6 @@ def render(table: alt.Data, *,
     )
     minimap = base.encode(
         alt.X('value:Q', bin=alt.Bin(maxbins=30)),
-    ).add_selection(brush).properties(width=width, height=height_minimap)
+    ).add_params(brush).properties(width=width, height=height_minimap)
 
     return detail & minimap
