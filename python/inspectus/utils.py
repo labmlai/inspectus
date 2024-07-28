@@ -13,6 +13,9 @@ def convert_b64(data: numpy.ndarray) -> str:
 def _to_json(data):
     try:
         import torch
+        import torch.nn
+        if isinstance(data, torch.nn.Parameter):
+            data = data.data
         if isinstance(data, torch.Tensor):
             with torch.no_grad():
                 data = data.cpu()
