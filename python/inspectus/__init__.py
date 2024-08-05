@@ -149,7 +149,6 @@ def distribution(data: dict[str, Union[
     List['torch.Tensor'],
     List['np.ndarray'],
 ]], *,
-                 steps: Optional['np.ndarray'] = None,
                  include_mean: bool = True,
                  include_borders: bool = False,
                  levels=5,
@@ -166,9 +165,6 @@ def distribution(data: dict[str, Union[
         data : dict
             A dictionary where keys are series names and values are lists of data points.
             Data points can be dictionaries(output from the inspectus.data_logger), numpy arrays, or PyTorch tensors.
-        steps : np.ndarray, optional
-            An array of step values. If not provided, step values are inferred from the data or generated from 1 to
-            data point length.
         include_mean : bool, optional
             If True, includes the mean of the data in the visualization. Default is True.
         include_borders : bool, optional
