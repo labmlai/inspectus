@@ -90,6 +90,30 @@ def attention(attn: Union[
     )
 
 
+def compress_series(series, compress_steps=1):
+    """
+    Compresses a series to blocks of `compress_steps`
+
+    Args:
+        series: series as a list of dictionaries
+        compress_steps: number of steps to compress
+
+    Returns:
+
+    """
+    res = []
+    for d in series:
+        values = d['values']
+        if not isinstance(values, list):
+            values = [values]
+        if not res or d['step'] - res[-1]['step'] >= compress_steps:
+            res.append({'step': d['step'], 'values': [] + values})
+        else:
+            res[-1]['values'] += values
+
+    return res
+
+
 def series_to_distribution(series: Union[
     List['dict'],
     List['torch.Tensor'],
