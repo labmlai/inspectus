@@ -176,7 +176,7 @@ def distribution(data: dict[str, Union[
                  include_mean: bool = True,
                  include_borders: bool = False,
                  levels=5,
-                 alpha=0.6,
+                 alpha=0.5,
                  color_scheme='tableau10',
                  height: int = 500,
                  width: int = 700,
