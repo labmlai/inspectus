@@ -40,5 +40,6 @@ export enum ChartType {
     DestTokenHeatmap = 'key_token_heatmap',
     DimensionHeatmap = 'dimension_heatmap',
     TokenDimHeatmap = 'token_dim_heatmap',
-    LineGrid = 'line_grid'
+    LineGrid = 'line_grid',
+    TokenLoss = 'token_loss'
 }

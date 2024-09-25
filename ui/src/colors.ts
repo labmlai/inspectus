@@ -12,7 +12,8 @@ export class PlotColors {
             [ChartType.DestTokenHeatmap]: 'Blues',
             [ChartType.TokenDimHeatmap]: 'Blues',
             [ChartType.DimensionHeatmap]: 'Blues',
-            [ChartType.LineGrid]: 'Blues'
+            [ChartType.LineGrid]: 'Blues',
+            [ChartType.TokenLoss]: 'Blues'
         }
     }
 

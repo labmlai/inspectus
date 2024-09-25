@@ -1,4 +1,5 @@
 import base64
+import pkgutil
 
 import numpy
 
@@ -53,3 +54,24 @@ def to_json(data):
         return {k: _to_json(v) for k, v in data.items()}
     elif isinstance(data, list):
         return {'values': [_to_json(v) for v in data]}
+
+
+def init_inline_viz():
+    html = ''
+
+    try:
+        js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
+        css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
+    except FileNotFoundError:
+        try:
+            js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
+            css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
+        except FileNotFoundError:
+            raise FileNotFoundError('Could not find the static files for the visualization')
+
+    html += f'<script type="text/javascript">{js_file}</script>'
+    html += f'<style>{css_file}</style>'
+
+    from IPython.display import display, HTML
+
+    display(HTML(html))
