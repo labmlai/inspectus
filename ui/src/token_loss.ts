@@ -4,19 +4,22 @@ import {PlotColors} from "./colors";
 import {setAlpha} from "./utils";
 
 class TokenView {
-    private elem: HTMLDivElement;
+    private elem: HTMLElement;
     private menu: HTMLDivElement;
     private token: string;
     private values: TokenValue[];
+    public isNewLine: boolean
 
     constructor(token: string, values: TokenValue[]) {
-        this.token = token;
-        this.values = values;
+      this.isNewLine = /^[\n\r\v]+$/.test(token);
+      this.token = token;
+      this.values = values;
     }
 
     render() {
       return $('div', '.hover-container', $ => {
-        this.elem = $('div', '.token', this.token)
+        this.elem = $('pre', '.token' + (this.isNewLine ? '.new-line' : ''),
+           this.token.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\v/g, '\\v'))
         this.menu = $('div', '.menu', $ => {
           for (let i = 0; i < this.values.length; ++i) {
             $('div', $ => {
@@ -83,6 +86,9 @@ export class StringTokenLoss {
       })
       for (let i = 0; i < this.tokens.length; ++i) {
           elem.appendChild(this.tokenViews[i].render())
+          if (this.tokenViews[i].isNewLine) {
+            elem.appendChild($('br'))
+          }
       }
       for (let i = 0; i < this.tokenValues[0].length; ++i) {
         this.selectElem.appendChild($('option', this.tokenValues[0][i].name))

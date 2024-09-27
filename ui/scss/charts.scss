@@ -1,6 +1,29 @@
-body {
-  background: #eee;
+@media (prefers-color-scheme: dark) {
+
+  .attention-visualization {
+    color: #eee;
+  }
+
+  .attention-visualization {
+    .menu {
+      background-color: #333;
+    }
+  }
 }
+
+@media (prefers-color-scheme: light) {
+
+  .attention-visualization {
+    color: #333;
+  }
+
+  .attention-visualization  {
+    .menu {
+      background-color: #eee;
+    }
+  }
+}
+
 
 .attention-visualization {
   font-family: "Roboto Light", "Ubuntu Light", "Ubuntu", monospace;
@@ -57,6 +80,10 @@ body {
       cursor: pointer;
       margin-bottom: 10px;
       background-clip: padding-box !important;
+
+      &.new-line {
+        opacity: 0.6;
+      }
     }
 
     margin-bottom: 10px;
@@ -102,6 +129,7 @@ body {
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     width: 200px;
+    padding: 5px;
   }
   
   .hover-container:hover .menu {display: block;}
