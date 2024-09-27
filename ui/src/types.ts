@@ -43,3 +43,9 @@ export enum ChartType {
     LineGrid = 'line_grid',
     TokenLoss = 'token_loss'
 }
+
+export interface TokenValue {
+    name: string
+    value: number
+    normalizedValue: number
+}

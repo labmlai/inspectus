@@ -1,4 +1,4 @@
-import {ChartType} from "./types"
+import {ChartType, TokenValue} from "./types"
 import {ChartDataModel} from "./types"
 import {ChartData} from "./data"
 import {Controller} from "./controller";
@@ -28,25 +28,20 @@ window["chartsEmbedTest"] = function() {
     document.body.appendChild(chart.render())
 }
 
-window["tokenViz"] = function(elemId: string, tokens: string[], losses: number[]) {
-    let lossView = new StringTokenLoss(tokens)
+window["tokenViz"] = function(elemId: string, tokens: string[], 
+    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean = true) {
+
+    let tokenValues: TokenValue[][] = []
+    for (let idx = 0; idx < losses[0].length; ++idx) {
+        tokenValues.push(losses.map((loss, i) => ({name: valueNames[i], value: loss[idx], normalizedValue: normalizedLosses[i][idx]})));
+    }
+    console.log(tokenValues)
+    
+    let lossView = new StringTokenLoss(tokens, tokenValues, paddingLess)
     let div = document.createElement('div');
     div.className = "attention-visualization"
     div.appendChild(lossView.render());
-    lossView.setLosses(losses)
 
     document.getElementById(elemId).appendChild(div)
-}
-
-window["tokenVizTest"] = function() {
-    let tokens = ["hello", "world", "this", "is", "a", "test"]
-    let losses = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-    let lossView = new StringTokenLoss(tokens)
-    let div = document.createElement('div');
-    div.className = "attention-visualization"
-    div.appendChild(lossView.render());
-    lossView.setLosses(losses)
-
-    document.body.appendChild(div);
 }
 

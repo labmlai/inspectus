@@ -243,4 +243,4 @@ def distribution(data: dict[str, Union[
 
 __all__ = ['attention', 'series_to_distribution', 'distribution']
 
-from inspectus.token_viz import visalize_token_loss
+from inspectus.token_viz import visualize_token_loss
