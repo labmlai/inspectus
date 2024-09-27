@@ -40,13 +40,7 @@ class TokenView {
       let normalizedValue = value.normalizedValue
 
       this.elem.style.setProperty('background',
-        this.colors.getInterpolatedColor(normalizedValue * 0.8, ChartType.TokenLoss))
-      this.elem.style.setProperty('border-left',
-          `3px solid ${
-          setAlpha(this.colors.getInterpolatedColor(1 - normalizedValue * 0.8, ChartType.TokenLoss), 0.5)}`)
-
-
-      this.elem.style.setProperty('color', this.colors.getInterpolatedTextColor(normalizedValue))
+      this.colors.getInterpolatedColor(normalizedValue * 0.6 + 0.4, ChartType.TokenLoss))
     }
 }
 
