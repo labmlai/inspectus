@@ -1,5 +1,5 @@
 import {Weya as $} from "../lib/weya/weya";
-import {ChartType, TokenValue} from "./types";
+import {ChartType, TokenData, TokenValue} from "./types";
 import {PlotColors} from "./colors";
 import {setAlpha} from "./utils";
 
@@ -10,12 +10,14 @@ class TokenView {
     private values: TokenValue[];
     public isNewLine: boolean
     private colors: PlotColors
+    private info: Object
 
-    constructor(token: string, values: TokenValue[], colors: PlotColors) {
+    constructor(token: string, tokenData: TokenData, colors: PlotColors) {
       this.isNewLine = /^[\n\r\v]+$/.test(token);
       this.token = token;
-      this.values = values;
+      this.values = tokenData.values;
       this.colors = colors;
+      this.info = tokenData.info
     }
 
     render() {
@@ -27,6 +29,14 @@ class TokenView {
             $('div', $ => {
               $('div', `${this.values[i].name}: ${this.values[i].value.toExponential()}`)
             })
+          }
+          $('hr')
+          for (let key in this.info) {
+            if (this.info.hasOwnProperty(key)) {
+              $('div', $ => {
+                $('div', `${key}: ${this.info[key]}`)
+              })
+            }
           }
         })
       })
@@ -49,18 +59,18 @@ export class StringTokenLoss {
     private tokenViews: TokenView[]
     private selectElem: HTMLSelectElement
     private selectedMetric: string
-    private tokenValues: TokenValue[][]
+    private tokenData: TokenData[]
     private paddingLess: boolean
 
-    constructor(tokens: string[], tokenValues: TokenValue[][], colors: PlotColors, paddingLess: boolean = true) {
+    constructor(tokens: string[], tokenData: TokenData[], colors: PlotColors, paddingLess: boolean = true) {
       this.tokens = tokens;
-      this.selectedMetric = tokenValues[0][0].name
-      this.tokenValues = tokenValues
+      this.selectedMetric = tokenData[0].values[0].name
+      this.tokenData = tokenData
       this.paddingLess = paddingLess
 
       this.tokenViews = []
       for (let i = 0; i < this.tokens.length; ++i) {
-        let view = new TokenView(this.tokens[i], tokenValues[i], colors)
+        let view = new TokenView(this.tokens[i], this.tokenData[i], colors)
         this.tokenViews.push(view)
       }
     }
@@ -86,8 +96,8 @@ export class StringTokenLoss {
             elem.appendChild($('br'))
           }
       }
-      for (let i = 0; i < this.tokenValues[0].length; ++i) {
-        this.selectElem.appendChild($('option', this.tokenValues[0][i].name))
+      for (let i = 0; i < this.tokenData[0].values.length; ++i) {
+        this.selectElem.appendChild($('option', this.tokenData[0].values[i].name))
       }
 
       this.selectElem.value = this.selectedMetric

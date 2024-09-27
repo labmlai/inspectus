@@ -44,6 +44,11 @@ export enum ChartType {
     TokenLoss = 'token_loss'
 }
 
+export interface TokenData {
+    values: TokenValue[]
+    info: Object
+}
+
 export interface TokenValue {
     name: string
     value: number

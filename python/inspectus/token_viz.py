@@ -2,7 +2,7 @@ from typing import Optional
 from inspectus.utils import init_inline_viz
 import numpy as np
 
-def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, 
+def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, token_info: Optional[list[dict]] = None,
                          remove_padding: bool = True, color: str = "blue"):
   if isinstance(values, list):
       values = np.array(values)
@@ -21,7 +21,12 @@ def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Opt
 
   if len(set(value_names)) < len(value_names):
       raise ValueError("Duplicate names found in value_names")
-
+  
+  if token_info is not None and len(token_info) != values.shape[1]:
+    raise ValueError("token_info length must match the number of values in dim 1")
+  
+  if token_info is None:
+    token_info = [{} for _ in range(values.shape[1])]
   normalized_values = (values - np.min(values, axis=1, keepdims=True)) / (np.max(values, axis=1, keepdims=True) - np.min(values, axis=1, keepdims=True))
 
   from uuid import uuid1
@@ -31,7 +36,7 @@ def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Opt
 
   html = f'<div id="{elem_id}"></div>'
 
-  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)})</script>'
+  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)}, {json.dumps(token_info)})</script>'
 
   from IPython.display import display, HTML
   init_inline_viz()

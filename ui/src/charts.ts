@@ -1,4 +1,4 @@
-import {ChartType, TokenValue} from "./types"
+import {ChartType, TokenData, TokenValue} from "./types"
 import {ChartDataModel} from "./types"
 import {ChartData} from "./data"
 import {Controller} from "./controller";
@@ -35,19 +35,25 @@ window["chartsEmbedTest"] = function() {
 }
 
 window["tokenViz"] = function(elemId: string, tokens: string[], 
-    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean, color: string) {
-
+    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean, color: string, tokenInfo: Object[]) {
+    console.log(tokenInfo)
     let colorScheme: any = {};
     colorScheme[ChartType.TokenLoss] = color;
     let colors = new PlotColors()
     colors.setColorScheme(colorScheme);
     
-    let tokenValues: TokenValue[][] = []
+    let tokenData: TokenData[] = []
     for (let idx = 0; idx < losses[0].length; ++idx) {
-        tokenValues.push(losses.map((loss, i) => ({name: valueNames[i], value: loss[idx], normalizedValue: normalizedLosses[i][idx]})));
+        let tokenValues = losses.map((loss, i) => ({name: valueNames[i], value: loss[idx], 
+            normalizedValue: normalizedLosses[i][idx], info: tokenInfo[idx]}))
+
+        tokenData[idx] = {
+            values: tokenValues,
+            info: tokenInfo[idx]
+        }
     }
     
-    let lossView = new StringTokenLoss(tokens, tokenValues, colors, paddingLess)
+    let lossView = new StringTokenLoss(tokens, tokenData, colors, paddingLess)
     let div = document.createElement('div');
     div.className = "attention-visualization"
     div.appendChild(lossView.render());
