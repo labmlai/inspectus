@@ -11,10 +11,12 @@ class TokenView {
     private type: string;
     private idx: number | string;
     private selected: boolean;
+    private plotColors: PlotColors;
 
-    constructor(token: string) {
+    constructor(token: string, plotColors: PlotColors) {
         this.token = token;
         this.selected = true
+        this.plotColors = plotColors
     }
 
     render() {
@@ -40,22 +42,22 @@ class TokenView {
     setAttn(value: number) {
         if(this.selected) {
             this.elem.style.setProperty('background',
-                PlotColors.shared.getInterpolatedColor(value * 0.8,
+                this.plotColors.getInterpolatedColor(value * 0.8,
                     this.type == 'src' ? ChartType.SrcTokenHeatmap : ChartType.DestTokenHeatmap))
             this.elem.style.setProperty('border-left',
                 `3px solid ${
-                setAlpha(PlotColors.shared.getInterpolatedColor(1 - value * 0.8, 
+                setAlpha(this.plotColors.getInterpolatedColor(1 - value * 0.8, 
                     this.type == 'src' ? ChartType.SrcTokenHeatmap : ChartType.DestTokenHeatmap), 0.5)}`)
         } else {
             this.elem.style.setProperty('background',
-                PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
+                this.plotColors.getInterpolatedSecondaryColor(value * 0.8))
             this.elem.style.setProperty('border-left',
                 `3px solid ${
-                setAlpha(PlotColors.shared.getInterpolatedSecondaryColor( 1 - value * 0.8), 0.5)}`)
+                setAlpha(this.plotColors.getInterpolatedSecondaryColor( 1 - value * 0.8), 0.5)}`)
         }
 
 
-        this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(value))
+        this.elem.style.setProperty('color', this.plotColors.getInterpolatedTextColor(value))
 
         this.elem.title = value.toExponential()
     }
@@ -69,14 +71,15 @@ export class StringTokenHeatmap {
     private tokens: StringTokens;
     private tokenViews: TokenView[]
     private title: string
-
-    constructor(tokens: StringTokens, title: string) {
+    private plotColors: PlotColors
+    constructor(tokens: StringTokens, title: string, plotColors: PlotColors) {
         this.tokens = tokens;
         this.title = title
+        this.plotColors = plotColors
 
         this.tokenViews = []
         for (let i = 0; i < this.tokens.length; ++i) {
-            let view = new TokenView(this.tokens.tokens[i])
+            let view = new TokenView(this.tokens.tokens[i], this.plotColors)
             this.tokenViews.push(view)
         }
 

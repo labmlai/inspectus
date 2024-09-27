@@ -11,10 +11,12 @@ class ValueView {
     private type: string;
     private idx: number | string;
     private selected: boolean;
+    private plotColors: PlotColors;
 
-    constructor(value: string) {
+    constructor(value: string, plotColors: PlotColors) {
         this.value = value;
         this.selected = true
+        this.plotColors = plotColors
     }
 
     render() {
@@ -43,11 +45,11 @@ class ValueView {
 
     setAttn(value: number) {
         if(this.selected) {
-            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.DimensionHeatmap))
+            this.elem.style.setProperty('background', this.plotColors.getInterpolatedColor(value * 0.8, ChartType.DimensionHeatmap))
         } else {
-            this.elem.style.setProperty('background', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
+            this.elem.style.setProperty('background', this.plotColors.getInterpolatedSecondaryColor(value * 0.8))
         }
-        this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(value))
+        this.elem.style.setProperty('color', this.plotColors.getInterpolatedTextColor(value))
 
         this.elem.title = value.toExponential()
     }
@@ -61,14 +63,16 @@ export class DimensionHeatmap {
     private values: string[];
     private valueViews: {[value: DimValue]: ValueView}
     private name: string;
+    private plotColors: PlotColors;
 
-    constructor(values: string[], name: string) {
+    constructor(values: string[], name: string, plotColors: PlotColors) {
         this.values = values;
         this.name = name;
+        this.plotColors = plotColors;
 
         this.valueViews = {}
         for (let v of this.values) {
-            let view = new ValueView(v)
+            let view = new ValueView(v, this.plotColors)
             this.valueViews[v] = view
         }
 

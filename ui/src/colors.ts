@@ -2,10 +2,9 @@ import * as d3 from "../lib/d3/d3"
 import {ChartType} from "./types"
 
 export class PlotColors {
-    public static shared = new PlotColors()
     private colorSchemes: Record<ChartType, string>
 
-    private constructor() {
+    constructor() {
         this.colorSchemes = {
             [ChartType.AttentionMatrix]: 'Blues',
             [ChartType.SrcTokenHeatmap]: 'Blues',

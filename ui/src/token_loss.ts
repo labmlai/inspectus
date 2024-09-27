@@ -9,11 +9,13 @@ class TokenView {
     private token: string;
     private values: TokenValue[];
     public isNewLine: boolean
+    private colors: PlotColors
 
-    constructor(token: string, values: TokenValue[]) {
+    constructor(token: string, values: TokenValue[], colors: PlotColors) {
       this.isNewLine = /^[\n\r\v]+$/.test(token);
       this.token = token;
       this.values = values;
+      this.colors = colors;
     }
 
     render() {
@@ -38,13 +40,13 @@ class TokenView {
       let normalizedValue = value.normalizedValue
 
       this.elem.style.setProperty('background',
-        PlotColors.shared.getInterpolatedColor(normalizedValue * 0.8, ChartType.TokenLoss))
+        this.colors.getInterpolatedColor(normalizedValue * 0.8, ChartType.TokenLoss))
       this.elem.style.setProperty('border-left',
           `3px solid ${
-          setAlpha(PlotColors.shared.getInterpolatedColor(1 - normalizedValue * 0.8, ChartType.TokenLoss), 0.5)}`)
+          setAlpha(this.colors.getInterpolatedColor(1 - normalizedValue * 0.8, ChartType.TokenLoss), 0.5)}`)
 
 
-      this.elem.style.setProperty('color', PlotColors.shared.getInterpolatedTextColor(normalizedValue))
+      this.elem.style.setProperty('color', this.colors.getInterpolatedTextColor(normalizedValue))
     }
 }
 
@@ -56,7 +58,7 @@ export class StringTokenLoss {
     private tokenValues: TokenValue[][]
     private paddingLess: boolean
 
-    constructor(tokens: string[], tokenValues: TokenValue[][], paddingLess: boolean = true) {
+    constructor(tokens: string[], tokenValues: TokenValue[][], colors: PlotColors, paddingLess: boolean = true) {
       this.tokens = tokens;
       this.selectedMetric = tokenValues[0][0].name
       this.tokenValues = tokenValues
@@ -64,7 +66,7 @@ export class StringTokenLoss {
 
       this.tokenViews = []
       for (let i = 0; i < this.tokens.length; ++i) {
-        let view = new TokenView(this.tokens[i], tokenValues[i])
+        let view = new TokenView(this.tokens[i], tokenValues[i], colors)
         this.tokenViews.push(view)
       }
     }
