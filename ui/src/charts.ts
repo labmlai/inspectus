@@ -29,19 +29,22 @@ window["chartsEmbedTest"] = function() {
 }
 
 window["tokenViz"] = function(elemId: string, tokens: string[], 
-    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean = true) {
+    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean, color: string) {
 
+    let colorScheme: any = {};
+    colorScheme[ChartType.TokenLoss] = color;
+    PlotColors.shared.setColorScheme(colorScheme);
+    
     let tokenValues: TokenValue[][] = []
     for (let idx = 0; idx < losses[0].length; ++idx) {
         tokenValues.push(losses.map((loss, i) => ({name: valueNames[i], value: loss[idx], normalizedValue: normalizedLosses[i][idx]})));
     }
-    console.log(tokenValues)
     
     let lossView = new StringTokenLoss(tokens, tokenValues, paddingLess)
     let div = document.createElement('div');
     div.className = "attention-visualization"
     div.appendChild(lossView.render());
 
+
     document.getElementById(elemId).appendChild(div)
 }
-

@@ -2,7 +2,8 @@ from typing import Optional
 from inspectus.utils import init_inline_viz
 import numpy as np
 
-def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, remove_padding: bool = True):
+def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, 
+                         remove_padding: bool = True, color: str = "blue"):
   if isinstance(values, list):
       values = np.array(values)
   
@@ -30,7 +31,7 @@ def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Opt
 
   html = f'<div id="{elem_id}"></div>'
 
-  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)})</script>'
+  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)})</script>'
 
   from IPython.display import display, HTML
   init_inline_viz()
