@@ -126,11 +126,13 @@
   .menu {
     display: none;
     position: absolute;
-    width: fit-content;
+    width: max-content;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    width: 200px;
+    min-width: 100px;
+    max-width: 500px;
     padding: 5px;
+    white-space: nowrap;
   }
   
   .hover-container:hover .menu {display: block;}
