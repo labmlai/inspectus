@@ -2,7 +2,7 @@ from typing import Optional
 from inspectus.utils import init_inline_viz
 import numpy as np
 
-def visualize_token_loss(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, token_info: Optional[list[dict]] = None,
+def visualize_tokens(tokens: list[str], values: np.ndarray, value_names: Optional[list[str]] = None, token_info: Optional[list[dict]] = None,
                          remove_padding: bool = True, color: str = "blue"):
   if isinstance(values, list):
       values = np.array(values)
