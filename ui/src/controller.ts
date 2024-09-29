@@ -14,6 +14,7 @@ import {AttentionMatrix, ChartType, Dimension, Dimensions, DimValue, GridAttenti
 import {DimensionHeatmap} from "./dimensions";
 import {TokenDimHeatmapView} from "./token_dim_heatmap";
 import {LineGridView} from "./line_grid";
+import {PlotColors} from "./colors";
 
 
 interface StringTokensModel {
@@ -62,7 +63,7 @@ export class Controller {
     private readonly chartTypes: ChartType[]
 
     constructor(dimensions: Dimension[], attentions: AttentionMatrix[],
-                srcTokens: StringTokensModel, dstTokens: StringTokensModel, chartTypes: ChartType[] = [ChartType.AttentionMatrix]) {
+                srcTokens: StringTokensModel, dstTokens: StringTokensModel, chartTypes: ChartType[] = [ChartType.AttentionMatrix], plotColors: PlotColors) {
         this.attentions = attentions
         this.srcTokens = new StringTokens(srcTokens)
         this.dstTokens = new StringTokens(dstTokens)
@@ -72,10 +73,10 @@ export class Controller {
         for (let d of this.dimensions) {
             this.dimensionsMap[d.name] = d
         }
-        this.attentionMatrixView = new AttentionMatrixView(this.srcTokens, this.dstTokens)
+        this.attentionMatrixView = new AttentionMatrixView(this.srcTokens, this.dstTokens, plotColors)
 
-        this.srcTokenHeatmap = new StringTokenHeatmap(this.srcTokens, "Query Tokens")
-        this.dstTokenHeatmap = new StringTokenHeatmap(this.dstTokens, "Key Tokens")
+        this.srcTokenHeatmap = new StringTokenHeatmap(this.srcTokens, "Query Tokens", plotColors)
+        this.dstTokenHeatmap = new StringTokenHeatmap(this.dstTokens, "Key Tokens", plotColors)
 
         this.srcTokenHeatmap.addClickHandler('src', this.onSelected)
         this.dstTokenHeatmap.addClickHandler('dst', this.onSelected)
@@ -113,14 +114,14 @@ export class Controller {
             for (let v in this.selected[dim.name]) {
                 values.push(v)
             }
-            let heatmap = new DimensionHeatmap(values, dim.name)
+            let heatmap = new DimensionHeatmap(values, dim.name, plotColors)
 
             heatmap.addClickHandler(dim.name, this.onSelected)
             this.dimensionHeatmaps.push(heatmap)
         }
 
         this.tokenDimHeatmap = new TokenDimHeatmapView(this.dstTokens, this.dimensionsMap,
-            this.onTokenHeatmapDimChange)
+            this.onTokenHeatmapDimChange, plotColors)
         this.lineGridView = new LineGridView(this.srcTokens, this.dstTokens, this.dimensionsMap,
             this.onLineGridDimChange)
 

@@ -9,8 +9,10 @@ class CellView {
     private elem: SVGRectElement;
     private selected: boolean;
     private titleElem: SVGTitleElement
+    private plotColors: PlotColors;
 
-    constructor() {
+    constructor(plotColors: PlotColors) {
+        this.plotColors = plotColors
     }
 
     render(row: number, col: number, cellSize: number) {
@@ -29,9 +31,9 @@ class CellView {
 
     setAttn(value: number) {
         if (this.selected) {
-            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedColor(value * 0.8, ChartType.TokenDimHeatmap))
+            this.elem.style.setProperty('fill', this.plotColors.getInterpolatedColor(value * 0.8, ChartType.TokenDimHeatmap))
         } else {
-            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedSecondaryColor(value * 0.8))
+            this.elem.style.setProperty('fill', this.plotColors.getInterpolatedSecondaryColor(value * 0.8))
         }
 
         this.titleElem.textContent = value.toExponential()
@@ -49,7 +51,7 @@ export class TokenDimHeatmapView {
     handler: any;
     private cellSize: number;
     private leftLabelsMargin: number;
-    private cells: CellView[][]
+    private cells: CellView[][];
     private labelCellGap: number;
     private dimensions: Dimensions
     selectedDimension: string;
@@ -58,11 +60,13 @@ export class TokenDimHeatmapView {
     private elem: HTMLDivElement;
     private tokenDim: { [p: DimValue]: number }[];
     private selected: { [p: DimValue]: boolean };
+    private plotColors: PlotColors;
 
-    constructor(tokens: Tokens, dimensions: Dimensions, handler: any) {
+    constructor(tokens: Tokens, dimensions: Dimensions, handler: any, plotColors: PlotColors) {
         this.tokens = tokens
         this.dimensions = dimensions
         this.handler = handler;
+        this.plotColors = plotColors;
 
         this.tokenElems = []
         for (let i = 0; i < tokens.length; ++i) {
@@ -155,7 +159,7 @@ export class TokenDimHeatmapView {
         for (let i = 0; i < this.tokens.length; ++i) {
             this.cells.push([])
             for (let j = 0; j < dim.values.length; ++j) {
-                this.cells[i].push(new CellView())
+                this.cells[i].push(new CellView(this.plotColors))
                 grid.appendChild(this.cells[i][j].render(i, j, this.cellSize))
             }
         }

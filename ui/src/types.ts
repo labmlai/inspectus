@@ -40,5 +40,17 @@ export enum ChartType {
     DestTokenHeatmap = 'key_token_heatmap',
     DimensionHeatmap = 'dimension_heatmap',
     TokenDimHeatmap = 'token_dim_heatmap',
-    LineGrid = 'line_grid'
+    LineGrid = 'line_grid',
+    TokenLoss = 'token_loss'
+}
+
+export interface TokenData {
+    values: TokenValue[]
+    info: Object
+}
+
+export interface TokenValue {
+    name: string
+    value: number
+    normalizedValue: number
 }

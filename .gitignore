@@ -26,3 +26,7 @@ build/
 /ui/node_modules/
 /ui/lib/weya
 
+*logs/
+*.jsonl
+scratch.txt
+*.pt

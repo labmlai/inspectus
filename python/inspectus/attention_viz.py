@@ -4,7 +4,7 @@ from typing import List, NamedTuple, Dict, Union, Tuple
 
 import numpy as np
 
-from inspectus.utils import convert_b64
+from inspectus.utils import convert_b64, init_inline_viz
 
 CHART_TYPES = ['attention_matrix', 'query_token_heatmap', 'key_token_heatmap', 'dimension_heatmap', 'token_dim_heatmap', 'line_grid']
 DEFAULT_COLOR = 'blue'
@@ -32,28 +32,6 @@ def parse_colors(color: Union[str, Dict[str, str]]):
         color_json[k] = v
 
     return color_json
-
-
-
-def _init_inline_viz():
-    html = ''
-
-    try:
-        js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
-        css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
-    except FileNotFoundError:
-        try:
-            js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
-            css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
-        except FileNotFoundError:
-            raise FileNotFoundError('Could not find the static files for the visualization')
-
-    html += f'<script type="text/javascript">{js_file}</script>'
-    html += f'<style>{css_file}</style>'
-
-    from IPython.display import display, HTML
-
-    display(HTML(html))
 
 
 class AttentionMap(NamedTuple):
@@ -162,8 +140,7 @@ def attention_chart(*,
         'chart_types': chart_types,
         'dimensions': dimensions,
     })
-
-    _init_inline_viz()
+    init_inline_viz()
 
     from uuid import uuid1
     elem_id = 'id_' + uuid1().hex

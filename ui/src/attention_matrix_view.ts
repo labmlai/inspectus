@@ -10,8 +10,10 @@ class CellView {
     private elem: SVGRectElement;
     private selected: boolean;
     private titleElem: SVGTitleElement
+    private plotColors: PlotColors
 
-    constructor() {
+    constructor(plotColors: PlotColors) {
+        this.plotColors = plotColors
     }
 
     render(row: number, col: number, cellSize: number) {
@@ -29,9 +31,9 @@ class CellView {
 
     setAttn(value: number) {
         if (this.selected) {
-            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedColor(value, ChartType.AttentionMatrix))
+            this.elem.style.setProperty('fill', this.plotColors.getInterpolatedColor(value, ChartType.AttentionMatrix))
         } else {
-            this.elem.style.setProperty('fill', PlotColors.shared.getInterpolatedSecondaryColor(value))
+            this.elem.style.setProperty('fill', this.plotColors.getInterpolatedSecondaryColor(value))
         }
         this.titleElem.textContent = value.toExponential()
     }
@@ -56,7 +58,7 @@ export class AttentionMatrixView {
     private srcLabels: SVGElement[]
     private dstLabels: SVGElement[]
 
-    constructor(srcTokens: Tokens, dstTokens: Tokens) {
+    constructor(srcTokens: Tokens, dstTokens: Tokens, plotColors: PlotColors) {
         this.srcTokens = srcTokens
         this.dstTokens = dstTokens
 
@@ -79,7 +81,7 @@ export class AttentionMatrixView {
         for (let i = 0; i < srcTokens.length; ++i) {
             this.cells.push([])
             for (let j = 0; j < dstTokens.length; ++j) {
-                this.cells[i].push(new CellView())
+                this.cells[i].push(new CellView(plotColors))
             }
         }
 
