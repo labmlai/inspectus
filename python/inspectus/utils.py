@@ -40,7 +40,7 @@ def to_json(data):
         import torch
         if isinstance(data, torch.Tensor):
             with torch.no_grad():
-                data = data.cpu()
+                data = data.clone().cpu()
                 if data.dtype == torch.bfloat16:
                     data = data.float()
                 return {'values': data.numpy().tolist()}
