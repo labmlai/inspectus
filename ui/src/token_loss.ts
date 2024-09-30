@@ -53,6 +53,8 @@ class TokenView {
       let normalizedValue = value.normalizedValue
 
       this.elem.style.setProperty('background',
+      window.matchMedia('(prefers-color-scheme: light)').matches ? 
+      this.colors.getInterpolatedColor(1 - (normalizedValue * 0.6 + 0.4), ChartType.TokenLoss) :
       this.colors.getInterpolatedColor(normalizedValue * 0.6 + 0.4, ChartType.TokenLoss))
     }
 }
