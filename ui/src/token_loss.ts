@@ -19,6 +19,14 @@ class TokenView {
       this.info = tokenData.info
     }
 
+    updateMenuPosition() {
+      const rect = this.elem.getBoundingClientRect();
+      const midPoint = window.innerWidth / 2;
+      if (rect.left > midPoint) {
+        this.menu.classList.add('right-align');
+      }
+    }
+
     render() {
       return $('div', '.hover-container', $ => {
         this.elem = $('pre', '.token' + (this.isNewLine ? '.new-line' : ''),
@@ -74,6 +82,12 @@ export class StringTokenLoss {
       this.selectedMetric = this.selectElem.value
       for (let i = 0; i < this.tokens.length; ++i) {
         this.tokenViews[i].setValue(this.selectedMetric)
+      }
+    }
+
+    updateMenuPosition() {
+      for (let i = 0; i < this.tokens.length; ++i) {
+        this.tokenViews[i].updateMenuPosition()
       }
     }
 

@@ -22,7 +22,7 @@ def visualize_tokens(tokens: list[str], values: dict[str, list[float]], token_in
   html = f'<div id="{elem_id}"></div>'
 
   script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color_scheme)}, {json.dumps(token_info)})</script>'
-  print(value_names)
+
   from IPython.display import display, HTML
   init_inline_viz()
   display(HTML(html + script))

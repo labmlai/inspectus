@@ -58,6 +58,7 @@ window["tokenViz"] = function(elemId: string, tokens: string[],
     div.className = "attention-visualization"
     div.appendChild(lossView.render());
 
-
     document.getElementById(elemId).appendChild(div)
+
+    lossView.updateMenuPosition()
 }

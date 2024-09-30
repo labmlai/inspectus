@@ -27,6 +27,7 @@
 
 .attention-visualization {
   font-family: "Roboto Light", "Ubuntu Light", "Ubuntu", monospace;
+  overflow-y: scroll;
 
   .title {
     padding-top: 10px;
@@ -91,6 +92,7 @@
 
   .token-value-container {
     padding-bottom: 100px;
+    width: calc(100% - 20px);
 
     &.padding-less {
       .token {
@@ -133,6 +135,16 @@
     max-width: 500px;
     padding: 5px;
     white-space: nowrap;
+
+    pre {
+      background-color: transparent;
+      text-wrap: wrap;
+    }
+  }
+
+  .menu.right-align {
+    right: 0;
+    left: auto;
   }
   
   .hover-container:hover .menu {display: block;}
