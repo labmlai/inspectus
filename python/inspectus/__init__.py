@@ -115,7 +115,7 @@ def compress_series(series, compress_steps=1):
 
 
 def series_to_distribution(series: Union[
-    List['dict'],
+    List[Dict],
     List['torch.Tensor'],
     List['np.ndarray'],
 ], steps: 'np.ndarray' = None):
@@ -124,7 +124,7 @@ def series_to_distribution(series: Union[
 
        Parameters
        ----------
-       series : Union[List['dict'], List['torch.Tensor'], List['np.ndarray']]
+       series : Union[List[Dict], List['torch.Tensor'], List['np.ndarray']]
            A list of data points. Data points can be dictionaries, numpy arrays, or PyTorch tensors.
            Dictionary struture should be {'values': [data_points], 'step': step_value}.
        steps : np.ndarray, optional
@@ -168,8 +168,8 @@ def series_to_distribution(series: Union[
     return table
 
 
-def distribution(data: dict[str, Union[
-    List['dict'],
+def distribution(data: Dict[str, Union[
+    List[Dict],
     List['torch.Tensor'],
     List['np.ndarray'],
 ]], *,
@@ -241,8 +241,14 @@ def distribution(data: dict[str, Union[
                   height_minimap=height_minimap)
 
 
-def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Optional[list[str]] = None,
-                     remove_padding: bool = True, color_scheme: str = "tableau10"):
+ArrayLike = Union['torch.Tensor', 'np.ndarray', List[float]]
+
+
+def tokens(tokens: List[str],
+           values: Union[ArrayLike, Dict[str, ArrayLike]], *,
+           token_info: Optional[list[str]] = None,
+           remove_padding: bool = True,
+           color_scheme: str = "tableau10"):
     """
     Visualize metrics related to tokens
 
@@ -250,7 +256,7 @@ def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Option
     ----------
     tokens : list[str]
         List of tokens
-    values : dict[str, list[float]]
+    values : (ArrayLike or dict[str, ArrayLike])
         Values to visualize. (key: name, value: list of values with shape [num_tokens])
     token_info : Optional[list[str]]
         Aditional info about the tokens. Shape [num_tokens]
@@ -259,7 +265,10 @@ def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Option
     color_scheme : str
         The color scheme to use for the visualization. Default is 'tableau10'.
     """
-    
+
+    if not isinstance(values, dict):
+        values = {'value': values}
+
     for value_list in values.values():
         if len(value_list) != len(tokens):
             raise ValueError("All value lists must have the same length as the tokens list")
@@ -269,7 +278,9 @@ def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Option
 
     from inspectus.token_viz import visualize_tokens
 
-    visualize_tokens(tokens, values, token_info, remove_padding, color_scheme)
+    visualize_tokens(tokens, values,
+                     token_info=token_info,
+                     remove_padding=remove_padding, color_scheme=color_scheme)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']

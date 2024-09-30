@@ -2,7 +2,8 @@ from typing import Optional
 from inspectus.utils import init_inline_viz
 import numpy as np
 
-def visualize_tokens(tokens: list[str], values: dict[str, list[float]], token_info: Optional[list[str]],
+def visualize_tokens(tokens: List[str], values: Dict[str, List[float]], *,
+                     token_info: Optional[List[str]],
                          remove_padding: bool, color_scheme: str):
   if token_info is None:
     token_info = [{} for _ in range(len(tokens))]
