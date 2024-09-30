@@ -242,7 +242,7 @@ def distribution(data: dict[str, Union[
 
 
 def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Optional[list[str]] = None,
-                     remove_padding: bool = True, color: str = "blue"):
+                     remove_padding: bool = True, color_scheme: str = "tableau10"):
     """
     Visualize metrics related to tokens
 
@@ -250,20 +250,26 @@ def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Option
     ----------
     tokens : list[str]
         List of tokens
-    values : np.ndarray
-        Values to visualize. Shape [num_tokens] or [num_metrics, num_tokens]
-    value_names : Optional[list[str]]
-        Names of the values
-    token_info : Optional[list[dict]]
-        Info about the tokens.
+    values : dict[str, list[float]]
+        Values to visualize. (key: name, value: list of values with shape [num_tokens])
+    token_info : Optional[list[str]]
+        Aditional info about the tokens. Shape [num_tokens]
     remove_padding : bool
         Whether to remove padding in the visualization
-    color : str
-        Color of the chart
+    color_scheme : str
+        The color scheme to use for the visualization. Default is 'tableau10'.
     """
+    
+    for value_list in values.values():
+        if len(value_list) != len(tokens):
+            raise ValueError("All value lists must have the same length as the tokens list")
+
+    if token_info is not None and len(token_info) != len(tokens):
+        raise ValueError("token_info must have the same length as the tokens list")
+
     from inspectus.token_viz import visualize_tokens
 
-    visualize_tokens(tokens, values, token_info, remove_padding, color)
+    visualize_tokens(tokens, values, token_info, remove_padding, color_scheme)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']
