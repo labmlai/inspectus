@@ -35,8 +35,8 @@ window["chartsEmbedTest"] = function() {
 }
 
 window["tokenViz"] = function(elemId: string, tokens: string[], 
-    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean, color: string, tokenInfo: Object[]) {
-    console.log(tokenInfo)
+    losses: number[][], normalizedLosses: number[][], valueNames: string[] | null, paddingLess: boolean, color: string, tokenInfo: string[]) {
+    
     let colorScheme: any = {};
     colorScheme[ChartType.TokenLoss] = color;
     let colors = new PlotColors()

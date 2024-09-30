@@ -241,8 +241,8 @@ def distribution(data: dict[str, Union[
                   height_minimap=height_minimap)
 
 
-def tokens(tokens: list[str], values: 'np.ndarray', value_names: Optional[list[str]] = None, token_info: Optional[list[dict]] = None,
-                         remove_padding: bool = True, color: str = "blue"):
+def tokens(tokens: list[str], values: dict[str, list[float]], token_info: Optional[list[str]] = None,
+                     remove_padding: bool = True, color: str = "blue"):
     """
     Visualize metrics related to tokens
 
@@ -263,7 +263,7 @@ def tokens(tokens: list[str], values: 'np.ndarray', value_names: Optional[list[s
     """
     from inspectus.token_viz import visualize_tokens
 
-    visualize_tokens(tokens, values, value_names, token_info, remove_padding, color)
+    visualize_tokens(tokens, values, token_info, remove_padding, color)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']

@@ -1,7 +1,6 @@
 import {Weya as $} from "../lib/weya/weya";
 import {ChartType, TokenData, TokenValue} from "./types";
 import {PlotColors} from "./colors";
-import {setAlpha} from "./utils";
 
 class TokenView {
     private elem: HTMLElement;
@@ -10,7 +9,7 @@ class TokenView {
     private values: TokenValue[];
     public isNewLine: boolean
     private colors: PlotColors
-    private info: Object
+    private info: string
 
     constructor(token: string, tokenData: TokenData, colors: PlotColors) {
       this.isNewLine = /^[\n\r\v]+$/.test(token);
@@ -31,12 +30,8 @@ class TokenView {
             })
           }
           $('hr')
-          for (let key in this.info) {
-            if (this.info.hasOwnProperty(key)) {
-              $('div', $ => {
-                $('div', `${key}: ${this.info[key]}`)
-              })
-            }
+          if (this.info != null) {
+            $('pre', this.info)
           }
         })
       })
