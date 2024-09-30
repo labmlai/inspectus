@@ -20,7 +20,7 @@ Inspectus is a versatile visualization tool for machine learning. It runs smooth
   - [Preview](#preview-1)
   - [Usage](#usage-1)
   - [Sample Use case](#sample-use-case)
-- [Token Visualization](#token-viz)
+- [Token Visualization](#token-visualization)
   - [Preview](#preview-2)
   - [Usage](#usage-1)
 - [Setting up for Development](#setting-up-for-development)
