@@ -46,7 +46,7 @@ export enum ChartType {
 
 export interface TokenData {
     values: TokenValue[]
-    info: Object
+    info: string
 }
 
 export interface TokenValue {
