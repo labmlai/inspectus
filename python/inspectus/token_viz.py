@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict
 from inspectus.utils import init_inline_viz
 import numpy as np
 
