@@ -163,4 +163,8 @@
   }
   
   .hover-container:hover .menu {display: block;}
+
+  .hover-container:hover {
+    border: 1px solid #878686;
+  }
 }
