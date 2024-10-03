@@ -30,3 +30,5 @@ build/
 *.jsonl
 scratch.txt
 *.pt
+
+/python/inspectus/settings.py

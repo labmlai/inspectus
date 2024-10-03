@@ -1,7 +1,10 @@
 import base64
 import pkgutil
 from typing import Dict, Callable
+from inspectus import settings
 import numpy
+import os
+from dotenv import load_dotenv
 
 
 def convert_b64(data: numpy.ndarray) -> str:
@@ -59,15 +62,25 @@ def to_json(data):
 def init_inline_viz():
     html = ''
 
-    try:
-        js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
-        css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
-    except FileNotFoundError:
+    is_debug = settings.IS_DEBUG
+    print(is_debug, os.getcwd())
+    if is_debug:
+        print("Debug Mode: Ignoring static folder")
         try:
             js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
             css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
         except FileNotFoundError:
-            raise FileNotFoundError('Could not find the static files for the visualization')
+            raise FileNotFoundError('Could not find the static files for the visualization in debug mode')
+    else:
+        try:
+            js_file = pkgutil.get_data('inspectus', "static/js/charts.js").decode('utf-8')
+            css_file = pkgutil.get_data('inspectus', "static/css/charts.css").decode('utf-8')
+        except FileNotFoundError:
+            try:
+                js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
+                css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
+            except FileNotFoundError:
+                raise FileNotFoundError('Could not find the static files for the visualization')
 
     html += f'<script type="text/javascript">{js_file}</script>'
     html += f'<style>{css_file}</style>'
