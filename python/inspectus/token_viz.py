@@ -2,9 +2,9 @@ from typing import Optional, List, Dict
 from inspectus.utils import init_inline_viz
 import numpy as np
 
-def visualize_tokens(tokens: List[str], values: Dict[str, List[float]], *,
+def visualize_tokens(tokens: List[str], values: Dict[str, List[float]],
                      token_info: Optional[List[str]],
-                         remove_padding: bool, color: str):
+                     remove_padding: bool, color: str, theme: str):
   if token_info is None:
     token_info = [{} for _ in range(len(tokens))]
 
@@ -22,7 +22,7 @@ def visualize_tokens(tokens: List[str], values: Dict[str, List[float]], *,
 
   html = f'<div id="{elem_id}"></div>'
 
-  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)}, {json.dumps(token_info)})</script>'
+  script = f'<script>window.tokenViz(\'{elem_id}\',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)}, {json.dumps(token_info)}, {json.dumps(theme)})</script>'
 
   from IPython.display import display, HTML
   init_inline_viz()

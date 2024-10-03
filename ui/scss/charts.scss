@@ -1,39 +1,40 @@
-@media (prefers-color-scheme: dark) {
+.attention-visualization {
+  color: #000000;
+  background-color: #ffffff;
+  .menu {
+    background-color: #eee;
+    color: #000000;
 
-  .attention-visualization {
-    color: #eee;
-
-    svg {
-      text {
-        stroke: #eee;
-        fill: #eee;
-      }
+    pre {
+      color: #000000;
+      background-color: #eee;
     }
   }
 
-  .attention-visualization {
+  svg {
+    text {
+      fill: #000000;
+    }
+  }
+
+  &.dark-theme {
+    color: #ffffff;
+    background-color: #000000;
+
     .menu {
       background-color: #333;
+      color: #ffffff;
+
+      pre {
+        color: #ffffff;
+        background-color: #333;
+      }
     }
-  }
-}
-
-@media (prefers-color-scheme: light) {
-
-  .attention-visualization {
-    color: #333;
 
     svg {
       text {
-        stroke: #333;
-        fill: #333;
+        fill: #ffffff;
       }
-    }
-  }
-
-  .attention-visualization  {
-    .menu {
-      background-color: #eee;
     }
   }
 }

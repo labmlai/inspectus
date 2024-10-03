@@ -31,6 +31,8 @@ class TokenView {
       return $('div', '.hover-container', $ => {
         this.elem = $('pre', '.token' + (this.isNewLine ? '.new-line' : ''),
            this.token.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\v/g, '\\v'))
+        this.elem.style.setProperty('color', this.colors.getFilledTextColor())
+        
         this.menu = $('div', '.menu', $ => {
           for (let i = 0; i < this.values.length; ++i) {
             $('div', $ => {
@@ -52,10 +54,7 @@ class TokenView {
       }
       let normalizedValue = value.normalizedValue
 
-      this.elem.style.setProperty('background',
-      window.matchMedia('(prefers-color-scheme: light)').matches ? 
-      this.colors.getInterpolatedColor(1 - (normalizedValue * 0.6 + 0.4), ChartType.TokenLoss) :
-      this.colors.getInterpolatedColor(normalizedValue * 0.6 + 0.4, ChartType.TokenLoss))
+      this.elem.style.setProperty('background', this.colors.getInterpolatedColor(normalizedValue, ChartType.TokenLoss))
     }
 }
 

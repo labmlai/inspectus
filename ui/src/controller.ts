@@ -422,8 +422,14 @@ export class Controller {
         }
     }
 
-    render() {
+    render(theme: string) {
         let elem = $('div', '.attention-visualization')
+        if (theme === 'auto') {
+            theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        }
+        if (theme === 'dark') {
+            elem.classList.add('dark-theme')
+        }
 
         if (this.chartTypes.includes(ChartType.AttentionMatrix)) {
             elem.appendChild(this.attentionMatrixView.render())

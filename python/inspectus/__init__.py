@@ -26,7 +26,7 @@ def attention(attn: Union[
     Tuple['torch.Tensor', ...],
 ],
               query_tokens: Optional[List['str']], key_tokens: Optional[List['str']] = None, *,
-              chart_types: Optional[List['str']] = None, color: Union[str, Dict[str, str]] = None):
+              chart_types: Optional[List['str']] = None, color: Union[str, Dict[str, str]] = None, theme: str = "auto"):
     """
     Use this to visualize attention maps.
 
@@ -51,6 +51,8 @@ def attention(attn: Union[
         (key: chart_type, value: color).
         If not provided, it defaults to 'blue'.
         refer https://observablehq.com/@d3/color-schemes for color options
+    theme : str
+        The theme to use for the visualization. Possible values are 'auto', 'light', and 'dark'. Default is 'auto'.
 
     Raises
     ------
@@ -86,7 +88,8 @@ def attention(attn: Union[
         tgt_tokens=[str(t) for t in key_tokens],
         chart_types=chart_types,
         color=parse_colors(color),
-        dimensions=dimensions
+        dimensions=dimensions,
+        theme=theme
     )
 
 
@@ -248,7 +251,7 @@ def tokens(tokens: List[str],
            values: Union[ArrayLike, Dict[str, ArrayLike]], *,
            token_info: Optional[list[str]] = None,
            remove_padding: bool = True,
-           color: str = "blue"):
+           color: str = "blue", theme: str = "auto"):
     """
     Visualize metrics related to tokens
 
@@ -264,6 +267,8 @@ def tokens(tokens: List[str],
         Whether to remove padding in the visualization
     color_scheme : str
         The color scheme to use for the visualization. Default is 'tableau10'.
+    theme : str
+        The theme to use for the visualization. Possible values are 'auto', 'light', and 'dark'. Default is 'auto'.
     """
 
     if not isinstance(values, dict):
@@ -280,7 +285,7 @@ def tokens(tokens: List[str],
 
     visualize_tokens(tokens, values,
                      token_info=token_info,
-                     remove_padding=remove_padding, color=color)
+                     remove_padding=remove_padding, color=color, theme=theme)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']

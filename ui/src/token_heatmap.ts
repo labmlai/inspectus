@@ -57,7 +57,7 @@ class TokenView {
         }
 
 
-        this.elem.style.setProperty('color', this.plotColors.getInterpolatedTextColor(value))
+        this.elem.style.setProperty('color', this.plotColors.getFilledTextColor())
 
         this.elem.title = value.toExponential()
     }

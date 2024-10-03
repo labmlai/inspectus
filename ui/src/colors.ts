@@ -3,8 +3,9 @@ import {ChartType} from "./types"
 
 export class PlotColors {
     private colorSchemes: Record<ChartType, string>
+    private theme: string
 
-    constructor() {
+    constructor(theme: string) {
         this.colorSchemes = {
             [ChartType.AttentionMatrix]: 'Blues',
             [ChartType.SrcTokenHeatmap]: 'Blues',
@@ -13,6 +14,11 @@ export class PlotColors {
             [ChartType.DimensionHeatmap]: 'Blues',
             [ChartType.LineGrid]: 'Blues',
             [ChartType.TokenLoss]: 'Blues'
+        }
+        if (theme === 'auto') {
+            this.theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        } else {
+            this.theme = theme
         }
     }
 
@@ -43,19 +49,37 @@ export class PlotColors {
         }
     }
 
-    public getInterpolatedTextColor(value: number) {
-        let processed_val = 1-value
-        if (processed_val <= 0.8 && processed_val >= 0.3) {
-            processed_val = 0.8
+    public getBackgroundColor() {
+        if (this.theme === 'light') {
+            return d3.interpolateGreys(0)
+        } else {
+            return d3.interpolateGreys(1)
         }
-        return d3.interpolateGreys(processed_val)
+    }
+
+    public getFilledTextColor() {
+        if (this.theme === 'light') {
+            return d3.interpolateGreys(1)
+        } else {
+            return d3.interpolateGreys(0)
+        }
     }
 
     public getInterpolatedSecondaryColor(value: number) {
+        if (this.theme === 'light') {
+            value = 1 - value
+        }
+
         return d3.interpolateGreys(value)
     }
 
     public getInterpolatedColor(value: number, chart: string) {
+        if (this.theme === 'dark') {
+            value = 0.2 + (value) * 0.8
+        } else {
+            value = value * 0.8
+        }
+
         let color = this.colorSchemes[chart as ChartType]
         switch (color.toLowerCase()) {
             case 'blues':
