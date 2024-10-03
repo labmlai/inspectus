@@ -1,6 +1,6 @@
 import base64
 import pkgutil
-
+from typing import Dict, Callable
 import numpy
 
 
@@ -72,6 +72,51 @@ def init_inline_viz():
     html += f'<script type="text/javascript">{js_file}</script>'
     html += f'<style>{css_file}</style>'
 
+    if is_ipynb_pycharm():
+        print("\033[93mJetbrains IDE detected. Output might not be displayed properly. If any issue occurs please run in a jupyter notebook.\033[0m")
+
     from IPython.display import display, HTML
 
     display(HTML(html))
+
+
+get_ipython: Callable
+
+
+def is_ipynb():
+    try:
+        cfg = get_ipython().config
+        if cfg['IPKernelApp'] is None:
+            return False
+
+        app: Dict = cfg['IPKernelApp']
+        if len(app.keys()) > 0:
+            return True
+        else:
+            return False
+    except NameError:
+        return False
+
+
+def is_ipynb_pycharm():
+    if not is_ipynb():
+        return False
+
+    if is_colab() or is_kaggle():
+        return False
+
+    import os
+    if '_' not in os.environ:
+        return True
+    else:
+        return False
+
+
+def is_colab():
+    import sys
+    return 'google.colab' in sys.modules
+
+
+def is_kaggle():
+    import sys
+    return 'kaggle_gcp' in sys.modules
