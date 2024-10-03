@@ -63,9 +63,8 @@ def init_inline_viz():
     html = ''
 
     is_debug = settings.IS_DEBUG
-    print(is_debug, os.getcwd())
     if is_debug:
-        print("Debug Mode: Ignoring static folder")
+        print("Debug Mode: Ignoring static folder for frontend static files")
         try:
             js_file = pkgutil.get_data('inspectus', "../../ui/build/js/charts.js").decode('utf-8')
             css_file = pkgutil.get_data('inspectus', "../../ui/build/css/charts.css").decode('utf-8')
