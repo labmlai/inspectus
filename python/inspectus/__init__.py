@@ -248,7 +248,7 @@ def tokens(tokens: List[str],
            values: Union[ArrayLike, Dict[str, ArrayLike]], *,
            token_info: Optional[list[str]] = None,
            remove_padding: bool = True,
-           color_scheme: str = "tableau10"):
+           color: str = "blue"):
     """
     Visualize metrics related to tokens
 
@@ -280,7 +280,7 @@ def tokens(tokens: List[str],
 
     visualize_tokens(tokens, values,
                      token_info=token_info,
-                     remove_padding=remove_padding, color_scheme=color_scheme)
+                     remove_padding=remove_padding, color=color)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']
