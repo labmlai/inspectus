@@ -1,20 +1,29 @@
-# Minimal makefile for Sphinx documentation
-#
+sphinx-help: ## Sphinx help
+	@sphinx-build -M help . build
 
-# You can set these variables from the command line, and also
-# from the environment for the first two.
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = .
-BUILDDIR      = _build
+prepare: ## Prepare environment for build
+	@pip3 install -r requirements.txt
 
-# Put it first so that "make" without argument is like "make help".
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+build: ## Build docs
+	@sphinx-build -M html . build
 
-.PHONY: help Makefile
+open: ## Open docs
+	@open build/html/index.html
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+clean: ## Clean
+	@echo "Removing everything under 'build'.."
+	@rm -rf build/html/ build/doctrees
+	@rm -rf ../../docs
+
+rebuild: clean build ## Rebuild docs
+
+pages: rebuild ## Create docs.labml.ai
+	@mkdir -p ../../docs
+	@echo "This file makes sure that Github Pages doesn't process" > ../../docs/.nojekyll
+	@cp -r build/html/* ../../docs
+
+help: ## Show this help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+.PHONY: build clean help sphinx-help pages rebuild prepare
+.DEFAULT_GOAL := help
