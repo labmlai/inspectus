@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>inspectus &mdash; inspectus 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            inspectus
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">inspectus</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">inspectus</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for inspectus</h1><div class="highlight"><pre>
+<span></span><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.5&#39;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">BASIS_POINTS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="mf">6.68</span><span class="p">,</span>
+    <span class="mf">15.87</span><span class="p">,</span>
+    <span class="mf">30.85</span><span class="p">,</span>
+    <span class="mf">50.00</span><span class="p">,</span>
+    <span class="mf">69.15</span><span class="p">,</span>
+    <span class="mf">84.13</span><span class="p">,</span>
+    <span class="mf">93.32</span><span class="p">,</span>
+    <span class="mf">100.00</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="attention">
+<a class="viewcode-back" href="../inspectus.html#inspectus.attention">[docs]</a>
+<span class="k">def</span> <span class="nf">attention</span><span class="p">(</span><span class="n">attn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="s1">&#39;np.ndarray&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">[</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+<span class="p">],</span>
+              <span class="n">query_tokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]],</span> <span class="n">key_tokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+              <span class="n">chart_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use this to visualize attention maps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    attn : array-like</span>
+<span class="sd">        `attn` should be a numpy array, a PyTorch tensor or an attention output from Huggingface transformers.</span>
+<span class="sd">        For numpy arrays or PyTorch tensors, it should have the shape `[q_len, k_len]` or `[heads, q_len, k_len]`</span>
+<span class="sd">        or `[layers, heads, q_len, k_len]`.</span>
+<span class="sd">    query_tokens : (List[str], optional)</span>
+<span class="sd">        This is the list of query tokens.</span>
+<span class="sd">    key_tokens : (List[str], optional)</span>
+<span class="sd">        This is the list of key tokens. If not provided it defaults to query tokens.</span>
+<span class="sd">    chart_types : (List[str], optional)</span>
+<span class="sd">        A list of chart types to render.</span>
+<span class="sd">        If not provided, it defaults to</span>
+<span class="sd">        `[&#39;attention_matrix&#39;, &#39;query_token_heatmap&#39;, &#39;key_token_heatmap&#39;, &#39;dimension_heatmap&#39;]`.</span>
+<span class="sd">        Possible values are</span>
+<span class="sd">        `&#39;attention_matrix&#39;, &#39;query_token_heatmap&#39;, &#39;key_token_heatmap&#39;, &#39;dimension_heatmap&#39;, &#39;token_dim_heatmap&#39;, &#39;line_grid&#39;`.</span>
+<span class="sd">    color : (str, dict)</span>
+<span class="sd">        A color to use for rendering components. Single color for all components or a dictionary of colors with</span>
+<span class="sd">        (key: chart_type, value: color).</span>
+<span class="sd">        If not provided, it defaults to &#39;blue&#39;.</span>
+<span class="sd">        refer https://observablehq.com/@d3/color-schemes for color options</span>
+<span class="sd">    theme : str</span>
+<span class="sd">        The theme to use for the visualization. Possible values are &#39;auto&#39;, &#39;light&#39;, and &#39;dark&#39;. Default is &#39;auto&#39;.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If src_tokens is None or if attn is empty or if attn contains an unknown type or shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">query_tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Tokens should be provided&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">key_tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">key_tokens</span> <span class="o">=</span> <span class="n">query_tokens</span>
+
+    <span class="kn">from</span> <span class="nn">inspectus.attention_viz</span> <span class="kn">import</span> <span class="n">parse_attn</span><span class="p">,</span> <span class="n">attention_chart</span><span class="p">,</span> <span class="n">parse_colors</span>
+
+    <span class="n">attn</span><span class="p">,</span> <span class="n">dimensions</span> <span class="o">=</span> <span class="n">parse_attn</span><span class="p">(</span><span class="n">attn</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_tokens</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Attention matrix size should be equal to &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;[query_len, key_len] = [</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">key_tokens</span><span class="p">)</span><span class="si">}</span><span class="s1">]; got &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s1"> instead.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chart_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chart_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;attention_matrix&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;query_token_heatmap&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;key_token_heatmap&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;dimension_heatmap&#39;</span><span class="p">]</span>
+
+    <span class="n">attention_chart</span><span class="p">(</span>
+        <span class="n">attn</span><span class="o">=</span><span class="n">attn</span><span class="p">,</span>
+        <span class="n">src_tokens</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">query_tokens</span><span class="p">],</span>
+        <span class="n">tgt_tokens</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">key_tokens</span><span class="p">],</span>
+        <span class="n">chart_types</span><span class="o">=</span><span class="n">chart_types</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">parse_colors</span><span class="p">(</span><span class="n">color</span><span class="p">),</span>
+        <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span>
+        <span class="n">theme</span><span class="o">=</span><span class="n">theme</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">compress_series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">compress_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compresses a series to blocks of `compress_steps`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        series: series as a list of dictionaries</span>
+<span class="sd">        compress_steps: number of steps to compress</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">values</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span> <span class="ow">or</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">compress_steps</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;step&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">],</span> <span class="s1">&#39;values&#39;</span><span class="p">:</span> <span class="p">[]</span> <span class="o">+</span> <span class="n">values</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">values</span>
+
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<div class="viewcode-block" id="series_to_distribution">
+<a class="viewcode-back" href="../inspectus.html#inspectus.series_to_distribution">[docs]</a>
+<span class="k">def</span> <span class="nf">series_to_distribution</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="s1">&#39;np.ndarray&#39;</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">steps</span><span class="p">:</span> <span class="s1">&#39;np.ndarray&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Converts a series of data points into a distribution table.</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       series : Union[List[Dict], List[&#39;torch.Tensor&#39;], List[&#39;np.ndarray&#39;]]</span>
+<span class="sd">           A list of data points. Data points can be dictionaries, numpy arrays, or PyTorch tensors.</span>
+<span class="sd">           Dictionary struture should be {&#39;values&#39;: [data_points], &#39;step&#39;: step_value}.</span>
+<span class="sd">       steps : np.ndarray, optional</span>
+<span class="sd">           An array of step values. If not provided, step values are inferred from the data.</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       -------</span>
+<span class="sd">       list</span>
+<span class="sd">           A list of dictionaries representing the distribution table. Each dictionary contains the step, histogram, and mean of the data at that step.</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">torch</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span> <span class="n">BASIS_POINTS</span><span class="p">)</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BASIS_POINTS</span><span class="p">)</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">steps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">i</span>
+
+        <span class="n">histogram</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;step&#39;</span><span class="p">:</span> <span class="n">step</span><span class="p">,</span>
+            <span class="s1">&#39;histogram&#39;</span><span class="p">:</span> <span class="n">histogram</span><span class="p">,</span>
+            <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">mean</span>
+        <span class="p">}</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<div class="viewcode-block" id="distribution">
+<a class="viewcode-back" href="../inspectus.html#inspectus.distribution">[docs]</a>
+<span class="k">def</span> <span class="nf">distribution</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">],</span>
+    <span class="n">List</span><span class="p">[</span><span class="s1">&#39;np.ndarray&#39;</span><span class="p">],</span>
+<span class="p">]],</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">include_mean</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">include_borders</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">levels</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;tableau10&#39;</span><span class="p">,</span>
+                 <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+                 <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">700</span><span class="p">,</span>
+                 <span class="n">height_minimap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a distribution visualization from the given data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dict</span>
+<span class="sd">            A dictionary where keys are series names and values are lists of data points.</span>
+<span class="sd">            Data points can be dictionaries(output from the inspectus.data_logger), numpy arrays, or PyTorch tensors.</span>
+<span class="sd">        include_mean : bool, optional</span>
+<span class="sd">            If True, includes the mean of the data in the visualization. Default is True.</span>
+<span class="sd">        include_borders : bool, optional</span>
+<span class="sd">            If True, includes borders at the highest and lowest levels in the visualization. Default is False.</span>
+<span class="sd">        levels : int, optional</span>
+<span class="sd">            An Integer between 1 and 5, the number of levels in the visualization. Default is 5.</span>
+<span class="sd">        alpha : float, optional</span>
+<span class="sd">            Opacity of the first band. Reduces by powers for each level. Default is 0.6.</span>
+<span class="sd">        color_scheme : str, optional</span>
+<span class="sd">            The color scheme to use for the visualization. Default is &#39;tableau10&#39;.</span>
+<span class="sd">        height : int, optional</span>
+<span class="sd">            The height of the visualization. Default is 500.</span>
+<span class="sd">        width : int, optional</span>
+<span class="sd">            The width of the visualization. Default is 700.</span>
+<span class="sd">        height_minimap : int, optional</span>
+<span class="sd">            The height of the minimap in the visualization. Default is 100.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        alt.Chart</span>
+<span class="sd">            An Altair Chart object representing the distribution visualization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">inspectus.distribution_viz</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">_histogram_to_table</span>
+
+    <span class="k">if</span> <span class="n">levels</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="k">if</span> <span class="n">levels</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;histogram&#39;</span> <span class="ow">in</span> <span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">table</span> <span class="o">+=</span> <span class="n">_histogram_to_table</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">+=</span> <span class="n">_histogram_to_table</span><span class="p">(</span><span class="n">series_to_distribution</span><span class="p">(</span><span class="n">series</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">table</span><span class="p">,</span>
+                  <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+                  <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                  <span class="n">include_borders</span><span class="o">=</span><span class="n">include_borders</span><span class="p">,</span>
+                  <span class="n">include_mean</span><span class="o">=</span><span class="n">include_mean</span><span class="p">,</span>
+                  <span class="n">color_scheme</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span>
+                  <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+                  <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                  <span class="n">height_minimap</span><span class="o">=</span><span class="n">height_minimap</span><span class="p">)</span></div>
+
+
+
+<span class="n">ArrayLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;np.ndarray&#39;</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="tokens">
+<a class="viewcode-back" href="../inspectus.html#inspectus.tokens">[docs]</a>
+<span class="k">def</span> <span class="nf">tokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+           <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]],</span> <span class="o">*</span><span class="p">,</span>
+           <span class="n">token_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="n">remove_padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+           <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visualize metrics related to tokens</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tokens : list[str]</span>
+<span class="sd">        List of tokens</span>
+<span class="sd">    values : (ArrayLike or dict[str, ArrayLike])</span>
+<span class="sd">        Values to visualize. (key: name, value: list of values with shape [num_tokens])</span>
+<span class="sd">    token_info : Optional[list[str]]</span>
+<span class="sd">        Aditional info about the tokens. Shape [num_tokens]</span>
+<span class="sd">    remove_padding : bool</span>
+<span class="sd">        Whether to remove padding in the visualization</span>
+<span class="sd">    color_scheme : str</span>
+<span class="sd">        The color scheme to use for the visualization. Default is &#39;tableau10&#39;.</span>
+<span class="sd">    theme : str</span>
+<span class="sd">        The theme to use for the visualization. Possible values are &#39;auto&#39;, &#39;light&#39;, and &#39;dark&#39;. Default is &#39;auto&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">value_list</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All value lists must have the same length as the tokens list&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">token_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_info</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;token_info must have the same length as the tokens list&quot;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">inspectus.token_viz</span> <span class="kn">import</span> <span class="n">visualize_tokens</span>
+
+    <span class="n">visualize_tokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span>
+                     <span class="n">token_info</span><span class="o">=</span><span class="n">token_info</span><span class="p">,</span>
+                     <span class="n">remove_padding</span><span class="o">=</span><span class="n">remove_padding</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;attention&#39;</span><span class="p">,</span> <span class="s1">&#39;series_to_distribution&#39;</span><span class="p">,</span> <span class="s1">&#39;distribution&#39;</span><span class="p">,</span> <span class="s1">&#39;tokens&#39;</span><span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, labml.ai.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
