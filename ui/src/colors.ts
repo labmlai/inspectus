@@ -75,7 +75,7 @@ export class PlotColors {
 
     public getInterpolatedColor(value: number, chart: string) {
         if (this.theme === 'dark') {
-            value = 0.2 + (value) * 0.8
+            value = 0.3 + (1 - value) * 0.7
         } else {
             value = value * 0.8
         }
