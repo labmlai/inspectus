@@ -16,13 +16,13 @@ Inspectus is a versatile visualization tool for machine learning. It runs smooth
   - [Tutorials](#tutorials)
     - [Huggingface model](#huggingface-model)
     - [Custom attention map](#custom-attention-map)
-- [Distribution Plot](#distribution-plot)
+- [Token Visualization](#token-visualization)
   - [Preview](#preview-1)
   - [Usage](#usage-1)
-  - [Sample Use case](#sample-use-case)
-- [Token Visualization](#token-visualization)
+- [Distribution Plot](#distribution-plot)
   - [Preview](#preview-2)
-  - [Usage](#usage-1)
+  - [Usage](#usage-2)
+  - [Sample Use case](#sample-use-case)
 - [Setting up for Development](#setting-up-for-development)
 - [Citing](#citing)
 
@@ -79,7 +79,7 @@ For different query and key tokens
 inspectus.attention(attns, query_tokens, key_tokens)
 ```
 
-For detailed API documentation, please refer to the [official documentation - wip]().
+For detailed API documentation, please refer to the [official documentation](https://labmlai.github.io/inspectus/).
 
 ### Tutorials
 
@@ -146,6 +146,22 @@ Check out the notebook here: [Custom attention map tutorial](https://github.com/
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/custom_attn.ipynb)
 
+## Token Visualization
+
+This tool is used to visualize some metric related to tokens. This supports multiple metrics and the metric used for the visualization can be selected using the dropdown. Along with metrics, any aditional information can be added to tokens.
+
+#### Preview
+
+![Token Visualization](https://github.com/labmlai/inspectus/raw/main/assets/token_preview.png)
+
+#### Usage
+
+```python
+import inspectus
+
+inspectus.tokens(['hello', 'world'], np.random.rand(2))
+```
+
 ## Distribution Plot
 The distribution plot is a plot that shows the distribution of a series of data. At each step, 
 the distribution of the data is calculated and maximum of 5 bands are drawn from 9 basis points. 
@@ -178,22 +194,6 @@ notebooks demonstrate how to use the distribution plot to identify outliers in t
 [MNIST](https://github.com/labmlai/inspectus/blob/main/notebooks/mnist.ipynb)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/mnist.ipynb)
-
-## Token Visualization
-
-This tool is used to visualize some metric related to tokens. This supports multiple metrics and the metric used for the visualization can be selected using the dropdown. Along with metrics, any aditional information can be added to tokens.
-
-#### Preview
-
-![Token Visualization](https://github.com/labmlai/inspectus/raw/main/assets/token_preview.png)
-
-#### Usage
-
-```python
-import inspectus
-
-inspectus.tokens(['hello', 'world'], np.random.rand(2))
-```
 
 
 
