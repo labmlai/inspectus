@@ -1,10 +1,7 @@
 import base64
 import pkgutil
 from typing import Dict, Callable
-from inspectus import settings
 import numpy
-import os
-from dotenv import load_dotenv
 
 
 def convert_b64(data: numpy.ndarray) -> str:
@@ -62,7 +59,7 @@ def to_json(data):
 def init_inline_viz():
     html = ''
 
-    is_debug = settings.IS_DEBUG
+    is_debug = False
     if is_debug:
         print("Debug Mode: Ignoring static folder for frontend static files")
         try:
