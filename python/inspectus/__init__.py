@@ -251,7 +251,7 @@ def tokens(tokens: List[str],
            values: Union[ArrayLike, Dict[str, ArrayLike]], *,
            token_info: Optional[list[str]] = None,
            remove_padding: bool = True,
-           color: str = "blue", theme: str = "auto"):
+           colors: Union[str, List[str]] = ["blue", "red"], theme: str = "auto"):
     """
     Visualize metrics related to tokens
 
@@ -265,11 +265,14 @@ def tokens(tokens: List[str],
         Aditional info about the tokens. Shape [num_tokens]
     remove_padding : bool
         Whether to remove padding in the visualization
-    color_scheme : str
-        The color scheme to use for the visualization. Default is 'tableau10'.
+    colors : Union[str, List[str]]
+        The color scheme to use for the visualization. Default is ['blue', 'red'].
     theme : str
         The theme to use for the visualization. Possible values are 'auto', 'light', and 'dark'. Default is 'auto'.
     """
+    
+    if isinstance(colors, str):
+        colors = [colors]
 
     if not isinstance(values, dict):
         values = {'value': values}
@@ -285,7 +288,7 @@ def tokens(tokens: List[str],
 
     visualize_tokens(tokens, values,
                      token_info=token_info,
-                     remove_padding=remove_padding, color=color, theme=theme)
+                     remove_padding=remove_padding, colors=colors, theme=theme)
 
 
 __all__ = ['attention', 'series_to_distribution', 'distribution', 'tokens']

@@ -8,7 +8,7 @@ def visualize_tokens(
     values: Dict[str, List[float]],
     token_info: Optional[List[str]],
     remove_padding: bool,
-    color: str,
+    colors: List[str],
     theme: str,
 ):
     if token_info is None:
@@ -30,7 +30,7 @@ def visualize_tokens(
 
     html = f'<div id="{elem_id}"></div>'
 
-    script = f"<script>window.tokenViz('{elem_id}',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(color)}, {json.dumps(token_info)}, {json.dumps(theme)})</script>"
+    script = f"<script>window.tokenViz('{elem_id}',{json.dumps(tokens)}, {json.dumps(values.tolist())}, {json.dumps(normalized_values.tolist())}, {json.dumps(value_names)}, {json.dumps(remove_padding)}, {json.dumps(colors)}, {json.dumps(token_info)}, {json.dumps(theme)})</script>"
 
     from IPython.display import display, HTML
 

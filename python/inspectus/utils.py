@@ -59,7 +59,7 @@ def to_json(data):
 def init_inline_viz():
     html = ''
 
-    is_debug = False
+    is_debug = True
     if is_debug:
         print("Debug Mode: Ignoring static folder for frontend static files")
         try:
