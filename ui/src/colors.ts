@@ -1,5 +1,5 @@
 import * as d3 from "../lib/d3/d3"
-import {ChartType} from "./types"
+import { ChartType } from "./types"
 
 export class PlotColors {
     private colorSchemes: Record<ChartType, string>
@@ -7,16 +7,19 @@ export class PlotColors {
 
     constructor(theme: string) {
         this.colorSchemes = {
-            [ChartType.AttentionMatrix]: 'Blues',
-            [ChartType.SrcTokenHeatmap]: 'Blues',
-            [ChartType.DestTokenHeatmap]: 'Blues',
-            [ChartType.TokenDimHeatmap]: 'Blues',
-            [ChartType.DimensionHeatmap]: 'Blues',
-            [ChartType.LineGrid]: 'Blues',
-            [ChartType.TokenLoss]: 'Blues'
+            [ChartType.AttentionMatrix]: "Blues",
+            [ChartType.SrcTokenHeatmap]: "Blues",
+            [ChartType.DestTokenHeatmap]: "Blues",
+            [ChartType.TokenDimHeatmap]: "Blues",
+            [ChartType.DimensionHeatmap]: "Blues",
+            [ChartType.LineGrid]: "Blues",
+            [ChartType.TokenLoss]: "Blues",
         }
-        if (theme === 'auto') {
-            this.theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        if (theme === "auto") {
+            this.theme = window.matchMedia("(prefers-color-scheme: light)")
+                .matches
+                ? "light"
+                : "dark"
         } else {
             this.theme = theme
         }
@@ -30,7 +33,7 @@ export class PlotColors {
     }
 
     public getBackgroundColor() {
-        if (this.theme === 'light') {
+        if (this.theme === "light") {
             return d3.interpolateGreys(0)
         } else {
             return d3.interpolateGreys(1)
@@ -38,7 +41,7 @@ export class PlotColors {
     }
 
     public getFilledTextColor() {
-        if (this.theme === 'light') {
+        if (this.theme === "light") {
             return d3.interpolateGreys(1)
         } else {
             return d3.interpolateGreys(0)
@@ -46,7 +49,7 @@ export class PlotColors {
     }
 
     public getInterpolatedSecondaryColor(value: number) {
-        if (this.theme === 'light') {
+        if (this.theme === "light") {
             value = 1 - value
         }
 
@@ -56,13 +59,13 @@ export class PlotColors {
     public getInterpolatedColor(value: number, chart: string) {
         let col1: string
         let col2: string
-        if (this.theme === 'dark') {
-            col1 = 'black'
+        if (this.theme === "dark") {
+            col1 = "black"
         } else {
-            col1 = 'white'
+            col1 = "white"
         }
         col2 = this.colorSchemes[chart as ChartType].toLowerCase()
-        value = value * 0.8
+        value = value * 0.6
 
         return d3.interpolateRgb(col1, col2)(value)
     }
