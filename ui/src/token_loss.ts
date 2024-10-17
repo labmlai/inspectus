@@ -10,6 +10,7 @@ class TokenView {
     public isNewLine: boolean
     private colors: PlotColors
     private info: string
+    private underLineElement: HTMLDivElement
 
     constructor(token: string, tokenData: TokenData, colors: PlotColors) {
         this.isNewLine = /^[\n\r\v]+$/.test(token)
@@ -41,7 +42,6 @@ class TokenView {
                 "color",
                 this.colors.getFilledTextColor()
             )
-
             this.menu = $("div", ".menu", ($) => {
                 for (let i = 0; i < this.values.length; ++i) {
                     $("div", ($) => {
@@ -61,43 +61,39 @@ class TokenView {
         })
     }
 
-    setSecondaryValue(name: string) {
-        let value = this.values.find((v) => v.name === name)
-        if (value == null) {
-            this.elem.style.setProperty("border-bottom", "unset")
-            this.elem.style.setProperty("border-bottom-width", "unset")
-            this.elem.style.setProperty("border-bottom-style", "unset")
-            return
-        }
-        let normalizedValue = value.normalizedValue
-
-        this.elem.style.setProperty(
-            "border-bottom",
-            this.colors.getInterpolatedColor(
-                normalizedValue,
-                ChartType.TokenLoss,
-                1
-            )
-        )
-        this.elem.style.setProperty("border-bottom-width", "6px")
-        this.elem.style.setProperty("border-bottom-style", "solid")
-    }
-
     setValue(name: string) {
-        let value = this.values.find((v) => v.name === name)
-        if (value == null) {
-            this.elem.style.setProperty("background", "unset")
-            return
+        if (this.underLineElement == null) {
+            $(this.elem, ($) => {
+                this.underLineElement = $("div", ".underline")
+            })
         }
-        let normalizedValue = value.normalizedValue
 
-        this.elem.style.setProperty(
-            "background",
-            this.colors.getInterpolatedColor(
-                normalizedValue,
-                ChartType.TokenLoss
-            )
-        )
+        this.elem.style.setProperty("background", "unset")
+        this.underLineElement.innerHTML = ""
+
+        for (let i = 0; i < this.values.length; ++i) {
+            if (this.values[i].name === name) {
+                this.elem.style.setProperty(
+                    "background",
+                    this.colors.getInterpolatedColor(
+                        this.values[i].normalizedValue,
+                        ChartType.TokenLoss,
+                        i
+                    )
+                )
+            } else {
+                let lineElem = $("div", ".item", "")
+                lineElem.style.setProperty(
+                    "background",
+                    this.colors.getInterpolatedColor(
+                        this.values[i].normalizedValue,
+                        ChartType.TokenLoss,
+                        i
+                    )
+                )
+                this.underLineElement.appendChild(lineElem)
+            }
+        }
     }
 }
 
@@ -105,11 +101,10 @@ export class StringTokenLoss {
     private tokens: string[]
     private tokenViews: TokenView[]
     private selectElem: HTMLSelectElement
-    private secondarySelectElem: HTMLSelectElement
     private selectedMetric: string
-    private secondarySelectedMetric: string
     private tokenData: TokenData[]
     private paddingLess: boolean
+    private colors: PlotColors
 
     constructor(
         tokens: string[],
@@ -119,10 +114,9 @@ export class StringTokenLoss {
     ) {
         this.tokens = tokens
         this.selectedMetric = tokenData[0].values[0].name
-        this.secondarySelectedMetric = "None"
         this.tokenData = tokenData
         this.paddingLess = paddingLess
-
+        this.colors = colors
         this.tokenViews = []
         for (let i = 0; i < this.tokens.length; ++i) {
             let view = new TokenView(this.tokens[i], this.tokenData[i], colors)
@@ -132,10 +126,8 @@ export class StringTokenLoss {
 
     onSelectChange = () => {
         this.selectedMetric = this.selectElem.value
-        this.secondarySelectedMetric = this.secondarySelectElem.value
         for (let i = 0; i < this.tokens.length; ++i) {
             this.tokenViews[i].setValue(this.selectedMetric)
-            this.tokenViews[i].setSecondaryValue(this.secondarySelectedMetric)
         }
     }
 
@@ -154,7 +146,23 @@ export class StringTokenLoss {
                 $("div.title", "Token Visualization")
                 $("div.title", ($) => {
                     this.selectElem = $("select", ($) => {})
-                    this.secondarySelectElem = $("select", ($) => {})
+                })
+
+                $("div.legend", ($) => {
+                    for (let i = 0; i < this.tokenData[0].values.length; ++i) {
+                        $("div.row", ($) => {
+                            let colorElem = $("div.color")
+                            colorElem.style.setProperty(
+                                "background",
+                                this.colors.getInterpolatedColor(
+                                    1.0,
+                                    ChartType.TokenLoss,
+                                    i
+                                )
+                            )
+                            $("span", this.tokenData[0].values[i].name)
+                        })
+                    }
                 })
             }
         )
@@ -166,22 +174,16 @@ export class StringTokenLoss {
         }
 
         this.selectElem.appendChild($("option", "None"))
-        this.secondarySelectElem.appendChild($("option", "None"))
         for (let i = 0; i < this.tokenData[0].values.length; ++i) {
             this.selectElem.appendChild(
-                $("option", this.tokenData[0].values[i].name)
-            )
-            this.secondarySelectElem.appendChild(
                 $("option", this.tokenData[0].values[i].name)
             )
         }
 
         this.selectElem.value = this.selectedMetric
-        this.secondarySelectElem.value = this.secondarySelectedMetric
         this.onSelectChange()
 
         this.selectElem.addEventListener("change", this.onSelectChange)
-        this.secondarySelectElem.addEventListener("change", this.onSelectChange)
 
         return elem
     }

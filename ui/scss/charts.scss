@@ -98,6 +98,16 @@
             &.new-line {
                 opacity: 0.6;
             }
+
+            .underline {
+                display: flex;
+                flex-direction: column;
+
+                .item {
+                    height: 6px;
+                    width: 100%;
+                }
+            }
         }
 
         margin-bottom: 10px;
@@ -166,5 +176,25 @@
 
     .hover-container:hover {
         border: 1px solid #878686;
+    }
+
+    .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-items: center;
+            justify-content: left;
+
+            .color {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+            }
+        }
     }
 }

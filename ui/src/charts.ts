@@ -54,7 +54,7 @@ window["tokenViz"] = function (
     tokens: string[],
     losses: number[][],
     normalizedLosses: number[][],
-    valueNames: string[] | null,
+    valueNames: string[],
     paddingLess: boolean,
     colors: string[],
     tokenInfo: string[],

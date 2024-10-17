@@ -8,7 +8,7 @@ def visualize_tokens(
     values: Dict[str, List[float]],
     token_info: Optional[List[str]],
     remove_padding: bool,
-    colors: List[str],
+    colors: Dict[str, str],
     theme: str,
 ):
     if token_info is None:
@@ -16,6 +16,8 @@ def visualize_tokens(
 
     value_names = list(values.keys())
     value_names.sort()
+    
+    colors = [colors[name] for name in value_names]
 
     values = np.stack([values[name] for name in value_names])
 

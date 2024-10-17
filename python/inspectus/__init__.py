@@ -2,6 +2,8 @@ __version__ = '0.1.5'
 
 from typing import List, Optional, TYPE_CHECKING, Union, Tuple, Dict
 
+from inspectus.utils import get_color_list
+
 if TYPE_CHECKING:
     import numpy as np
     import torch
@@ -251,7 +253,7 @@ def tokens(tokens: List[str],
            values: Union[ArrayLike, Dict[str, ArrayLike]], *,
            token_info: Optional[list[str]] = None,
            remove_padding: bool = True,
-           colors: Union[str, List[str]] = ["blue", "red"], theme: str = "auto"):
+           colors: Optional[Dict[str, str]] = None, theme: str = "auto"):
     """
     Visualize metrics related to tokens
 
@@ -265,17 +267,24 @@ def tokens(tokens: List[str],
         Aditional info about the tokens. Shape [num_tokens]
     remove_padding : bool
         Whether to remove padding in the visualization
-    colors : Union[str, List[str]]
-        The color scheme to use for the visualization. Default is ['blue', 'red'].
+    colors : Optional[Dict[str, str]]
+        Colors to use for each metric in the visualization. 
+        If not provided, it defaults to the default color scheme.
     theme : str
         The theme to use for the visualization. Possible values are 'auto', 'light', and 'dark'. Default is 'auto'.
     """
-    
-    if isinstance(colors, str):
-        colors = [colors]
 
     if not isinstance(values, dict):
         values = {'value': values}
+        
+    if colors is None:
+        colors = {}
+    
+    color_index = 0
+    for name, _ in values.items():
+        if name not in colors:
+            colors[name] = get_color_list()[color_index]
+            color_index += 1
 
     for value_list in values.values():
         if len(value_list) != len(tokens):
