@@ -134,7 +134,7 @@ export class StringTokenLoss {
         this.colors = colors
         this.tokenViews = []
         this.secondarySelectedMetricList = []
-        this.selectedToken = this.tokenData[0].values[0].name
+        this.selectedToken = this.tokens[0]
         this.selectedTokenData = this.tokenData[0]
         this.isScientific = true
         this.valueElements = {}
