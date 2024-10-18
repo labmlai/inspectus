@@ -92,6 +92,4 @@ window["tokenViz"] = function (
     div.appendChild(lossView.render())
 
     document.getElementById(elemId).appendChild(div)
-
-    lossView.updateMenuPosition()
 }

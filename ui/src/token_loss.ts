@@ -4,28 +4,26 @@ import { PlotColors } from "./colors"
 
 class TokenView {
     private elem: HTMLElement
-    private menu: HTMLDivElement
     private token: string
     private values: TokenValue[]
     public isNewLine: boolean
     private colors: PlotColors
     private info: string
     private underLineElement: HTMLDivElement
+    private selectCallback: (token: string, tokenData: TokenData) => void
 
-    constructor(token: string, tokenData: TokenData, colors: PlotColors) {
+    constructor(
+        token: string,
+        tokenData: TokenData,
+        colors: PlotColors,
+        selectCallback: (token: string, tokenData: TokenData) => void
+    ) {
         this.isNewLine = /^[\n\r\v]+$/.test(token)
         this.token = token
         this.values = tokenData.values
         this.colors = colors
         this.info = tokenData.info
-    }
-
-    updateMenuPosition() {
-        const rect = this.elem.getBoundingClientRect()
-        const midPoint = window.innerWidth / 2
-        if (rect.left > midPoint) {
-            this.menu.classList.add("right-align")
-        }
+        this.selectCallback = selectCallback
     }
 
     render() {
@@ -42,26 +40,32 @@ class TokenView {
                 "color",
                 this.colors.getFilledTextColor()
             )
-            this.menu = $("div", ".menu", ($) => {
-                for (let i = 0; i < this.values.length; ++i) {
-                    $("div", ($) => {
-                        $(
-                            "div",
-                            `${this.values[i].name}: ${this.values[
-                                i
-                            ].value.toExponential()}`
-                        )
-                    })
-                }
-                $("hr")
-                if (this.info != null) {
-                    $("pre", this.info)
-                }
+            this.elem.addEventListener("click", () => {
+                this.selectCallback(this.token, {
+                    values: this.values,
+                    info: this.info,
+                })
             })
+            // this.menu = $("div", ".menu", ($) => {
+            //     for (let i = 0; i < this.values.length; ++i) {
+            //         $("div", ($) => {
+            //             $(
+            //                 "div",
+            //                 `${this.values[i].name}: ${this.values[
+            //                     i
+            //                 ].value.toExponential()}`
+            //             )
+            //         })
+            //     }
+            //     $("hr")
+            //     if (this.info != null) {
+            //         $("pre", this.info)
+            //     }
+            // })
         })
     }
 
-    setValue(name: string) {
+    setValue(name: string, selectedList: string[]) {
         if (this.underLineElement == null) {
             $(this.elem, ($) => {
                 this.underLineElement = $("div", ".underline")
@@ -81,7 +85,9 @@ class TokenView {
                         i
                     )
                 )
-            } else {
+            }
+
+            if (selectedList.includes(this.values[i].name)) {
                 let lineElem = $("div", ".item", "")
                 lineElem.style.setProperty(
                     "background",
@@ -102,9 +108,18 @@ export class StringTokenLoss {
     private tokenViews: TokenView[]
     private selectElem: HTMLSelectElement
     private selectedMetric: string
+    private secondarySelectedMetricList: string[]
     private tokenData: TokenData[]
     private paddingLess: boolean
     private colors: PlotColors
+
+    private selectedToken: string
+    private selectedTokenElem: HTMLSpanElement
+    private selectedTokenData: TokenData
+    private tokenInfoElem: HTMLPreElement
+    private valueElements: Record<string, HTMLElement>
+    private isScientific: boolean
+    private scientificToggleElem: HTMLInputElement
 
     constructor(
         tokens: string[],
@@ -118,8 +133,24 @@ export class StringTokenLoss {
         this.paddingLess = paddingLess
         this.colors = colors
         this.tokenViews = []
+        this.secondarySelectedMetricList = []
+        this.selectedToken = this.tokenData[0].values[0].name
+        this.selectedTokenData = this.tokenData[0]
+        this.isScientific = true
+        this.valueElements = {}
+
+        for (let i = 0; i < this.tokenData[0].values.length; ++i) {
+            this.secondarySelectedMetricList.push(
+                this.tokenData[0].values[i].name
+            )
+        }
         for (let i = 0; i < this.tokens.length; ++i) {
-            let view = new TokenView(this.tokens[i], this.tokenData[i], colors)
+            let view = new TokenView(
+                this.tokens[i],
+                this.tokenData[i],
+                colors,
+                this.onTokenClick
+            )
             this.tokenViews.push(view)
         }
     }
@@ -127,13 +158,26 @@ export class StringTokenLoss {
     onSelectChange = () => {
         this.selectedMetric = this.selectElem.value
         for (let i = 0; i < this.tokens.length; ++i) {
-            this.tokenViews[i].setValue(this.selectedMetric)
+            this.tokenViews[i].setValue(
+                this.selectedMetric,
+                this.secondarySelectedMetricList
+            )
         }
     }
 
-    updateMenuPosition() {
-        for (let i = 0; i < this.tokens.length; ++i) {
-            this.tokenViews[i].updateMenuPosition()
+    private onTokenClick = (token: string, tokenData: TokenData) => {
+        this.selectedToken = token
+        this.selectedTokenData = tokenData
+        this.selectedTokenElem.textContent = this.selectedToken
+        this.tokenInfoElem.textContent = tokenData.info
+        for (let i = 0; i < tokenData.values.length; ++i) {
+            const valueName = tokenData.values[i].name
+            const valueElement = this.valueElements[valueName]
+            if (valueElement) {
+                valueElement.textContent = this.isScientific
+                    ? tokenData.values[i].value.toExponential()
+                    : tokenData.values[i].value.toString()
+            }
         }
     }
 
@@ -143,26 +187,138 @@ export class StringTokenLoss {
             ".src-tokens.text-tokens.token-value-container" +
                 (this.paddingLess ? ".padding-less" : ""),
             ($) => {
-                $("div.title", "Token Visualization")
-                $("div.title", ($) => {
-                    this.selectElem = $("select", ($) => {})
-                })
-
-                $("div.legend", ($) => {
-                    for (let i = 0; i < this.tokenData[0].values.length; ++i) {
-                        $("div.row", ($) => {
-                            let colorElem = $("div.color")
-                            colorElem.style.setProperty(
-                                "background",
-                                this.colors.getInterpolatedColor(
-                                    1.0,
-                                    ChartType.TokenLoss,
-                                    i
-                                )
-                            )
-                            $("span", this.tokenData[0].values[i].name)
+                $("div", ".token-loss-header", ($) => {
+                    $("div.spaced-row", ($) => {
+                        $("span", ($) => {
+                            $("span.caption", "Token Background: ")
+                            this.selectElem = $("select", ($) => {})
                         })
-                    }
+
+                        $("label", ($) => {
+                            this.scientificToggleElem = $("input")
+                            this.scientificToggleElem.setAttribute(
+                                "type",
+                                "checkbox"
+                            )
+                            this.scientificToggleElem.setAttribute(
+                                "checked",
+                                this.isScientific.toString()
+                            )
+                            this.scientificToggleElem.addEventListener(
+                                "change",
+                                () => {
+                                    this.isScientific =
+                                        this.scientificToggleElem.checked
+                                    this.onTokenClick(
+                                        this.selectedToken,
+                                        this.selectedTokenData
+                                    )
+                                }
+                            )
+                            $("span", "Use Scientific Notation")
+                        })
+                    })
+
+                    $("div.spaced-row", ($) => {
+                        $("span.legend-item", ($) => {
+                            $("span.caption", "Token: ")
+                            this.selectedTokenElem = $(
+                                "span.selected-token",
+                                this.selectedToken
+                            ) as HTMLSpanElement
+                        })
+
+                        $("span.caption", "(Tap to toggle metric visibility)")
+                    })
+
+                    $("div.spaced-row", ($) => {
+                        $("div.legend", ($) => {
+                            for (
+                                let i = 0;
+                                i < this.tokenData[0].values.length;
+                                ++i
+                            ) {
+                                let colorElem
+                                let row = $("div.row", ($) => {
+                                    $("span.legend-item", ($) => {
+                                        colorElem = $("div.color")
+                                        $(
+                                            "span",
+                                            this.tokenData[0].values[i].name
+                                        )
+                                    })
+
+                                    colorElem.style.setProperty(
+                                        "background",
+                                        this.colors.getInterpolatedColor(
+                                            1.0,
+                                            ChartType.TokenLoss,
+                                            i
+                                        )
+                                    )
+                                    colorElem.style.setProperty(
+                                        "border",
+                                        "2px solid " +
+                                            this.colors.getInterpolatedColor(
+                                                1.0,
+                                                ChartType.TokenLoss,
+                                                i
+                                            )
+                                    )
+
+                                    let tokenValueElem = $(
+                                        "span.token-value",
+                                        ""
+                                    )
+                                    this.valueElements[
+                                        this.tokenData[0].values[i].name
+                                    ] = tokenValueElem as HTMLElement
+                                })
+
+                                row.addEventListener("click", () => {
+                                    if (
+                                        this.secondarySelectedMetricList.includes(
+                                            this.tokenData[0].values[i].name
+                                        )
+                                    ) {
+                                        this.secondarySelectedMetricList =
+                                            this.secondarySelectedMetricList.filter(
+                                                (metric) =>
+                                                    metric !==
+                                                    this.tokenData[0].values[i]
+                                                        .name
+                                            )
+                                        colorElem.style.setProperty(
+                                            "background",
+                                            "unset"
+                                        )
+                                        row.style.setProperty("opacity", "0.5")
+                                    } else {
+                                        this.secondarySelectedMetricList.push(
+                                            this.tokenData[0].values[i].name
+                                        )
+                                        colorElem.style.setProperty(
+                                            "background",
+                                            this.colors.getInterpolatedColor(
+                                                1.0,
+                                                ChartType.TokenLoss,
+                                                i
+                                            )
+                                        )
+                                        row.style.setProperty("opacity", "1.0")
+                                    }
+
+                                    this.onSelectChange()
+                                })
+                            }
+                        })
+
+                        this.tokenInfoElem = $(
+                            "pre",
+                            ".token-info",
+                            this.selectedTokenData.info
+                        )
+                    })
                 })
             }
         )
@@ -181,7 +337,9 @@ export class StringTokenLoss {
         }
 
         this.selectElem.value = this.selectedMetric
+
         this.onSelectChange()
+        this.onTokenClick(this.selectedToken, this.selectedTokenData)
 
         this.selectElem.addEventListener("change", this.onSelectChange)
 
