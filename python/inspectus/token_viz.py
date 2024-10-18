@@ -15,7 +15,6 @@ def visualize_tokens(
         token_info = [{} for _ in range(len(tokens))]
 
     value_names = list(values.keys())
-    value_names.sort()
     
     colors = [colors[name] for name in value_names]
 
