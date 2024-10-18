@@ -12,7 +12,7 @@ def visualize_tokens(
     theme: str,
 ):
     if token_info is None:
-        token_info = [{} for _ in range(len(tokens))]
+        token_info = ["" for _ in range(len(tokens))]
 
     value_names = list(values.keys())
     
