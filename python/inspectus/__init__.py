@@ -283,7 +283,7 @@ def tokens(tokens: List[str],
     color_index = 0
     for name, _ in values.items():
         if name not in colors:
-            colors[name] = get_color_list()[color_index]
+            colors[name] = get_color_list()[color_index % len(get_color_list())]
             color_index += 1
 
     for value_list in values.values():
