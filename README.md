@@ -162,6 +162,10 @@ import inspectus
 inspectus.tokens(['hello', 'world'], np.random.rand(2))
 ```
 
+Check out the notebook here: [GPT2 example](https://github.com/labmlai/inspectus/blob/main/notebooks/token_viz.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/token_viz.ipynb)
+
+
 ## Distribution Plot
 The distribution plot is a plot that shows the distribution of a series of data. At each step, 
 the distribution of the data is calculated and maximum of 5 bands are drawn from 9 basis points. 
