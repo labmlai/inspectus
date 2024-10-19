@@ -158,9 +158,15 @@ This tool is used to visualize some metric related to tokens. This supports mult
 
 ```python
 import inspectus
-
-inspectus.tokens(['hello', 'world'], np.random.rand(2))
+inspectus.tokens(["Hello", " World", "!"], {
+    'loss': [-7.375, -8.312, -7.5625],
+    'entropy': [3.323, 1.0666, 0.432]
+}, token_info=["info 1", "info 2", "info 3"])
 ```
+
+Check out the notebook here: [GPT2 example](https://github.com/labmlai/inspectus/blob/main/notebooks/token_viz.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/labmlai/inspectus/blob/main/notebooks/token_viz.ipynb)
+
 
 ## Distribution Plot
 The distribution plot is a plot that shows the distribution of a series of data. At each step, 
