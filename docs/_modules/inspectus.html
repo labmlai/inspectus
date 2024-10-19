@@ -74,6 +74,8 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
 
+<span class="kn">from</span> <span class="nn">inspectus.utils</span> <span class="kn">import</span> <span class="n">get_color_list</span>
+
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="kn">import</span> <span class="nn">torch</span>
@@ -334,7 +336,7 @@
            <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]],</span> <span class="o">*</span><span class="p">,</span>
            <span class="n">token_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">remove_padding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-           <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+           <span class="n">colors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Visualize metrics related to tokens</span>
 
@@ -348,14 +350,24 @@
 <span class="sd">        Aditional info about the tokens. Shape [num_tokens]</span>
 <span class="sd">    remove_padding : bool</span>
 <span class="sd">        Whether to remove padding in the visualization</span>
-<span class="sd">    color_scheme : str</span>
-<span class="sd">        The color scheme to use for the visualization. Default is &#39;tableau10&#39;.</span>
+<span class="sd">    colors : Optional[Dict[str, str]]</span>
+<span class="sd">        Colors to use for each metric in the visualization. </span>
+<span class="sd">        If not provided, it defaults to the default color scheme.</span>
 <span class="sd">    theme : str</span>
 <span class="sd">        The theme to use for the visualization. Possible values are &#39;auto&#39;, &#39;light&#39;, and &#39;dark&#39;. Default is &#39;auto&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span>
+        
+    <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="n">color_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">:</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_color_list</span><span class="p">()[</span><span class="n">color_index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_color_list</span><span class="p">())]</span>
+            <span class="n">color_index</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">for</span> <span class="n">value_list</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
@@ -368,7 +380,7 @@
 
     <span class="n">visualize_tokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span>
                      <span class="n">token_info</span><span class="o">=</span><span class="n">token_info</span><span class="p">,</span>
-                     <span class="n">remove_padding</span><span class="o">=</span><span class="n">remove_padding</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span></div>
+                     <span class="n">remove_padding</span><span class="o">=</span><span class="n">remove_padding</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">)</span></div>
 
 
 
