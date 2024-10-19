@@ -1,4 +1,7 @@
 .attention-visualization {
+    --text-color: #000000;
+    --background-color: #ffffff;
+
     color: #000000;
     background-color: #ffffff;
     .menu {
@@ -33,6 +36,9 @@
     }
 
     &.dark-theme {
+        --text-color: #ffffff;
+        --background-color: #111111;
+
         color: #ffffff;
         background-color: #111111;
 
@@ -121,7 +127,8 @@
             background-clip: padding-box !important;
 
             &.new-line {
-                opacity: 0.6;
+                opacity: 0.4;
+                font-size: 0.8em;
             }
 
             .underline {
@@ -133,6 +140,14 @@
                     width: 100%;
                 }
             }
+
+            border-top: 2px solid transparent;
+        }
+
+        .token:hover {
+            box-shadow: -4px 0px 12px rgba(0, 0, 0, 0.2),
+                4px 0px 12px rgba(0, 0, 0, 0.2);
+            border-top: 2px solid var(--text-color);
         }
 
         margin-bottom: 10px;
@@ -212,14 +227,10 @@
         left: auto;
     }
 
-    .hover-container:hover {
-        border: 1px solid #878686;
-    }
-
     .legend {
-        display: flex;
-        flex-direction: column;
-        width: fit-content;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
 
         .row {
             display: flex;
@@ -230,26 +241,27 @@
             cursor: pointer;
             width: 100%;
             overflow-y: auto;
+        }
 
-            .legend-item {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
 
-            .color {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-            }
+        .color {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
 
-            .token-value {
-                font-family: monospace;
-                white-space: pre;
-                display: inline-block;
-                margin-left: 5px;
-                text-align: center;
-            }
+        .token-value {
+            font-family: monospace;
+            white-space: pre;
+            display: inline-block;
+            margin-left: 5px;
+            text-align: left;
         }
     }
 
@@ -260,7 +272,6 @@
         align-items: flex-start;
         justify-content: space-between;
         width: 100%;
-        max-width: 600px;
     }
 
     .selected-token {

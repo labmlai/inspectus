@@ -76,7 +76,7 @@ export class PlotColors {
             this.colorSchemes[chart as ChartType][
                 index % this.colorSchemes[chart as ChartType].length
             ].toLowerCase()
-        value = value * 0.6
+        value = value * 0.8
 
         return d3.interpolateRgb(col1, col2)(value)
     }

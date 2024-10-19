@@ -170,14 +170,29 @@ export class StringTokenLoss {
         this.selectedTokenData = tokenData
         this.selectedTokenElem.textContent = this.selectedToken
         this.tokenInfoElem.textContent = tokenData.info
+
+        let value_strings = []
         for (let i = 0; i < tokenData.values.length; ++i) {
-            const valueName = tokenData.values[i].name
-            const valueElement = this.valueElements[valueName]
-            if (valueElement) {
-                valueElement.textContent = this.isScientific
+            value_strings.push(
+                this.isScientific
                     ? tokenData.values[i].value.toExponential()
                     : tokenData.values[i].value.toString()
-            }
+            )
+        }
+
+        const maxLength = Math.max(
+            ...value_strings.map((str) => str.split(".")[0].length)
+        )
+        value_strings = value_strings.map((str) => {
+            const [intPart, decPart] = str.split(".")
+            return (
+                intPart.padEnd(maxLength, " ") + (decPart ? "." + decPart : "")
+            )
+        })
+
+        for (let i = 0; i < value_strings.length; ++i) {
+            this.valueElements[tokenData.values[i].name].textContent =
+                value_strings[i]
         }
     }
 
@@ -239,41 +254,33 @@ export class StringTokenLoss {
                                 ++i
                             ) {
                                 let colorElem
-                                let row = $("div.row", ($) => {
-                                    $("span.legend-item", ($) => {
-                                        colorElem = $("div.color")
-                                        $(
-                                            "span",
-                                            this.tokenData[0].values[i].name
-                                        )
-                                    })
+                                let row = $("span.legend-item", ($) => {
+                                    colorElem = $("div.color")
+                                    $("span", this.tokenData[0].values[i].name)
+                                })
 
-                                    colorElem.style.setProperty(
-                                        "background",
+                                colorElem.style.setProperty(
+                                    "background",
+                                    this.colors.getInterpolatedColor(
+                                        1.0,
+                                        ChartType.TokenLoss,
+                                        i
+                                    )
+                                )
+                                colorElem.style.setProperty(
+                                    "border",
+                                    "2px solid " +
                                         this.colors.getInterpolatedColor(
                                             1.0,
                                             ChartType.TokenLoss,
                                             i
                                         )
-                                    )
-                                    colorElem.style.setProperty(
-                                        "border",
-                                        "2px solid " +
-                                            this.colors.getInterpolatedColor(
-                                                1.0,
-                                                ChartType.TokenLoss,
-                                                i
-                                            )
-                                    )
+                                )
 
-                                    let tokenValueElem = $(
-                                        "span.token-value",
-                                        ""
-                                    )
-                                    this.valueElements[
-                                        this.tokenData[0].values[i].name
-                                    ] = tokenValueElem as HTMLElement
-                                })
+                                let tokenValueElem = $("span.token-value", "")
+                                this.valueElements[
+                                    this.tokenData[0].values[i].name
+                                ] = tokenValueElem as HTMLElement
 
                                 row.addEventListener("click", () => {
                                     if (
