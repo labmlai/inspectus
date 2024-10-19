@@ -139,9 +139,16 @@ export class StringTokenLoss {
         this.isScientific = true
         this.valueElements = {}
 
-        for (let i = 0; i < this.tokenData[0].values.length; ++i) {
+        let secondaryLength = 0
+        if (this.tokenData[0].values.length > 3) {
+            secondaryLength = 2
+        } else if (this.tokenData[0].values.length > 1) {
+            secondaryLength = 1
+        }
+
+        for (let i = 0; i < secondaryLength; ++i) {
             this.secondarySelectedMetricList.push(
-                this.tokenData[0].values[i].name
+                this.tokenData[0].values[1 + i].name
             )
         }
         for (let i = 0; i < this.tokens.length; ++i) {
@@ -168,14 +175,17 @@ export class StringTokenLoss {
     private onTokenClick = (token: string, tokenData: TokenData) => {
         this.selectedToken = token
         this.selectedTokenData = tokenData
-        this.selectedTokenElem.textContent = this.selectedToken
+        this.selectedTokenElem.textContent = this.selectedToken.replace(
+            /\n/g,
+            "\\n"
+        )
         this.tokenInfoElem.textContent = tokenData.info
 
         let value_strings = []
         for (let i = 0; i < tokenData.values.length; ++i) {
             value_strings.push(
                 this.isScientific
-                    ? tokenData.values[i].value.toExponential()
+                    ? tokenData.values[i].value.toExponential(6)
                     : tokenData.values[i].value.toString()
             )
         }
@@ -183,11 +193,24 @@ export class StringTokenLoss {
         const maxLength = Math.max(
             ...value_strings.map((str) => str.split(".")[0].length)
         )
+        const maxExponent = Math.max(
+            ...value_strings.map((str) => str.split("e")[1]?.length - 1 ?? 0)
+        )
         value_strings = value_strings.map((str) => {
             const [intPart, decPart] = str.split(".")
-            return (
-                intPart.padEnd(maxLength, " ") + (decPart ? "." + decPart : "")
-            )
+
+            let text =
+                intPart.padStart(maxLength, " ") +
+                (decPart ? "." + decPart : "")
+
+            if (text.includes("e")) {
+                const [base, exponent] = text.split("e")
+                const sign = exponent[0]
+                const expValue = exponent.slice(1).padStart(maxExponent, "0")
+                text = `${base}e${sign}${expValue}`
+            }
+
+            return text
         })
 
         for (let i = 0; i < value_strings.length; ++i) {
@@ -243,7 +266,7 @@ export class StringTokenLoss {
                             ) as HTMLSpanElement
                         })
 
-                        $("span.caption", "(Tap to toggle metric visibility)")
+                        $("span.caption", "")
                     })
 
                     $("div.spaced-row", ($) => {
@@ -259,14 +282,20 @@ export class StringTokenLoss {
                                     $("span", this.tokenData[0].values[i].name)
                                 })
 
-                                colorElem.style.setProperty(
-                                    "background",
-                                    this.colors.getInterpolatedColor(
-                                        1.0,
-                                        ChartType.TokenLoss,
-                                        i
+                                if (
+                                    this.secondarySelectedMetricList.includes(
+                                        this.tokenData[0].values[i].name
                                     )
-                                )
+                                ) {
+                                    colorElem.style.setProperty(
+                                        "background",
+                                        this.colors.getInterpolatedColor(
+                                            1.0,
+                                            ChartType.TokenLoss,
+                                            i
+                                        )
+                                    )
+                                }
                                 colorElem.style.setProperty(
                                     "border",
                                     "2px solid " +
