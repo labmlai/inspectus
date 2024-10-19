@@ -196,8 +196,14 @@ export class StringTokenLoss {
         const maxExponent = Math.max(
             ...value_strings.map((str) => str.split("e")[1]?.length - 1 ?? 0)
         )
+        const maxDecimals = Math.min(
+            Math.max(
+                ...value_strings.map((str) => str.split(".")[1]?.length ?? 0)
+            ),
+            6
+        )
         value_strings = value_strings.map((str) => {
-            const [intPart, decPart] = str.split(".")
+            let [intPart, decPart] = str.split(".")
 
             let text =
                 intPart.padStart(maxLength, " ") +
@@ -208,6 +214,11 @@ export class StringTokenLoss {
                 const sign = exponent[0]
                 const expValue = exponent.slice(1).padStart(maxExponent, "0")
                 text = `${base}e${sign}${expValue}`
+            } else {
+                if (decPart) {
+                    decPart = decPart.substring(0, maxDecimals)
+                    text = `${intPart}.${decPart.padEnd(maxDecimals, "0")}`
+                }
             }
 
             return text
