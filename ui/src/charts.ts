@@ -28,27 +28,6 @@ window["chartsEmbed"] = function (
     document.getElementById(elemId).appendChild(chart.render(theme))
 }
 
-window["chartsEmbedTest"] = function () {
-    let sample: any = {} // require('/assets/attention.json')
-    let chartData = new ChartData(sample)
-    let plotColors = new PlotColors("light")
-    let chart = new Controller(
-        chartData.dimensions,
-        chartData.attention,
-        { tokens: chartData.src_tokens },
-        { tokens: chartData.tgt_tokens },
-        [
-            ChartType.AttentionMatrix,
-            ChartType.SrcTokenHeatmap,
-            ChartType.TokenDimHeatmap,
-            ChartType.DimensionHeatmap,
-            ChartType.LineGrid,
-        ],
-        plotColors
-    )
-    document.body.appendChild(chart.render("auto"))
-}
-
 window["tokenViz"] = function (
     elemId: string,
     tokens: string[],

@@ -1,7 +1,6 @@
 import {Weya as $} from '../lib/weya/weya'
 import {Tokens} from "./controller";
 import {TokenLabelView} from "./token_label_view";
-import {createMatrix} from "./utils";
 import {DimValue} from "./types";
 import {PlotColors} from "./colors";
 import {ChartType} from "./types";
@@ -44,7 +43,6 @@ class CellView {
 }
 
 export class AttentionMatrixView {
-    private attentions: number[][];
     private srcTokens: Tokens;
     private dstTokens: Tokens;
     private srcTokenElems: TokenLabelView[];
@@ -61,8 +59,6 @@ export class AttentionMatrixView {
     constructor(srcTokens: Tokens, dstTokens: Tokens, plotColors: PlotColors) {
         this.srcTokens = srcTokens
         this.dstTokens = dstTokens
-
-        this.attentions = createMatrix(srcTokens.length, dstTokens.length)
 
         this.srcTokenElems = []
         for (let i = 0; i < srcTokens.length; ++i) {

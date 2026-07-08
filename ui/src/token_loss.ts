@@ -46,22 +46,6 @@ class TokenView {
                     info: this.info,
                 })
             })
-            // this.menu = $("div", ".menu", ($) => {
-            //     for (let i = 0; i < this.values.length; ++i) {
-            //         $("div", ($) => {
-            //             $(
-            //                 "div",
-            //                 `${this.values[i].name}: ${this.values[
-            //                     i
-            //                 ].value.toExponential()}`
-            //             )
-            //         })
-            //     }
-            //     $("hr")
-            //     if (this.info != null) {
-            //         $("pre", this.info)
-            //     }
-            // })
         })
     }
 
