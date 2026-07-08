@@ -284,7 +284,7 @@ export class Controller {
         return res
     }
 
-    private calcGridAttentionAttention(dim1: string, dim2: string): GridAttention {
+    private calcGridAttention(dim1: string, dim2: string): GridAttention {
         let res = {}
         for (let dv1 of getDimValues(dim1, this.dimensionsMap)) {
             res[dv1] = {}
@@ -376,7 +376,7 @@ export class Controller {
     }
 
     private onLineGridDimChange = (dim1: string, dim2: string): GridAttention => {
-        return this.calcGridAttentionAttention(dim1, dim2)
+        return this.calcGridAttention(dim1, dim2)
     }
 
     private onTokenHeatmapDimChange = (selDim: string): { [value: DimValue]: number }[] => {
@@ -418,7 +418,7 @@ export class Controller {
 
         if (this.chartTypes.includes(ChartType.LineGrid)) {
             this.lineGridView.setSelection(this.selected)
-            this.lineGridView.setAttention(this.calcGridAttentionAttention(this.lineGridView.dim1, this.lineGridView.dim2))
+            this.lineGridView.setAttention(this.calcGridAttention(this.lineGridView.dim1, this.lineGridView.dim2))
         }
     }
 

@@ -95,7 +95,6 @@ class LineCellView {
         e.preventDefault()
         e.stopPropagation()
 
-        console.log('click', this.dims)
         for (let d of this.dims) {
             this.handler(d.d, d.v, false)
         }
@@ -149,7 +148,7 @@ export class LineGridView {
     dim2: string;
     private chartElem: SVGSVGElement;
     private dimChangeHandler: any;
-    private selectHanlder: SelectCallback
+    private selectHandler: SelectCallback
     private selected: { [p: string]: { [p: DimValue]: boolean } };
     private cells: LineCellView[][]
     private cellWidth: number;
@@ -173,7 +172,7 @@ export class LineGridView {
     }
 
     addClickHandler(handler: SelectCallback) {
-        this.selectHanlder = handler
+        this.selectHandler = handler
     }
 
     render() {
@@ -273,7 +272,7 @@ export class LineGridView {
                     this.dstTokens.length,
                     this.cellHeight, this.cellWidth))
                 this.cellLayers[i][j].appendChild(this.cells[i][j].render())
-                this.cells[i][j].addClickHandler(this.dim1, dv1[i], this.dim2, dv2[j], this.selectHanlder)
+                this.cells[i][j].addClickHandler(this.dim1, dv1[i], this.dim2, dv2[j], this.selectHandler)
             }
         }
 

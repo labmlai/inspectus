@@ -95,30 +95,6 @@ def attention(attn: Union[
     )
 
 
-def compress_series(series, compress_steps=1):
-    """
-    Compresses a series to blocks of `compress_steps`
-
-    Args:
-        series: series as a list of dictionaries
-        compress_steps: number of steps to compress
-
-    Returns:
-
-    """
-    res = []
-    for d in series:
-        values = d['values']
-        if not isinstance(values, list):
-            values = [values]
-        if not res or d['step'] - res[-1]['step'] >= compress_steps:
-            res.append({'step': d['step'], 'values': [] + values})
-        else:
-            res[-1]['values'] += values
-
-    return res
-
-
 def series_to_distribution(series: Union[
     List[Dict],
     List['torch.Tensor'],
@@ -162,7 +138,7 @@ def series_to_distribution(series: Union[
             mean = np.mean(data)
             step = steps[i] if steps is not None else i
 
-        histogram = [dist[i] for i in range(0, 9)]
+        histogram = dist.tolist()
         row = {
             'step': step,
             'histogram': histogram,
@@ -201,7 +177,7 @@ def distribution(data: Dict[str, Union[
         levels : int, optional
             An Integer between 1 and 5, the number of levels in the visualization. Default is 5.
         alpha : float, optional
-            Opacity of the first band. Reduces by powers for each level. Default is 0.6.
+            Opacity of the first band. Reduces by powers for each level. Default is 0.5.
         color_scheme : str, optional
             The color scheme to use for the visualization. Default is 'tableau10'.
         height : int, optional
@@ -224,7 +200,6 @@ def distribution(data: Dict[str, Union[
         levels = 1
 
     table = []
-    i = 0
     for name, series in data.items():
         if len(series) == 0:
             continue
@@ -233,7 +208,6 @@ def distribution(data: Dict[str, Union[
             table += _histogram_to_table(series, name)
         else:
             table += _histogram_to_table(series_to_distribution(series), name)
-        i += 1
 
     return render(table,
                   levels=levels,
